@@ -15,6 +15,7 @@ public class SyntheticClipboardActivity extends Activity {
     };
     public void onCreate(Bundle state) {
         super.onCreate(state);
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         TextView text=new TextView(this);text.setText("ClipHistory synthetic clipboard test");text.setTextSize(22f);setContentView(text);
         registerReceiver(writer,new IntentFilter(ACTION),Context.RECEIVER_EXPORTED);
     }

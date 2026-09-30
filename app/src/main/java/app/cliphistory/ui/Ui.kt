@@ -60,7 +60,7 @@ class Ui(val activity: Activity) {
                     super.onInitializeAccessibilityNodeInfo(host,info);info.className="android.widget.Button"
                 }
             }
-            if(enabled)setOnClickListener { action() }
+            setOnClickListener { if(isEnabled)action() }
         }
         icon?.let { res -> row.addView(ImageView(activity).apply {
             setImageResource(res);imageTintList=ColorStateList.valueOf(if(!enabled)muted else if(danger)color(R.color.danger) else ink)
@@ -74,7 +74,8 @@ class Ui(val activity: Activity) {
     }
     fun sheet(title:String,content:(LinearLayout,Dialog)->Unit):Dialog {
         val dialog=Dialog(activity)
-        dialog.window?.apply { addFlags(WindowManager.LayoutParams.FLAG_SECURE);setBackgroundDrawableResource(android.R.color.transparent) }
+        ScreenPrivacy.apply(dialog.window,AppSettings(activity))
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         val box=column().apply { setPadding(dp(20),dp(12),dp(20),dp(20));background=shape(color(R.color.surface),24) }
         val handle=SheetHandle(activity).apply { minimumHeight=dp(48);contentDescription=activity.getString(R.string.dismiss_panel);isClickable=true;isFocusable=true }
         handle.addView(View(activity).apply { background=shape(color(R.color.divider),2) },FrameLayout.LayoutParams(dp(32),dp(4),Gravity.CENTER))
@@ -88,7 +89,7 @@ class Ui(val activity: Activity) {
                 MotionEvent.ACTION_UP->{
                     if(event.rawY-downY>dp(72))dialog.dismiss()
                     else if(event.rawY-downY<android.view.ViewConfiguration.get(activity).scaledTouchSlop)handle.performClick()
-                    else if(android.animation.ValueAnimator.areAnimatorsEnabled())decor?.animate()?.translationY(0f)?.setDuration(120)?.start()
+                    else if(ScreenPrivacy.motionEnabled(AppSettings(activity)))decor?.animate()?.translationY(0f)?.setDuration(120)?.start()
                     else decor?.translationY=0f
                     true
                 }
@@ -109,7 +110,7 @@ class Ui(val activity: Activity) {
         dialog.window?.apply {
             setGravity(Gravity.BOTTOM);setLayout(-1,-2)
             setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-            setWindowAnimations(R.style.SheetMotion)
+            setWindowAnimations(if(ScreenPrivacy.motionEnabled(AppSettings(activity)))R.style.SheetMotion else 0)
         }
         dialog.show();dialog.window?.setLayout(minOf(dp(600),activity.windowManager.currentWindowMetrics.bounds.width()),-2)
         return dialog

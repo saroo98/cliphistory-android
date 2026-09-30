@@ -1,0 +1,42 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Single tap dismisses quick copy
+PASS Underlying application remains foreground after copying
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Tile can reopen one panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Close dismisses floating panel
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Single tap dismisses quick copy
+PASS Underlying application remains foreground after copying
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Tile can reopen one panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Close dismisses floating panel
+PASS 20 feature assertions (tile), API 36. Synthetic validation only.
+

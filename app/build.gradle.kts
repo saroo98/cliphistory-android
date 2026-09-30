@@ -10,9 +10,10 @@ android {
         applicationId = "app.cliphistory"
         minSdk = 34
         targetSdk = 37
-        versionCode = 3
-        versionName = "1.2.0"
+        versionCode = 4
+        versionName = "1.3.0"
         manifestPlaceholders["appLabel"] = "@string/app_name"
+        manifestPlaceholders["tileLabel"] = "@string/tile_name"
         testInstrumentationRunner = "app.cliphistory.UiSmokeInstrumentation"
     }
     buildFeatures { aidl = true; buildConfig = true }
@@ -36,6 +37,7 @@ android {
                 applicationIdSuffix = ".validation"
                 versionNameSuffix = "-validation"
                 manifestPlaceholders["appLabel"] = "ClipHistory validation"
+                manifestPlaceholders["tileLabel"] = "Clipboard validation"
             }
         }
         getByName("release") {

@@ -1,0 +1,71 @@
+PASS Actual Shizuku connection
+PASS Shell listener and durable private storage, API 35
+PASS Set validation history limit
+PASS Clear only synthetic validation history
+PASS Select exact unique-text policy
+PASS Arm live callback test
+PASS Real self-test passes without saving nonce
+Producer package: app.cliphistory.validation.test, target: app.cliphistory.validation
+PASS Synthetic producer is foreground
+PASS Another app captures while history is backgrounded
+PASS Consecutive duplicates skipped
+PASS Pause prevents capture
+PASS Marked sensitive payload skipped
+PASS Oversized payload skipped
+PASS Full Unicode and whitespace preserved
+PASS Live missing entry distinguished from error
+PASS Actual A/B/A/B produces exactly B,A
+PASS Recopy invalidates the old ID without returning another text
+PASS Stale deletion reports missing rather than success
+PASS Consecutive-only policy acknowledged
+PASS Consecutive-only mode preserves four nonconsecutive copies
+PASS Mirrored offline history agrees after policy cleanup
+PASS Sustained fifty-copy session retains limit without queue drops
+PASS History returns after background capture
+PASS Foreground for clipboard restoration
+PASS Notification reports failed durable Stop
+PASS Failed notification Stop retains recording state and supervision
+PASS Stop during attachment is acknowledged
+PASS Stop during attachment removes the independent helper
+PASS Stop during attachment saves pause before shutdown
+PASS Explicit Start reconnects after attachment stop
+PASS Explicit Start resumes a deliberately stopped recorder
+PASS Failed first-setup persistence removes attached helper
+PASS Failed setup is not reported complete and saves pause before removing capture
+PASS Actual Shizuku connection
+PASS Shell listener and durable private storage, API 35
+PASS Set validation history limit
+PASS Clear only synthetic validation history
+PASS Select exact unique-text policy
+PASS Arm live callback test
+PASS Real self-test passes without saving nonce
+PASS Synthetic producer is foreground
+PASS Another app captures while history is backgrounded
+PASS Consecutive duplicates skipped
+PASS Pause prevents capture
+PASS Marked sensitive payload skipped
+Oversize counters: saved=1, count=1, oversized=1, unsupported=0
+PASS Oversized payload skipped
+PASS Full Unicode and whitespace preserved
+PASS Live missing entry distinguished from error
+PASS Actual A/B/A/B produces exactly B,A
+PASS Recopy invalidates the old ID without returning another text
+PASS Stale deletion reports missing rather than success
+PASS Consecutive-only policy acknowledged
+PASS Consecutive-only mode preserves four nonconsecutive copies
+PASS Mirrored offline history agrees after policy cleanup
+PASS Sustained fifty-copy session retains limit without queue drops
+Fifty-copy session: 1816 ms
+PASS History returns after background capture
+PASS Foreground for clipboard restoration
+PASS Notification reports failed durable Stop
+PASS Failed notification Stop retains recording state and supervision
+PASS Stop during attachment is acknowledged
+PASS Stop during attachment removes the independent helper
+PASS Stop during attachment saves pause before shutdown
+PASS Explicit Start reconnects after attachment stop
+PASS Explicit Start resumes a deliberately stopped recorder
+PASS Failed first-setup persistence removes attached helper
+PASS Failed setup is not reported complete and saves pause before removing capture
+PASS 33 release assertions (live). Synthetic data only.
+

@@ -17,5 +17,6 @@ interface IClipboardDaemon {
     Bundle armTest(String nonce) = 10;
     Bundle verifyStorage() = 11;
     Bundle entry(long id) = 12;
+    Bundle setDuplicateMode(int mode) = 13;
     void destroy() = 16777114;
 }

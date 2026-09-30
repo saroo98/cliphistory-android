@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="moe.shizuku.manager.permission.API_V23" />
-    <queries><package android:name="moe.shizuku.privileged.api" /></queries>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <queries>
+        <package android:name="moe.shizuku.privileged.api" />
+        <intent><action android:name="android.settings.VIEW_ADVANCED_POWER_USAGE_DETAIL" /><data android:scheme="package" /></intent>
+        <intent><action android:name="android.settings.APPLICATION_DETAILS_SETTINGS" /><data android:scheme="package" /></intent>
+        <intent><action android:name="android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS" /></intent>
+    </queries>
     <application
         android:name=".ClipApplication"
         android:label="${appLabel}"
@@ -20,6 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.QuickCopyActivity" android:exported="false"
+            android:theme="@style/QuickCopyTheme" android:launchMode="singleTask"
+            android:taskAffinity="" android:excludeFromRecents="true" android:noHistory="true" />
         <provider
             android:name="rikka.shizuku.ShizukuProvider"
             android:authorities="${applicationId}.shizuku"
@@ -27,11 +39,23 @@
             android:exported="true"
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
         <service android:name=".ui.ClipboardTileService"
-            android:label="@string/tile_name"
+            android:label="${tileLabel}"
             android:icon="@drawable/ic_clipboard"
             android:exported="true"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <!-- The action tile has no continuously changing state. Bind on demand
+                 instead of competing with other custom tiles whenever QS opens. -->
+            <meta-data android:name="android.service.quicksettings.ACTIVE_TILE" android:value="true" />
             <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
         </service>
+        <service android:name=".client.RecordingRecoveryService" android:exported="false" android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE" android:value="Maintaining a user-enabled local clipboard recorder and reconnecting its authorized Shizuku helper" />
+        </service>
+        <receiver android:name=".client.RecorderBootReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

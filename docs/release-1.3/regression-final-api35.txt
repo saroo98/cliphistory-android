@@ -1,0 +1,28 @@
+PASS Initial 40 entries loaded
+PASS All 73 entries loaded
+PASS Rotation preserves loaded entries and entry anchor
+PASS Return rotation preserves loaded entries
+PASS Delayed preview cannot replace Help
+PASS Copy feedback appears
+PASS History completes background transition
+PASS History returns to foreground
+PASS Backgrounding removes expired feedback
+PASS Missing entry is distinct from read failure
+PASS File changes invalidate cached history (BOTH_SNAPSHOTS_UNREADABLE)
+PASS Diagnostics reports current file corruption
+Encode 2758 bytes: 6 ms
+PASS Initial 40 entries loaded
+PASS All 73 entries loaded
+PASS Rotation preserves loaded entries and entry anchor
+PASS Return rotation preserves loaded entries
+PASS Delayed preview cannot replace Help
+PASS Copy feedback appears
+PASS History completes background transition
+PASS History returns to foreground
+PASS Backgrounding removes expired feedback
+PASS Missing entry is distinct from read failure
+PASS File changes invalidate cached history (BOTH_SNAPSHOTS_UNREADABLE)
+PASS Diagnostics reports current file corruption
+Encode 2758 bytes: 0 ms
+PASS 12 release assertions (regression). Synthetic data only.
+

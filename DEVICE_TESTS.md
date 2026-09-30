@@ -32,7 +32,7 @@ Do not mistake that command's completion for proof that the process was killed; 
 
 On disposable test history with limit 100, copy numbered strings `CH-001` through `CH-101` at a human pace while the history UI is closed. There should be 100 entries: `CH-101` at the top and `CH-002` at the bottom, with `CH-001` no longer in the current list. Lower the limit to 20 and confirm the oldest entries are removed. Raise it again and confirm that previously removed entries do not reappear.
 
-Copy `A`, `A` consecutively: one saved entry. Copy `A`, `B`, `A`: the two A entries are allowed because a different saved text intervened.
+Copy `A`, `A` consecutively: one entry. With default unique-text handling, `A → B → A → B` must leave exactly `B, A`. Select consecutive-only handling to obtain four entries for that sequence. Switching back must combine duplicate text, preserve pause/limit and clean both recovery snapshots. Compare complete text, including case, whitespace and Unicode.
 
 ## Recovery and pause
 
@@ -40,7 +40,7 @@ Pause the recorder from the menu, copy a harmless secret-like canary elsewhere, 
 
 Stop Shizuku while the app is closed. Copy a distinct text. Restart Shizuku and reopen ClipHistory. The missing interval must not be falsely reported as captured; old committed history should still be available. New copies after reconnection should be saved.
 
-Reboot the phone. Before restarting Shizuku, the app may show saved history but must not claim active recording. Start Shizuku and reopen ClipHistory, then test a fresh copy. Non-root restart is a manual requirement, not a bug hidden by a green status icon.
+Reboot a disposable test device. Before restarting Shizuku, history must not claim active recording or expose text before unlocking. With resumption enabled, unlock and start Shizuku; recovery should reconnect when permitted. With resumption Off, Binder delivery must not start the recorder until explicit activation. A previously paused history must remain paused. Non-root Shizuku restart remains a manual requirement.
 
 For disposable data only, also test Android's Clear storage and uninstall/reinstall behavior. Previously cleared history must not be resurrected from a surviving helper's memory. The implementation checks replacement file identities and rejects unlinked backing files; this platform behavior still requires device validation.
 
@@ -50,7 +50,7 @@ Use only a synthetic marked-sensitive clip, not an actual password, to test sens
 
 Revoke ClipHistory's Shizuku permission and confirm that recording stops or access is denied. Re-authorise it, reopen the app and check a new copy. Verify that other unprivileged apps cannot bind directly to the private history interface.
 
-History should not be readable while the lock screen is active. The tile should ask for unlocking. Screenshots/Recents previews of the history Activity should be blocked. The diagnostic report must contain no copied text.
+History must not be exposed while locked. The tile should require unlocking. Screenshots are blocked by default; enabling capture must take effect in the Activity, each sheet and the tile dialog, including recreation and locking. Recents hiding must remain independent. Screen recording and actual Recents snapshot checks are separate from window-flag assertions. Diagnostics must contain no saved text.
 
 ## Longer-run evidence
 
@@ -72,6 +72,8 @@ adb shell am instrument -w -e suite live app.cliphistory.validation.test/app.cli
 
 The live suite uses the test APK's separate clipboard producer, verifies real capture and restores the original clipboard as an opaque object. It clears only the validation app's synthetic history. The normal `app.cliphistory` package is not its target. The instrumented runner refuses synthetic seeding on a physical production package.
 
-On a disposable emulator with Shizuku stopped, build the normal debug app and run `-e suite regression`, `-e suite layout` or `-e suite capacity` against `app.cliphistory.test/app.cliphistory.UiSmokeInstrumentation`. Omit `suite` for the 26 UI checks and screenshot fixtures. Layout checks require an open software keyboard. Capacity uses 500 entries of 64 KiB, then restores small synthetic history.
+On a disposable emulator with Shizuku stopped, build the normal debug app and run `-e suite regression`, `-e suite layout` or `-e suite capacity` against `app.cliphistory.test/app.cliphistory.UiSmokeInstrumentation`. Omit `suite` for the UI checks and synthetic screenshots. Layout requires an open software keyboard. Capacity uses 500 entries of 64 KiB, then restores small synthetic history.
+
+Additional validation modes are `settings`, `privacy`, `recovery`, `onboarding`, `customization`, `paused-connection`, `tile` and `tile-performance`. The paused connection check performs no clipboard writes. On a personal phone, tile performance opens/closes only; native copy tests belong on disposable emulators. `tools/test-tile-timing.py` performs ten 60-second idle trials and two 120-second trials, with private bounded video/traces. It requires the isolated validation variant and a stopped validation recorder. Do not publish raw phone traces or full notification-shade images. See `docs/release-1.3/TILE_TIMING.md` for measured stages and limits.
 
 Stop the helper before fixture seeding: the helper is the single writer and must not hold different in-memory history while tests replace its files. The test APK and fixtures are never distributed in the production APK.

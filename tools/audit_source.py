@@ -21,15 +21,27 @@ manifest = ET.parse(MAIN / "AndroidManifest.xml").getroot()
 app = manifest.find("application")
 assert app is not None
 permissions = {p.get(ANDROID + "name") for p in manifest.findall("uses-permission")}
-check("source requests only the Shizuku API permission", permissions == {"moe.shizuku.manager.permission.API_V23"})
+check("source requests exactly the five reviewed permissions", permissions == {
+    "moe.shizuku.manager.permission.API_V23", "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_SPECIAL_USE", "android.permission.POST_NOTIFICATIONS",
+    "android.permission.RECEIVE_BOOT_COMPLETED"})
 check("source disables Android backup", app.get(ANDROID + "allowBackup") == "false" and app.get(ANDROID + "fullBackupContent") == "false")
 check("source disables cleartext traffic", app.get(ANDROID + "usesCleartextTraffic") == "false")
 providers = app.findall("provider")
 check("Shizuku provider protected by system signature permission", len(providers) == 1 and providers[0].get(ANDROID + "permission") == "android.permission.INTERACT_ACROSS_USERS_FULL")
 services = app.findall("service")
-check("only declared Android service is protected Quick Settings tile", len(services) == 1 and services[0].get(ANDROID + "permission") == "android.permission.BIND_QUICK_SETTINGS_TILE")
-check("one launcher Activity", len(app.findall("activity")) == 1 and len(app.findall("activity/intent-filter/action")) == 1)
-for element in [app, *app.findall("activity"), *services]:
+check("tile and private special-use recovery are the only Android services", len(services) == 2 and
+      services[0].get(ANDROID + "permission") == "android.permission.BIND_QUICK_SETTINGS_TILE" and
+      services[1].get(ANDROID + "exported") == "false" and services[1].get(ANDROID + "foregroundServiceType") == "specialUse")
+receivers = app.findall("receiver")
+check("only boot receiver is private and not direct-boot aware", len(receivers) == 1 and
+      receivers[0].get(ANDROID + "exported") == "false" and receivers[0].get(ANDROID + "directBootAware") != "true")
+activities=app.findall("activity")
+check("one launcher and one private floating Activity", len(activities)==2 and
+      len(app.findall("activity/intent-filter/action"))==1 and
+      activities[1].get(ANDROID+"name")==".ui.QuickCopyActivity" and activities[1].get(ANDROID+"exported")=="false" and
+      activities[1].get(ANDROID+"excludeFromRecents")=="true" and activities[1].get(ANDROID+"taskAffinity")=="")
+for element in [app, *app.findall("activity"), *services, *receivers]:
     name = element.get(ANDROID + "name", "")
     if name.startswith("."):
         path = MAIN / "java/app/cliphistory" / (name[1:].replace(".", "/") + ".kt")
@@ -45,7 +57,10 @@ check("no runtime network client imports", not re.search(r"import\s+(java\.net|o
 check("no external process execution", not re.search(r"Runtime\.getRuntime\(\)\.exec|ProcessBuilder\(", source))
 check("no Accessibility or keyboard components", "AccessibilityService" not in source and "InputMethodService" not in source)
 check("no repeating clipboard polling mechanism", not re.search(r"Timer\(|scheduleAtFixedRate|while\s*\(true\)|Thread\.sleep", source))
-check("history screen protects screenshots", "FLAG_SECURE" in text("app/src/main/java/app/cliphistory/ui/MainActivity.kt"))
+privacy = text("app/src/main/java/app/cliphistory/ui/ScreenPrivacy.kt")
+check("privacy defaults block screenshots with one conditional window policy", "FLAG_SECURE" in privacy and
+      "clearFlags" in privacy and 'flag("allow_screenshots", false)' in text("app/src/main/java/app/cliphistory/ui/AppSettings.kt") and
+      all("ScreenPrivacy.apply" in text("app/src/main/java/app/cliphistory/ui/" + name) for name in ["MainActivity.kt", "Ui.kt", "QuickCopyActivity.kt"]))
 check("tile uses immutable PendingIntent and unlock", "FLAG_IMMUTABLE" in text("app/src/main/java/app/cliphistory/ui/ClipboardTileService.kt") and "unlockAndRun" in source)
 check("normal app uses private no-backup files", "noBackupFilesDir" in text("app/src/main/java/app/cliphistory/client/PrivateHistory.kt"))
 check("shell does not truncate or chmod private files", not re.search(r"ftruncate|Os\.chmod|setLength\(", "\n".join(p.read_text(encoding="utf-8") for p in (MAIN / "java/app/cliphistory/daemon").glob("*.kt"))))
@@ -56,7 +71,7 @@ check("clipboard source is not coerced through content providers", "coerceToText
 daemon = text("app/src/main/java/app/cliphistory/daemon/ClipboardUserService.kt")
 aidl = text("app/src/main/aidl/app/cliphistory/ipc/IClipboardDaemon.aidl")
 methods = re.findall(r"\b(?:Bundle|String|void)\s+(\w+)\([^;]*?\)\s*=\s*\d+\s*;", aidl)
-check("all AIDL entrypoints implemented", all(re.search(r"override fun " + name + r"\(", daemon) for name in methods) and len(methods) == 14)
+check("all AIDL entrypoints implemented", all(re.search(r"override fun " + name + r"\(", daemon) for name in methods) and len(methods) == 15)
 for name in methods:
     if name == "destroy":
         continue
@@ -70,6 +85,14 @@ check("Shizuku destroy transaction matches documented constant", "destroy() = 16
 check("helper watches Shizuku server rather than UI lifetime", "IBinder shizukuServer" in aidl and "server.linkToDeath" in daemon and "leaseAlive=false" in daemon)
 check("replacement/unlinked private data is handled", "attachedFileIds!=incomingIds" in daemon and "st_nlink" in text("app/src/main/java/app/cliphistory/daemon/FdAccess.kt"))
 check("daemon uses bounded queue", "ArrayBlockingQueue<Runnable>(256)" in daemon)
+check("owner stop gates clipboard reads and serial commits", "if(!canRead())return" in bridge and
+      "if(!ownerStop.check())" in daemon and "FLAG_STOPPED" in text("app/src/main/java/app/cliphistory/daemon/OwnerStopGuard.kt") and
+      "REASON_USER_REQUESTED" in text("app/src/main/java/app/cliphistory/daemon/OwnerStopGuard.kt"))
+check("recovery retries are bounded and user-stop gated", "longArrayOf(1000,3000,10_000)" in source and
+      "mayRecover(options,boot" in source and re.search(r'putBoolean\("explicit_stop",\s*true\)', source) is not None)
+check("tile uses API 34 direct launch of a private visible floating panel",
+      "activityLaunchForClick=launch()" in source and "windowIsFloating" in text("app/src/main/res/values/styles.xml") and
+      "SYSTEM_ALERT_WINDOW" not in permissions and activities[1].get(ANDROID+"exported")=="false")
 check("IPC history is paged", "count in 1..40" in daemon and "SearchPreview.snippet" in daemon and "maxLength:Int=180" in text("app/src/main/java/app/cliphistory/core/SearchPreview.kt"))
 check("self-test uses tested probe tracker", "ProbeTracker()" in daemon and "probe.match" in daemon)
 build = text("app/build.gradle.kts")

@@ -13,6 +13,7 @@ import java.lang.reflect.Proxy
 class PlatformClipboardBridge(
     private val userId: Int,
     private val onCopy: (CopiedText) -> Unit,
+    private val canRead: () -> Boolean,
     private val onFailure: (String) -> Unit
 ) : java.io.Closeable {
     data class CopiedText(val text: String?, val sensitive: Boolean, val oversized: Boolean, val time: Long)
@@ -69,6 +70,7 @@ class PlatformClipboardBridge(
             invoke(add)
             registered = true
             // Probe access without importing old clipboard text into the archive.
+            check(canRead()) { "OWNER_STOPPED" }
             invoke(readMethod)
         } catch (t: Throwable) {
             try { invoke(removeMethod) } catch (_: Throwable) {}
@@ -94,6 +96,7 @@ class PlatformClipboardBridge(
     }
     private fun readImmediately() {
         try {
+            if(!canRead())return
             val clip = invoke(readMethod) as? ClipData ?: return
             val sensitive = clip.description.extras?.getBoolean("android.content.extra.IS_SENSITIVE", false) == true
             if (sensitive) { onCopy(CopiedText(null, true, false, System.currentTimeMillis())); return }

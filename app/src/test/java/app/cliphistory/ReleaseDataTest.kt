@@ -8,7 +8,7 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class ReleaseDataTest {
-    @Test fun snapshotsRemainByteCompatibleWithVersionOne() {
+    @Test fun versionOneDecodesAndVersionTwoRoundTrips() {
         val snapshot=Snapshot(42,100,4,true,listOf(Entry(3,12,"مرحبا 🌿\nnotes"),Entry(1,0,"old text")))
         val stream=ByteArrayOutputStream()
         DataOutputStream(stream).use { out ->
@@ -21,17 +21,18 @@ class ReleaseDataTest {
         }
         val body=stream.toByteArray()
         val legacy=body+MessageDigest.getInstance("SHA-256").digest(body)
-        assertArrayEquals(legacy,SnapshotCodec.encode(snapshot))
         assertEquals(snapshot,SnapshotCodec.decode(legacy))
+        assertEquals(2,java.nio.ByteBuffer.wrap(SnapshotCodec.encode(snapshot)).getInt(4))
+        assertEquals(snapshot,SnapshotCodec.decode(SnapshotCodec.encode(snapshot)))
     }
     @Test fun maximumHistorySurvivesRoundTrip() {
         val entries=(500L downTo 1L).map { Entry(it,it,"x".repeat(MAX_TEXT_BYTES)) }
-        val snapshot=Snapshot(1,500,501,false,entries)
+        val snapshot=Snapshot(1,500,501,false,entries,DuplicateMode.CONSECUTIVE_ONLY)
         assertEquals(snapshot,SnapshotCodec.decode(SnapshotCodec.encode(snapshot)))
     }
     @Test fun malformedUtf8WithAValidChecksumIsRejected() {
         val bytes=SnapshotCodec.encode(Snapshot(1,20,2,false,listOf(Entry(1,0,"a"))))
-        bytes[53]=0x80.toByte()
+        bytes[54]=0x80.toByte()
         MessageDigest.getInstance("SHA-256").run { update(bytes,0,bytes.size-32);digest() }.copyInto(bytes,bytes.size-32)
         try { SnapshotCodec.decode(bytes);fail("Malformed UTF-8 accepted") }
         catch(e:StoreException) { assertEquals("MALFORMED_SNAPSHOT",e.reason) }

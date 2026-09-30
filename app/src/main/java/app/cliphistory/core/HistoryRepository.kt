@@ -37,7 +37,10 @@ class HistoryRepository(private val a: Slot, private val b: Slot) {
     }
 
     /** Forces an actual descriptor write and fsync before startup may report ready. */
-    fun initialize() { commit(state) }
+    fun initialize() {
+        val migrated = state.uniqueProjection()
+        commit(migrated, mirror = migrated.entries != state.entries)
+    }
 
     fun capture(text: String, time: Long, sensitive: Boolean = false): CaptureResult {
         if (state.paused) return CaptureResult.PAUSED
@@ -48,7 +51,9 @@ class HistoryRepository(private val a: Slot, private val b: Slot) {
         if (state.entries.firstOrNull()?.text == text) return CaptureResult.DUPLICATE
         if (state.nextId == Long.MAX_VALUE) throw StoreException("ID_EXHAUSTED")
         val entry = Entry(state.nextId, time.coerceAtLeast(0), text)
-        commit(state.copy(nextId = state.nextId + 1, entries = (listOf(entry) + state.entries).take(state.limit)))
+        val retained = if (state.duplicateMode == DuplicateMode.UNIQUE_TEXT)
+            state.entries.filterNot { it.text == text } else state.entries
+        commit(state.copy(nextId = state.nextId + 1, entries = (listOf(entry) + retained).take(state.limit)))
         return CaptureResult.SAVED
     }
 
@@ -58,6 +63,11 @@ class HistoryRepository(private val a: Slot, private val b: Slot) {
         commit(state.copy(limit = limit, entries = state.entries.take(limit)), mirror = shrunk)
     }
     fun setPaused(paused: Boolean) { commit(state.copy(paused = paused), mirror = true) }
+    fun setDuplicateMode(mode: DuplicateMode) {
+        // A retry must clean both slots even when the first durable write already
+        // changed the selected mode and only the backup cleanup failed.
+        commit(state.copy(duplicateMode = mode).uniqueProjection(), mirror = true)
+    }
     fun delete(id: Long): Boolean {
         if (state.entries.none { it.id == id }) return false
         commit(state.copy(entries = state.entries.filterNot { it.id == id }), mirror = true)

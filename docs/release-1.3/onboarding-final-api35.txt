@@ -1,0 +1,50 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS First launcher opening presents welcome
+PASS Welcome appears before background guidance
+PASS Welcome respects screenshot protection
+PASS Background guidance follows deliberate welcome acknowledgement
+PASS Welcome acknowledgement persists
+PASS Background guidance can be dismissed
+PASS Optional background suggestion acknowledged
+PASS Once mode does not repeat acknowledged welcome
+PASS Each-launch mode presents welcome
+PASS Rotation/recreation does not count as another launcher opening
+PASS Off mode allows launching without optional prompts
+PASS Real optional support action: Leave feedback
+PASS Real optional support action: Star on GitHub
+PASS Real optional support action: Share app
+PASS Guide includes step 1: 1
+PASS Guide includes step 1: 2
+PASS Guide includes step 1: 3
+PASS Guide includes step 1: 4
+PASS Guide includes step 1: 5
+PASS Guide includes step 1: 6
+PASS Guide includes step 1: 7
+PASS Guide exposes Shizuku and connection-test actions
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS First launcher opening presents welcome
+PASS Welcome appears before background guidance
+PASS Welcome respects screenshot protection
+PASS Background guidance follows deliberate welcome acknowledgement
+PASS Welcome acknowledgement persists
+PASS Background guidance can be dismissed
+PASS Optional background suggestion acknowledged
+PASS Once mode does not repeat acknowledged welcome
+PASS Each-launch mode presents welcome
+PASS Rotation/recreation does not count as another launcher opening
+PASS Off mode allows launching without optional prompts
+PASS Real optional support action: Leave feedback
+PASS Real optional support action: Star on GitHub
+PASS Real optional support action: Share app
+PASS Guide includes step 1: 1
+PASS Guide includes step 1: 2
+PASS Guide includes step 1: 3
+PASS Guide includes step 1: 4
+PASS Guide includes step 1: 5
+PASS Guide includes step 1: 6
+PASS Guide includes step 1: 7
+PASS Guide exposes Shizuku and connection-test actions
+PASS 24 feature assertions (onboarding), API 35. Synthetic validation only.
+

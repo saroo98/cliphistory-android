@@ -17,12 +17,17 @@ class UiSmokeInstrumentation:Instrumentation() {
     private lateinit var activity:MainActivity
     private var assertions=0
     private var suite="ui"
+    private var arguments=Bundle()
     private val evidence get()=File(targetContext.filesDir,"ui-evidence").apply { mkdirs() }
-    override fun onCreate(arguments:Bundle?) { suite=arguments?.getString("suite","ui")?:"ui";super.onCreate(arguments);start() }
+    override fun onCreate(arguments:Bundle?) { this.arguments=arguments?:Bundle();suite=arguments?.getString("suite","ui")?:"ui";super.onCreate(arguments);start() }
     override fun runOnMainSync(runner:Runnable) {
         var failure:Throwable?=null
         super.runOnMainSync { try { runner.run() } catch(t:Throwable) { failure=t } }
         failure?.let { throw it }
+    }
+    override fun callActivityOnCreate(activity:Activity,state:Bundle?) {
+        super.callActivityOnCreate(activity,state)
+        if(activity is app.cliphistory.ui.QuickCopyActivity)FrameEvidence.observe(activity)
     }
     private fun checkThat(condition:Boolean,message:String) { check(condition){message};assertions++ }
     private fun idle() { waitForIdleSync();SystemClock.sleep(180);waitForIdleSync() }
@@ -65,16 +70,17 @@ class UiSmokeInstrumentation:Instrumentation() {
         try {
             check(BuildConfig.DEBUG && (Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk") || BuildConfig.APPLICATION_ID.endsWith(".validation"))) { "Synthetic tests require an emulator or the isolated validation application" }
             if(suite!="ui") {
-                report.putString("stream",ReleaseChecks(this).run(suite))
+                report.putString("stream",if(suite in listOf("settings","privacy","tile","tile-performance","paused-connection","recovery","onboarding","customization"))FeatureChecks(this,arguments).run(suite) else ReleaseChecks(this).run(suite))
                 finish(Activity.RESULT_OK,report);return
             }
+            stopRecorderForFixture(this)
             val samples=listOf("Let's meet at 10:30 by the library.","https://example.com/notes","Keep the interface quiet. Make the next action obvious.","Oats\nCoffee\nGreen apples","The final draft is ready for review. I've added the updated measurements and the installation notes.","A little less, but better.")
             val now=System.currentTimeMillis()
             val entries=(0 until 73).map { i -> Entry(73L-i,now-i*240_000L,if(i<6)samples[i] else "Saved example ${73-i}") }
             val (first,second)=PrivateHistory.openForDaemon(targetContext)
             listOf(first,second).forEach { pfd -> FramedSlot(FdAccess(pfd,targetContext.applicationInfo.uid)).use { it.writeAndSync(SnapshotCodec.encode(Snapshot(1,100,74,false,entries))) } }
-            AppSettings(targetContext).apply { appearance="light";returnAfterCopy=true }
-            activity=startActivitySync(Intent(targetContext,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as MainActivity
+            AppSettings(targetContext).apply { appearance="light";returnAfterCopy=true;welcome="never";backgroundSuggestion=false;allowScreenshots=false }
+            activity=startActivitySync(Intent(targetContext,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)) as MainActivity
             until("History did not load") { (field("home") as HistoryHome).adapter.count==40 }
             checkThat(activity.window.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE!=0,"History must remain secure")
             capture("S07-setup-with-offline-history")

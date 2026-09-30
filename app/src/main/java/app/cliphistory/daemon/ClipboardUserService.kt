@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong
 /** Shizuku creates this Binder in a distinct shell-UID process, not an Android Service. */
 class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
     private val ownerUid = context.applicationInfo.uid
+    private val ownerStop=OwnerStopGuard(context,ownerUid)
     private val userId = ownerUid / 100000
     private val callbacks = RemoteCallbackList<IHistoryObserver>()
     private val worker = ThreadPoolExecutor(1,1,0L,TimeUnit.MILLISECONDS,
@@ -50,6 +51,7 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
             try {
                 check(Process.myUid()==2000) { "START_SHIZUKU_USING_WIRELESS_DEBUGGING" }
                 check(userId==0) { "PRIMARY_PHONE_PROFILE_REQUIRED" }
+                ownerStop.verify()
                 attachLease(shizukuServer)
                 val accessA=FdAccess(first,ownerUid);val accessB=FdAccess(second,ownerUid)
                 val incomingIds=listOf(accessA.identity,accessB.identity)
@@ -73,7 +75,9 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
                 if(bridge?.registered!=true) {
                     bridge?.close()
                     val epoch=++captureEpoch
-                    val createdBridge=PlatformClipboardBridge(userId, { packet -> received(packet,epoch) }) { issue ->
+                    val createdBridge=PlatformClipboardBridge(userId, { packet -> received(packet,epoch) }, {
+                        if(ownerStop.check())true else { shutdownProcess();false }
+                    }) { issue ->
                         enqueue { if(epoch==captureEpoch) { lastIssue=issue;notifyChanged() } }
                     }
                     bridge=createdBridge
@@ -107,6 +111,7 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
 
     private fun received(packet: PlatformClipboardBridge.CopiedText,epoch:Long) = enqueue {
         if(!leaseAlive || stopping.get() || epoch!=captureEpoch)return@enqueue
+        if(!ownerStop.check()){shutdownProcess();return@enqueue}
         when(probe.match(packet.text,SystemClock.elapsedRealtime())) {
             ProbeTracker.Match.IGNORE -> return@enqueue
             ProbeTracker.Match.CURRENT -> {
@@ -169,11 +174,13 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
             putBoolean("leaseAlive",leaseAlive)
             putBoolean("active",leaseAlive && bridge?.registered==true && snapshot!=null && !snapshot.paused && storageVerified && problem.isEmpty())
             putInt("count",snapshot?.entries?.size?:0);putInt("limit",snapshot?.limit?:DEFAULT_LIMIT)
+            putInt("duplicateMode",snapshot?.duplicateMode?.value?:DuplicateMode.UNIQUE_TEXT.value)
             putLong("generation",snapshot?.generation?:0);putLong("saved",saved);putLong("lastSaved",lastSaved)
             putLong("sensitiveSkipped",sensitive);putLong("oversizedSkipped",oversized);putLong("unsupportedSkipped",unsupported)
             putLong("queueDrops",queueDrops.get());putString("issue",problem);putString("selfTest",testState)
             putString("signature",bridge?.signature?:"Not connected")
             putBoolean("recovered",repository?.recoveredFromDamagedSlot?:false)
+            putBoolean("ownerStopVerified",ownerStop.issue.isEmpty())
         }
     }
     private fun notifyChanged() {
@@ -206,10 +213,15 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
             Bundle().apply { putBoolean("ok",true);putString("text",repo().state.entries.firstOrNull { it.id==id }?.text) }
         }
     }
-    override fun deleteEntry(id:Long):Bundle { requireOwner();return serial { repo().delete(id);notifyChanged();statusInternal() } }
+    override fun deleteEntry(id:Long):Bundle { requireOwner();return serial {
+        if(!repo().delete(id)) failure("ENTRY_MISSING") else { notifyChanged();statusInternal() }
+    } }
     override fun clearHistory():Bundle { requireOwner();return serial { repo().clear();notifyChanged();statusInternal() } }
     override fun setLimit(limit:Int):Bundle { requireOwner();return serial { repo().setLimit(limit);notifyChanged();statusInternal() } }
     override fun setPaused(paused:Boolean):Bundle { requireOwner();return serial { repo().setPaused(paused);notifyChanged();statusInternal() } }
+    override fun setDuplicateMode(mode:Int):Bundle { requireOwner();return serial {
+        repo().setDuplicateMode(DuplicateMode.fromValue(mode));notifyChanged();statusInternal()
+    } }
     override fun registerObserver(observer:IHistoryObserver) { requireOwner();callbacks.register(observer) }
     override fun unregisterObserver(observer:IHistoryObserver) { requireOwner();callbacks.unregister(observer) }
     override fun armTest(nonce:String):Bundle {
@@ -232,11 +244,13 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
         if(!stopping.compareAndSet(false,true))return
         // This also gates already-queued captures before draining the worker.
         leaseAlive=false
-        bridge?.close();worker.shutdown()
-        val finished=try { worker.awaitTermination(5,TimeUnit.SECONDS) } catch (_:InterruptedException) { false }
-        if(finished)slots.forEach { try { it.close() } catch (_:Exception) {} }
-        callbacks.kill()
-        // If storage is wedged, process death closes its FDs; never race a live writer by closing them here.
-        kotlin.system.exitProcess(0)
+        Thread({
+            bridge?.close();worker.shutdown()
+            val finished=try { worker.awaitTermination(5,TimeUnit.SECONDS) } catch (_:InterruptedException) { false }
+            if(finished)slots.forEach { try { it.close() } catch (_:Exception) {} }
+            callbacks.kill()
+            // Never wait for the worker from the worker itself or race a live writer's FDs.
+            kotlin.system.exitProcess(0)
+        },"ClipHistory-stop").start()
     }
 }

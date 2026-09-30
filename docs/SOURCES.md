@@ -30,3 +30,16 @@ Checked on 2026-09-12. These sources guide the implementation; they do not const
 - App-domain existing-FD permissions (read/write/getattr/map, not arbitrary file-attribute changes): https://android.googlesource.com/platform/system/sepolicy/+/refs/heads/main/private/app.te
 
 The two-descriptor, non-truncating framing design is an implementation choice based on these rules. It is not a published guarantee that every OEM/Android version accepts the same descriptor operations.
+
+## 1.3 recovery, privacy and tile references checked on 2026-09-30
+
+- Tile's API 34 cached immutable activity launch: https://developer.android.com/reference/android/service/quicksettings/Tile#setActivityLaunchForClick(android.app.PendingIntent)
+- PendingIntent shade collapse: https://developer.android.com/reference/android/service/quicksettings/TileService#startActivityAndCollapse(android.app.PendingIntent)
+- Public exit history: https://developer.android.com/reference/android/app/ApplicationExitInfo
+- Recents privacy: https://developer.android.com/reference/android/app/Activity#setRecentsScreenshotEnabled(boolean)
+- Optional special-use foreground service: https://developer.android.com/develop/background-work/services/fgs/service-types#special-use
+- Battery settings: https://developer.android.com/reference/android/provider/Settings#ACTION_VIEW_ADVANCED_POWER_USAGE_DETAIL
+- SystemUI remote launch animation source (main can differ from the Pixel beta): https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/packages/SystemUI/src/com/android/systemui/qs/external/CustomTile.java
+- Perfetto frame analysis: https://perfetto.dev/docs/quickstart/trace-analysis
+
+The floating picker is a private visible Activity with the cached tile launch API. It avoids the transient service/dialog binding that physical traces reproduced. Its no-animation flags do not override this Pixel's SystemUI transition. Runtime evidence, not source inspection, determines timing claims.

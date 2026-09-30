@@ -1,39 +1,21 @@
 # F-Droid publication handoff
 
-Repository: https://github.com/saroo98/cliphistory-android
+Source: https://github.com/saroo98/cliphistory-android
 
-Release: https://github.com/saroo98/cliphistory-android/releases/tag/v1.2.0
+The working release is **1.3.0 / code 4**, application ID `app.cliphistory`, MIT, Android 14+. It requires the primary profile and separately installed Shizuku running as non-root shell UID 2000. Non-root Shizuku needs starting after reboot.
 
-Application ID: `app.cliphistory`. Version name `1.2.0`, code `3`. Licence MIT. Minimum Android 14 / API 34. It requires the primary device profile and separately installed Shizuku running as non-root shell UID 2000.
+The existing public release is 1.2.0. Its local recipe/reproduction evidence is historical. New 1.3 exact-source reproduction, public reference APK and recipe checks are pending and must be recorded after execution. GitLab CI and F-Droid inclusion have not been established.
 
-## Provided files
+Provided material: source/build instructions, Fastlane descriptions and changelog 4, synthetic native screenshots, full bundled dependency notices, exact five-permission audit and fresh runtime coverage in `docs/release-1.3/`. The existing 1.2 metadata build block, `Binaries` and allowed signing key are retained. The 1.3 block must pin the actual release source commit once determined.
 
-- `fdroid/metadata/app.cliphistory.yml`: source location, pinned release build, update checks and upstream binary verification/signing identity.
-- `fastlane/metadata/android/en-US/`: descriptions, changelog, rendered icon and four synthetic app screenshots.
-- `LICENSE`, `LICENSES/`, `THIRD_PARTY_NOTICES.md` and the APK's readable licence screen: app and dependency notices.
-- `BUILDING.md`, `DEVICE_TESTS.md`, `VERIFICATION.md` and `docs/release-1.2/`: reproducible build instructions, device coverage and selected evidence.
-- Signed APK, SHA-256 and complete source archive in the GitHub release.
-- `docs/F_DROID_SUBMISSION.md` and `docs/F_DROID_MERGE_REQUEST.md`: current guide/template checks, submission evidence and ready-to-use project details.
+Toolchain: AGP 9.1.1, Gradle 9.3.1, JDK 17, platform android-37.0, Build Tools 36.0.0. No proprietary runtime SDK, network client, ads or analytics. No custom scan exemption or disabled lint baseline.
 
-The release build uses AGP 9.1.1, Gradle 9.3.1, JDK 17, platform `android-37.0` and Build Tools 36.0.0. The official Gradle wrapper is checksum pinned. F-Droid's standard scanner may remove wrapper files and select the matching installed Gradle distribution. No custom scanning exemption is required.
+Android lint warnings for internal clipboard APIs and durable worker-thread preference commits are disclosed. Unknown platform interfaces fail with a visible error. The app adds no clipboard polling or background watchdog; optional recovery uses a quiet foreground notification with Open and Stop.
 
-## Validation performed
-
-F-Droid server 2.4.5 metadata lint passes with current fdroiddata categories. Its public-tag source scan reports zero fatal findings and its signed-APK scan succeeds. Windows and Linux clones produce identical unsigned APKs. Copying the upstream signature to the Linux build reproduces the signed APK byte for byte and that signature verifies. The build recipe pins the full source revision so Android's embedded source revision matches. Final signing and comparison results are in `docs/release-1.2/RELEASE.md`.
-
-No signing key, password, device history, SDK cache, emulator log or test APK is published. The APK requests only Shizuku permission and is not debuggable. No proprietary runtime SDK, network client, ad or analytics library is used. Shizuku manager remains an external prerequisite; its installation and runtime requirements are disclosed in the listing and in the app.
-
-## Inclusion workflow
-
-F-Droid publishes applications after reviewing source and reproducing their builds; a developer APK alone is insufficient. The current guide recommends a metadata merge request to fdroiddata. Its exact file is `metadata/app.cliphistory.yml`; descriptions and graphics remain upstream in Fastlane. A prepared request description and the remaining public-fork/CI steps are in `docs/F_DROID_SUBMISSION.md`. Maintainers may adjust the recipe for the current build server or request additional dependency and compatibility evidence. The `Binaries` field requests verification against the upstream signed APK so the existing signing identity can be retained when reproduction succeeds.
-
-The actual local fdroidserver recipe test succeeds, including source/APK scans, downloading the public reference APK, binary verification and allowed signer verification. Readmeta, rewritemeta, update discovery and lint were also checked. This is separate from GitLab CI and main-server verification.
-
-This handoff is prepared for that review. It does not claim an accepted packaging request, merged fdroiddata change or main-repository listing. Those are external decisions and must be reported only after they occur.
+F-Droid requires a source recipe and independent build/review, not only an APK. A public fdroiddata fork, pipeline and inclusion merge request are separate steps. Only actually observed results may be checked off. Read `docs/F_DROID_SUBMISSION.md` and the current guide before submission.
 
 Primary references:
 
-- https://f-droid.org/docs/Submitting_to_F-Droid_Quick_Start_Guide/
+- https://f-droid.org/en/docs/Submitting_to_F-Droid_Quick_Start_Guide/
 - https://f-droid.org/docs/Build_Metadata_Reference/
 - https://f-droid.org/docs/Reproducible_Builds/
-- https://gitlab.com/fdroid/fdroiddata

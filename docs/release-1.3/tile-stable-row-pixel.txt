@@ -1,0 +1,489 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Actual OS capture follows quick-panel privacy
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Repeated tile click collapses shade
+PASS Re-tap keeps exactly one quick panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Initial performance panel dismissed
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 1: app loading=106.852091 ms; accessibility availability=616 ms; 16 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 1
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 2: app loading=85.172241 ms; accessibility availability=608 ms; 16 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 2
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 3: app loading=81.184326 ms; accessibility availability=658 ms; 18 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 3
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 4: app loading=81.229411 ms; accessibility availability=627 ms; 18 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 4
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 5: app loading=82.838175 ms; accessibility availability=660 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 5
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 6: app loading=97.744913 ms; accessibility availability=663 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 6
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 7: app loading=114.568929 ms; accessibility availability=679 ms; 18 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 7
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 8: app loading=107.266479 ms; accessibility availability=711 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 8
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 9: app loading=106.627075 ms; accessibility availability=679 ms; 18 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 9
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 10: app loading=108.348023 ms; accessibility availability=692 ms; 18 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 10
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 11: app loading=105.963175 ms; accessibility availability=682 ms; 19 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 11
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 12: app loading=123.969198 ms; accessibility availability=692 ms; 19 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 12
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 13: app loading=105.239868 ms; accessibility availability=681 ms; 16 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 13
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 14: app loading=81.456746 ms; accessibility availability=676 ms; 16 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 14
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 15: app loading=77.872925 ms; accessibility availability=644 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 15
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 16: app loading=72.952474 ms; accessibility availability=672 ms; 16 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 16
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 17: app loading=88.569295 ms; accessibility availability=655 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 17
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 18: app loading=80.747843 ms; accessibility availability=687 ms; 18 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 18
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 19: app loading=88.004191 ms; accessibility availability=659 ms; 16 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 19
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 20: app loading=94.881388 ms; accessibility availability=639 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 20
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 21: app loading=81.059326 ms; accessibility availability=583 ms; 16 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 21
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 22: app loading=102.12085 ms; accessibility availability=665 ms; 16 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 22
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 23: app loading=82.921224 ms; accessibility availability=654 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 23
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 24: app loading=147.347045 ms; accessibility availability=727 ms; 18 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 24
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 25: app loading=99.497355 ms; accessibility availability=704 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 25
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 26: app loading=100.313639 ms; accessibility availability=601 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 26
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 27: app loading=106.625245 ms; accessibility availability=671 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 27
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 28: app loading=118.950765 ms; accessibility availability=705 ms; 18 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 28
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 29: app loading=100.897909 ms; accessibility availability=676 ms; 18 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 29
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+Trial 30: app loading=84.570353 ms; accessibility availability=664 ms; 17 reported app frames
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 30
+Actual SystemUI tile invocation (statusbar command) to available entries, 30 warm openings: p50=665 ms, p95=711 ms, max=727 ms
+Actual app latest-three loading p95=123.969198 ms; SystemUI/accessibility availability p95=711 ms
+PASS Thirty warm latest-three loads meet p95 <= 500 ms
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Actual OS capture follows quick-panel privacy
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Repeated tile click collapses shade
+PASS Re-tap keeps exactly one quick panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Initial performance panel dismissed
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 1
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 2
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 3
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 4
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 5
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 6
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 7
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 8
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 9
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 10
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 11
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 12
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 13
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 14
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 15
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 16
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 17
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 18
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 19
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 20
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 21
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 22
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 23
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 24
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 25
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 26
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 27
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 28
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 29
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Loading keeps the floating window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 30
+Actual SystemUI tile invocation (statusbar command) to available entries, 30 warm openings: p50=665 ms, p95=711 ms, max=727 ms
+PASS Thirty warm latest-three loads meet p95 <= 500 ms
+PASS 227 feature assertions (tile-performance), API 37. Synthetic validation only.
+

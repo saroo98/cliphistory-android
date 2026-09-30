@@ -7,24 +7,23 @@ import java.security.MessageDigest
 /** Bounded, versioned binary format. Hash is for corruption detection, not encryption. */
 object SnapshotCodec {
     private const val MAGIC = 0x434C4831 // CLH1
-    private const val VERSION = 1
+    private const val VERSION = 2
     private const val HASH_SIZE = 32
 
     fun encode(s: Snapshot): ByteArray {
         validate(s)
-        // Encode each text once and allocate the final frame once. The v1 bytes
-        // stay identical, without growing/copying a 32 MiB stream repeatedly.
+        // Encode each text once and allocate the final frame once.
         val texts=s.entries.map { entry ->
             entry.text.toByteArray(Charsets.UTF_8).also { bytes ->
                 if(bytes.size>MAX_TEXT_BYTES || String(bytes,Charsets.UTF_8)!=entry.text)throw StoreException("INVALID_TEXT")
             }
         }
-        val bodyLength=33L+texts.sumOf { 20L+it.size }
+        val bodyLength=34L+texts.sumOf { 20L+it.size }
         if(bodyLength+HASH_SIZE>MAX_SNAPSHOT_BYTES)throw StoreException("SNAPSHOT_TOO_LARGE")
         val bytes=ByteArray(bodyLength.toInt()+HASH_SIZE)
         val out=ByteBuffer.wrap(bytes)
         out.putInt(MAGIC);out.putInt(VERSION);out.putLong(s.generation);out.putInt(s.limit);out.putLong(s.nextId)
-        out.put(if(s.paused)1.toByte() else 0.toByte());out.putInt(s.entries.size)
+        out.put(if(s.paused)1.toByte() else 0.toByte());out.put(s.duplicateMode.value.toByte());out.putInt(s.entries.size)
         s.entries.forEachIndexed { index,entry ->
             out.putLong(entry.id);out.putLong(entry.timestamp);out.putInt(texts[index].size);out.put(texts[index])
         }
@@ -39,10 +38,13 @@ object SnapshotCodec {
         if (!MessageDigest.isEqual(hash, bytes.copyOfRange(bodyLength, bytes.size))) throw StoreException("CHECKSUM_MISMATCH")
         try {
             val input=ByteBuffer.wrap(bytes,0,bodyLength)
-            if (input.int != MAGIC || input.int != VERSION) throw StoreException("UNSUPPORTED_SNAPSHOT")
+            if (input.int != MAGIC) throw StoreException("UNSUPPORTED_SNAPSHOT")
+            val version = input.int
+            if (version !in 1..VERSION) throw StoreException("UNSUPPORTED_SNAPSHOT")
             val generation = input.long; val limit = input.int; val nextId = input.long
             val pausedByte = input.get().toInt()
             if (pausedByte !in 0..1) throw StoreException("INVALID_PAUSE_FLAG")
+            val mode = if (version == 1) DuplicateMode.UNIQUE_TEXT else DuplicateMode.fromValue(input.get().toInt())
             val count = input.int
             if (count !in 0..MAX_LIMIT) throw StoreException("INVALID_ENTRY_COUNT")
             val entries = ArrayList<Entry>(count)
@@ -56,7 +58,7 @@ object SnapshotCodec {
                 entries.add(Entry(id, timestamp, decoded))
             }
             if (input.remaining() != 0) throw StoreException("TRAILING_DATA")
-            return Snapshot(generation, limit, nextId, pausedByte == 1, entries.toList()).also(::validate)
+            return Snapshot(generation, limit, nextId, pausedByte == 1, entries.toList(), mode).also(::validate)
         } catch (e: StoreException) { throw e
         } catch (_: Exception) { throw StoreException("MALFORMED_SNAPSHOT") }
     }

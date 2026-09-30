@@ -24,15 +24,15 @@ The AIDL interface checks the app owner's UID for every history/status/control o
 
 The raw clipboard callback accepts the Android system UID, validates its interface descriptor and clears incoming Binder identity before making a shell-identity clipboard call. The helper reads the current clip immediately, then queues persistence on one bounded writer.
 
-Marked-sensitive clips, non-text/multi-item payloads and texts over 65,536 UTF-8 bytes are not archived. Source apps do not universally mark secrets. Pausing stops archiving; it is not an assertion that the process never transiently receives or reads a clipboard callback while paused. Stop Shizuku to stop the privileged helper itself.
+Marked-sensitive clips, non-text/multi-item payloads and texts over 65,536 UTF-8 bytes are not archived. Source apps do not universally mark secrets. Pausing stops archiving; it does not mean the helper never receives a clipboard callback. **Stop recorder** removes the helper and blocks recovery until explicit Start. A failed durable Stop write is reported without acknowledging success. Stopping Shizuku also ends the helper.
 
-A lease watches the Shizuku server Binder, not the UI Binder. Normal UI death should not stop capture, but server death should terminate the helper. Reboot recovery still requires starting non-root Shizuku and opening ClipHistory again. Hidden APIs, process lifetime and clipboard timing cannot support a universal 100% guarantee.
+A lease watches the Shizuku server Binder, not the UI Binder. Normal UI death should not stop capture; server death should terminate the helper. Optional recovery reconnects after supported interruptions. Reboot still requires unlocking and starting non-root Shizuku. Enabled recovery then attempts reconnection when permitted. Owner-stop checks gate reads and serial commits using the stopped flag and public process-exit information. Only verified AOSP task-removal descriptions are exempted; unknown descriptions fail closed. Those descriptions are not stable across manufacturers/releases. Hidden APIs, process lifetime and clipboard timing cannot support a universal 100% guarantee.
 
 The helper checks incoming file identities on attachment to avoid resurrecting memory belonging to files removed by Android's Clear storage. An unlinked backing file makes subsequent capture terminate the helper. These controls are implemented but must be validated on the device; no physical clear-data test was performed in the chat.
 
 ## UI and diagnostics
 
-The history Activity uses `FLAG_SECURE` to reduce exposure in screenshots and Recents. The tile opens history through an immutable PendingIntent and an unlock step when locked. Tapping a saved item deliberately places it on Android's shared clipboard, where Gboard and the destination app can use it.
+All app-owned windows block capture through `FLAG_SECURE` by default. **Allow screenshots** deliberately permits screenshots and screen recording. Recents hiding is independently enabled by default. The tile requires unlocking and either displays a temporary system QS dialog or opens history through an immutable PendingIntent. It requests no overlay permission. The private optional recovery notification contains no saved text. Copying deliberately places full text on Android's shared clipboard, where the keyboard and destination app can use it.
 
 No raw clips are logged by our code. Diagnostics expose counters, API layouts, version/device details and bounded error identifiers, not copied text. The connection test is opt-in and warns that it changes the current Android clipboard. Known test nonces are excluded from ordinary history, including delayed callbacks.
 

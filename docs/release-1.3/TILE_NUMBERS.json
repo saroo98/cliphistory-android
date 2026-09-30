@@ -1,0 +1,389 @@
+{
+  "configuration": "Pixel 8 Pro, Android 17 beta CP41.260828.004.A8, isolated debug validation app",
+  "idle_seconds": 840,
+  "wall_seconds": 1098.4070000000065,
+  "encoded_frames": 1183,
+  "trials": [
+    {
+      "trial": 1,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 93,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "46.120000",
+          "first_finish_after_touch_up_ms": "58.710000",
+          "last_finish_after_touch_up_ms": "730.890000",
+          "max_frame_ms": "15.110000"
+        }
+      ]
+    },
+    {
+      "trial": 2,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 102,
+      "app_frame_groups": [
+        {
+          "present_type": "Late Present",
+          "jank_type": "App Deadline Missed, App Resynced Jitter",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "137.460000",
+          "first_finish_after_touch_up_ms": "157.510000",
+          "last_finish_after_touch_up_ms": "157.510000",
+          "max_frame_ms": "20.050000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "Buffer Stuffing",
+          "frames": "11",
+          "first_start_after_touch_up_ms": "146.610000",
+          "first_finish_after_touch_up_ms": "157.570000",
+          "last_finish_after_touch_up_ms": "233.100000",
+          "max_frame_ms": "17.510000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "12",
+          "first_start_after_touch_up_ms": "678.540000",
+          "first_finish_after_touch_up_ms": "680.610000",
+          "last_finish_after_touch_up_ms": "773.190000",
+          "max_frame_ms": "4.380000"
+        },
+        {
+          "present_type": "Unspecified Present",
+          "jank_type": "Non Animating",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "78.370000",
+          "first_finish_after_touch_up_ms": "105.010000",
+          "last_finish_after_touch_up_ms": "105.010000",
+          "max_frame_ms": "26.640000"
+        }
+      ]
+    },
+    {
+      "trial": 3,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 87,
+      "app_frame_groups": [
+        {
+          "present_type": "Early Present",
+          "jank_type": "SurfaceFlinger Scheduling",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "127.190000",
+          "first_finish_after_touch_up_ms": "142.450000",
+          "last_finish_after_touch_up_ms": "142.450000",
+          "max_frame_ms": "15.260000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "Buffer Stuffing",
+          "frames": "11",
+          "first_start_after_touch_up_ms": "66.820000",
+          "first_finish_after_touch_up_ms": "75.530000",
+          "last_finish_after_touch_up_ms": "174.030000",
+          "max_frame_ms": "23.830000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "12",
+          "first_start_after_touch_up_ms": "651.580000",
+          "first_finish_after_touch_up_ms": "654.150000",
+          "last_finish_after_touch_up_ms": "748.320000",
+          "max_frame_ms": "5.090000"
+        },
+        {
+          "present_type": "Unspecified Present",
+          "jank_type": "Non Animating",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "51.420000",
+          "first_finish_after_touch_up_ms": "66.800000",
+          "last_finish_after_touch_up_ms": "66.800000",
+          "max_frame_ms": "15.380000"
+        }
+      ]
+    },
+    {
+      "trial": 4,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 91,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "46.200000",
+          "first_finish_after_touch_up_ms": "62.630000",
+          "last_finish_after_touch_up_ms": "725.120000",
+          "max_frame_ms": "16.440000"
+        }
+      ]
+    },
+    {
+      "trial": 5,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 95,
+      "app_frame_groups": [
+        {
+          "present_type": "Early Present",
+          "jank_type": "SurfaceFlinger Scheduling, App Resynced Jitter",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "84.020000",
+          "first_finish_after_touch_up_ms": "93.760000",
+          "last_finish_after_touch_up_ms": "93.760000",
+          "max_frame_ms": "9.730000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "23",
+          "first_start_after_touch_up_ms": "90.780000",
+          "first_finish_after_touch_up_ms": "100.960000",
+          "last_finish_after_touch_up_ms": "754.210000",
+          "max_frame_ms": "10.180000"
+        },
+        {
+          "present_type": "Unspecified Present",
+          "jank_type": "Non Animating",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "56.450000",
+          "first_finish_after_touch_up_ms": "79.600000",
+          "last_finish_after_touch_up_ms": "79.600000",
+          "max_frame_ms": "23.160000"
+        }
+      ]
+    },
+    {
+      "trial": 6,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 100,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "App Resynced Jitter, Buffer Stuffing",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "120.530000",
+          "first_finish_after_touch_up_ms": "130.020000",
+          "last_finish_after_touch_up_ms": "130.020000",
+          "max_frame_ms": "9.490000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "23",
+          "first_start_after_touch_up_ms": "126.820000",
+          "first_finish_after_touch_up_ms": "133.900000",
+          "last_finish_after_touch_up_ms": "771.570000",
+          "max_frame_ms": "10.210000"
+        },
+        {
+          "present_type": "Unspecified Present",
+          "jank_type": "Non Animating",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "85.660000",
+          "first_finish_after_touch_up_ms": "111.750000",
+          "last_finish_after_touch_up_ms": "111.750000",
+          "max_frame_ms": "26.090000"
+        }
+      ]
+    },
+    {
+      "trial": 7,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 101,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "66.810000",
+          "first_finish_after_touch_up_ms": "85.890000",
+          "last_finish_after_touch_up_ms": "762.600000",
+          "max_frame_ms": "19.080000"
+        }
+      ]
+    },
+    {
+      "trial": 8,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 92,
+      "app_frame_groups": [
+        {
+          "present_type": "Early Present",
+          "jank_type": "SurfaceFlinger Scheduling, App Resynced Jitter",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "66.080000",
+          "first_finish_after_touch_up_ms": "75.250000",
+          "last_finish_after_touch_up_ms": "75.250000",
+          "max_frame_ms": "9.170000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "24",
+          "first_start_after_touch_up_ms": "41.680000",
+          "first_finish_after_touch_up_ms": "57.470000",
+          "last_finish_after_touch_up_ms": "720.330000",
+          "max_frame_ms": "15.790000"
+        }
+      ]
+    },
+    {
+      "trial": 9,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 101,
+      "app_frame_groups": [
+        {
+          "present_type": "Early Present",
+          "jank_type": "SurfaceFlinger Scheduling, App Resynced Jitter",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "84.980000",
+          "first_finish_after_touch_up_ms": "98.700000",
+          "last_finish_after_touch_up_ms": "98.700000",
+          "max_frame_ms": "13.710000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "23",
+          "first_start_after_touch_up_ms": "93.500000",
+          "first_finish_after_touch_up_ms": "104.350000",
+          "last_finish_after_touch_up_ms": "748.910000",
+          "max_frame_ms": "10.850000"
+        },
+        {
+          "present_type": "Unspecified Present",
+          "jank_type": "Non Animating",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "63.510000",
+          "first_finish_after_touch_up_ms": "86.340000",
+          "last_finish_after_touch_up_ms": "86.340000",
+          "max_frame_ms": "22.830000"
+        }
+      ]
+    },
+    {
+      "trial": 10,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 105,
+      "app_frame_groups": [
+        {
+          "present_type": "Early Present",
+          "jank_type": "SurfaceFlinger Scheduling, App Resynced Jitter",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "97.410000",
+          "first_finish_after_touch_up_ms": "109.490000",
+          "last_finish_after_touch_up_ms": "109.490000",
+          "max_frame_ms": "12.080000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "23",
+          "first_start_after_touch_up_ms": "105.720000",
+          "first_finish_after_touch_up_ms": "113.490000",
+          "last_finish_after_touch_up_ms": "759.360000",
+          "max_frame_ms": "8.940000"
+        },
+        {
+          "present_type": "Unspecified Present",
+          "jank_type": "Non Animating",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "73.430000",
+          "first_finish_after_touch_up_ms": "97.860000",
+          "last_finish_after_touch_up_ms": "97.860000",
+          "max_frame_ms": "24.430000"
+        }
+      ]
+    },
+    {
+      "trial": 11,
+      "idle_seconds": 120,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 124,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "53.930000",
+          "first_finish_after_touch_up_ms": "70.390000",
+          "last_finish_after_touch_up_ms": "767.100000",
+          "max_frame_ms": "16.460000"
+        }
+      ]
+    },
+    {
+      "trial": 12,
+      "idle_seconds": 120,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 92,
+      "app_frame_groups": [
+        {
+          "present_type": "Early Present",
+          "jank_type": "SurfaceFlinger Scheduling, App Resynced Jitter",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "77.500000",
+          "first_finish_after_touch_up_ms": "84.750000",
+          "last_finish_after_touch_up_ms": "84.750000",
+          "max_frame_ms": "7.250000"
+        },
+        {
+          "present_type": "Late Present",
+          "jank_type": "App Deadline Missed, App Resynced Jitter",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "61.330000",
+          "first_finish_after_touch_up_ms": "84.510000",
+          "last_finish_after_touch_up_ms": "84.510000",
+          "max_frame_ms": "23.180000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "20",
+          "first_start_after_touch_up_ms": "44.480000",
+          "first_finish_after_touch_up_ms": "60.130000",
+          "last_finish_after_touch_up_ms": "730.070000",
+          "max_frame_ms": "15.650000"
+        }
+      ]
+    }
+  ]
+}

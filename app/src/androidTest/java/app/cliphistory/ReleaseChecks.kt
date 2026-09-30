@@ -48,17 +48,19 @@ class ReleaseChecks(private val test:Instrumentation) {
     private fun views(root:View):List<View> = listOf(root)+(if(root is ViewGroup)(0 until root.childCount).flatMap { views(root.getChildAt(it)) } else emptyList())
     private fun texts()=views(activity.window.decorView).filterIsInstance<TextView>().map { it.text.toString() }
     private fun seed(count:Int,length:Int=0) {
+        stopRecorderForFixture(test)
         PrivateHistory.invalidate()
         val entries=(count.toLong() downTo 1L).map { Entry(it,System.currentTimeMillis()-it*60000,if(length==0)"Synthetic clip $it" else (if(it%2==0L)"A" else "B").repeat(length)) }
         val start=SystemClock.elapsedRealtime()
-        val bytes=SnapshotCodec.encode(Snapshot(1,if(count>100)500 else 100,count+1L,false,entries))
+        val bytes=SnapshotCodec.encode(Snapshot(1,if(count>100)500 else 100,count+1L,false,entries,
+            if(length>0)DuplicateMode.CONSECUTIVE_ONLY else DuplicateMode.UNIQUE_TEXT))
         log.append("Encode ${bytes.size} bytes: ${SystemClock.elapsedRealtime()-start} ms\n")
         val (a,b)=PrivateHistory.openForDaemon(context)
         listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot -> slot.writeAndSync(bytes) } }
-        AppSettings(context).apply { appearance="light";returnAfterCopy=false }
+        AppSettings(context).apply { appearance="light";returnAfterCopy=false;welcome="never";backgroundSuggestion=false;allowScreenshots=false }
     }
     private fun launch(expected:Int=40) {
-        activity=test.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as MainActivity
+        activity=test.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)) as MainActivity
         until("Initial $expected entries loaded") { home().adapter.count==expected }
     }
     private fun capture(name:String) {
@@ -95,7 +97,8 @@ class ReleaseChecks(private val test:Instrumentation) {
         main { call("preview",71L);call("help") };release.countDown();SystemClock.sleep(450)
         main { checkThat(field("pageKind")=="help","Delayed preview cannot replace Help");call("closePage") }
         main { call("copyEntry",71L) };until("Copy feedback appears") { texts().contains("Copied") }
-        main { activity.moveTaskToBack(true) };SystemClock.sleep(300)
+        main { activity.moveTaskToBack(true) }
+        until("History completes background transition") { field("visible")==false }
         main { activity.startActivity(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
         until("History returns to foreground") { field("visible")==true }
         main { checkThat(!texts().contains("Copied"),"Backgrounding removes expired feedback") }
@@ -132,6 +135,7 @@ class ReleaseChecks(private val test:Instrumentation) {
             recreate(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE)
             until("Landscape entries restored") { home().adapter.count==40 }
         }
+        until("Landscape window has input focus") { activity.hasWindowFocus() }
         main { home().search.requestFocus();activity.getSystemService(InputMethodManager::class.java).showSoftInput(home().search,InputMethodManager.SHOW_IMPLICIT) }
         until("Keyboard visible") { activity.window.decorView.rootWindowInsets.isVisible(WindowInsets.Type.ime()) }
         SystemClock.sleep(700);capture("regression-layout-ime")
@@ -166,6 +170,7 @@ class ReleaseChecks(private val test:Instrumentation) {
     private fun live() {
         activity=test.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as MainActivity
         val client=(activity.application as ClipApplication).daemon
+        main { client.connect(true) }
         until("Actual Shizuku connection") { client.connected() }
         val service=DaemonClient::class.java.getDeclaredField("remote").apply { isAccessible=true }.get(client) as IClipboardDaemon
         fun status()=service.status()
@@ -194,6 +199,7 @@ class ReleaseChecks(private val test:Instrumentation) {
         try {
             checkThat(service.setLimit(20).getBoolean("ok"),"Set validation history limit")
             checkThat(service.clearHistory().getBoolean("ok"),"Clear only synthetic validation history")
+            checkThat(service.setDuplicateMode(DuplicateMode.UNIQUE_TEXT.value).getBoolean("ok"),"Select exact unique-text policy")
             val nonce="ClipHistory self-test ${java.util.UUID.randomUUID()}"
             checkThat(service.armTest(nonce).getBoolean("ok"),"Arm live callback test")
             main { activity.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText("Validation",nonce)) }
@@ -222,6 +228,35 @@ class ReleaseChecks(private val test:Instrumentation) {
             val id=service.page("validation Unicode",0,40).getLongArray("ids")!!.first()
             checkThat(service.entry(id).getString("text")==unicode,"Full Unicode and whitespace preserved")
             checkThat(service.entry(Long.MAX_VALUE).getBoolean("ok") && service.entry(Long.MAX_VALUE).getString("text")==null,"Live missing entry distinguished from error")
+            service.clearHistory()
+            fun captured(text:String) {
+                val beforeSaved=status().getLong("saved")
+                produce(text)
+                val end=SystemClock.elapsedRealtime()+8000
+                while(SystemClock.elapsedRealtime()<end && status().getLong("saved")==beforeSaved)SystemClock.sleep(30)
+                check(status().getLong("saved")>beforeSaved) { "Synthetic distinct capture not acknowledged" }
+            }
+            val a="Synthetic duplicate A";val b="Synthetic duplicate B"
+            captured(a)
+            val oldId=service.page("",0,3).getLongArray("ids")!!.first()
+            captured(b);captured(a);captured(b)
+            val unique=service.page("",0,3)
+            checkThat(status().getInt("count")==2 && unique.getLongArray("ids")!!.map { service.entry(it).getString("text") }==listOf(b,a),"Actual A/B/A/B produces exactly B,A")
+            checkThat(service.entry(oldId).getString("text")==null,"Recopy invalidates the old ID without returning another text")
+            val staleDelete=service.deleteEntry(oldId)
+            checkThat(!staleDelete.getBoolean("ok") && staleDelete.getString("issue")=="ENTRY_MISSING","Stale deletion reports missing rather than success")
+            checkThat(service.setDuplicateMode(DuplicateMode.CONSECUTIVE_ONLY.value).getBoolean("ok"),"Consecutive-only policy acknowledged")
+            service.clearHistory();captured(a);captured(b);captured(a);captured(b)
+            checkThat(status().getInt("count")==4,"Consecutive-only mode preserves four nonconsecutive copies")
+            service.setDuplicateMode(DuplicateMode.UNIQUE_TEXT.value)
+            PrivateHistory.invalidate()
+            val offline=PrivateHistory.readOffline(context)
+            checkThat(offline.entries.map { it.text }==listOf(b,a) && offline.duplicateMode==DuplicateMode.UNIQUE_TEXT,"Mirrored offline history agrees after policy cleanup")
+            val dropped=status().getLong("queueDrops")
+            val sessionStart=SystemClock.elapsedRealtime()
+            repeat(50) { captured("Synthetic sustained copy $it") }
+            checkThat(status().getInt("count")==20 && status().getLong("queueDrops")==dropped,"Sustained fifty-copy session retains limit without queue drops")
+            log.append("Fifty-copy session: ${SystemClock.elapsedRealtime()-sessionStart} ms\n")
             main { activity.startActivity(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
             until("History returns after background capture") { field("visible")==true }
             capture("live-connected-api-${Build.VERSION.SDK_INT}")
@@ -235,6 +270,62 @@ class ReleaseChecks(private val test:Instrumentation) {
             }
             service.clearHistory();service.setLimit(DEFAULT_LIMIT);service.setPaused(false)
         }
+        connectionFailures(client,service)
+    }
+    private fun connectionFailures(client:DaemonClient,service:IClipboardDaemon) {
+        check(Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk")) { "Persistence/permission failure fixtures require a disposable emulator" }
+        test.uiAutomation.grantRuntimePermission(context.packageName,android.Manifest.permission.POST_NOTIFICATIONS)
+        val directory=File(context.applicationInfo.dataDir,"shared_prefs")
+        val prefsFile=File(directory,"recorder_recovery.xml")
+        val preferences=context.getSharedPreferences("recorder_recovery",Context.MODE_PRIVATE)
+        fun writable(value:Boolean) {
+            check(directory.setWritable(value,false) && prefsFile.setWritable(value,false)) { "Preference failure fixture unavailable" }
+        }
+        fun helperAbsent():Boolean=test.uiAutomation.executeShellCommand("ps -A -o NAME").use { fd ->
+            ParcelFileDescriptor.AutoCloseInputStream(fd).bufferedReader().use { reader ->
+                reader.lineSequence().none { it.trim()==context.packageName+":clipboard" }
+            }
+        }
+        // The notification Stop action must retain supervision and report a failed
+        // durable write, rather than quietly abandoning an active shell recorder.
+        writable(false)
+        try {
+            main { context.startService(Intent(context,RecordingRecoveryService::class.java).setAction(RecordingRecoveryService.STOP)) }
+            until("Notification reports failed durable Stop") {
+                context.getSystemService(NotificationManager::class.java).activeNotifications.any {
+                    it.notification.extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()==context.getString(R.string.recovery_stop_failed)
+                }
+            }
+            checkThat(!client.preferences.options().explicitlyStopped && client.connected(),"Failed notification Stop retains recording state and supervision")
+        } finally { writable(true) }
+
+        val connection=DaemonClient::class.java.getDeclaredField("connection").apply { isAccessible=true }.get(client) as ServiceConnection
+        val remote=DaemonClient::class.java.getDeclaredField("remote").apply { isAccessible=true }
+        val stopped=CountDownLatch(1)
+        var stoppedOk=false
+        main {
+            remote.set(client,null)
+            connection.onServiceConnected(ComponentName(context,app.cliphistory.daemon.ClipboardUserService::class.java),service.asBinder())
+            client.stopRecording { stoppedOk=it.getBoolean("ok");stopped.countDown() }
+        }
+        check(stopped.await(12,TimeUnit.SECONDS))
+        checkThat(stoppedOk,"Stop during attachment is acknowledged")
+        until("Stop during attachment removes the independent helper") { helperAbsent() }
+        checkThat(PrivateHistory.readOffline(context).paused,"Stop during attachment saves pause before shutdown")
+
+        main { client.connect(true) }
+        until("Explicit Start reconnects after attachment stop") { client.connected() }
+        val restarted=remote.get(client) as IClipboardDaemon
+        checkThat(!restarted.status().getBoolean("paused"),"Explicit Start resumes a deliberately stopped recorder")
+        check(preferences.edit().putBoolean("setup_completed",false).commit())
+        writable(false)
+        try {
+            main { connection.onServiceConnected(ComponentName(context,app.cliphistory.daemon.ClipboardUserService::class.java),restarted.asBinder()) }
+            until("Failed first-setup persistence removes attached helper") { !client.connected() && helperAbsent() }
+            checkThat(!client.preferences.options().setupCompleted && PrivateHistory.readOffline(context).paused,
+                "Failed setup is not reported complete and saves pause before removing capture")
+        } finally { writable(true) }
+        check(preferences.edit().putBoolean("setup_completed",true).commit())
     }
     fun run(suite:String):String {
         try { when(suite) { "regression"->regression();"capacity"->capacity();"layout"->layout();"live"->live();else->error("Unknown suite") } }

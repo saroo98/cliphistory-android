@@ -65,7 +65,7 @@ object PrivateHistory {
                     override fun writeAndSync(bytes:ByteArray) { error("READ_ONLY") }
                 } else FramedSlot(FdAccess(ParcelFileDescriptor.open(file,ParcelFileDescriptor.MODE_READ_ONLY),context.applicationInfo.uid)))
             }
-            return HistoryRepository(opened[0],opened[1]).state
+            return HistoryRepository(opened[0],opened[1]).state.uniqueProjection()
         } finally { opened.forEach { try { it.close() } catch (_:Exception) {} } }
     }
 }

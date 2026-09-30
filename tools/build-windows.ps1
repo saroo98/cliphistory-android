@@ -192,12 +192,15 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Could not inspect APK permissions.' }
     [IO.File]::WriteAllText((Join-Path $Root 'apk-permissions.txt'),$Permissions)
     $DeclaredPermissions = [regex]::Matches($Permissions, "uses-permission(?:-sdk-\d+)?: name='([^']+)'")
+    $AllowedPermissions = @('moe.shizuku.manager.permission.API_V23', 'android.permission.FOREGROUND_SERVICE',
+        'android.permission.FOREGROUND_SERVICE_SPECIAL_USE', 'android.permission.POST_NOTIFICATIONS',
+        'android.permission.RECEIVE_BOOT_COMPLETED')
     foreach ($Permission in $DeclaredPermissions) {
-        if ($Permission.Groups[1].Value -ne 'moe.shizuku.manager.permission.API_V23') {
+        if ($Permission.Groups[1].Value -notin $AllowedPermissions) {
             throw "Unexpected permission in built APK: $($Permission.Groups[1].Value)"
         }
     }
-    if ($DeclaredPermissions.Count -lt 1) { throw 'Expected Shizuku permission was not found in APK permission report.' }
+    if ($DeclaredPermissions.Count -ne $AllowedPermissions.Count) { throw 'The exact reviewed permissions were not found in APK permission report.' }
     $Badging = (& $Aapt dump badging $Apk 2>&1 | Out-String)
     if ($LASTEXITCODE -ne 0 -or $Badging -notmatch "targetSdkVersion:'37'" -or $Badging -match 'application-debuggable') {
         throw 'APK target/debuggable audit failed.'

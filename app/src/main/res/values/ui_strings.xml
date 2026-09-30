@@ -121,7 +121,7 @@
     <string name="help_gboard">Keep using Gboard</string>
     <string name="help_gboard_body">Copy text as usual. Open ClipHistory and tap an entry to copy it back.</string>
     <string name="help_restart">After restarting your phone</string>
-    <string name="help_restart_body">Start Shizuku again, then open ClipHistory. Copies made while recording is stopped cannot be recovered.</string>
+    <string name="help_restart_body">Unlock the phone and start non-root Shizuku again. Automatic recovery and Resume after reboot prepare the recorder when enabled. If it does not reconnect, open ClipHistory and tap Connect. Force stop and Stop recorder remain effective until you explicitly start again. Pause stays saved. Copies made while recording is stopped cannot be recovered.</string>
     <string name="help_local">Only on this phone</string>
     <string name="help_local_body">No accounts, ads, analytics, or cloud sync.</string>
     <string name="help_sensitive">Sensitive text</string>
@@ -129,11 +129,11 @@
     <string name="help_limits">Limits</string>
     <string name="help_limits_body">Text only. Entries over 64 KiB are skipped. Only the main phone profile is supported.</string>
     <string name="help_screen">Screen privacy</string>
-    <string name="help_screen_body">Screenshots of history are blocked.</string>
+    <string name="help_screen_body">Screenshots and screen recording are blocked by default. You can allow them in Settings → Privacy. Hide history in Recents is a separate control. Do not assume other apps mark every private copy as sensitive; Pause before copying private text.</string>
     <string name="help_setup">Shizuku setup</string>
     <string name="version_license">ClipHistory %1$s · MIT license</string>
     <string name="open_faster">Open history faster</string>
-    <string name="tile_body">Add Clipboard to Quick Settings to open your saved text.</string>
+    <string name="tile_body">Add Clipboard to Quick Settings for a small floating panel with your newest three texts. Settings also offers Open full history. The tile asks you to unlock before showing saved text.</string>
     <string name="add_tile">Add tile</string>
     <string name="not_now">Not now</string>
     <string name="tile_manual">You can also add it from Quick Settings → Edit.</string>

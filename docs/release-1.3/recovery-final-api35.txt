@@ -1,0 +1,24 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Explicit stop persisted before helper shutdown
+PASS Recovery controls saved durably
+PASS Recovery and reboot controls persist independently
+PASS Background connect cannot bypass explicit stop or recovery off
+PASS No foreground recovery requested after explicit stop
+PASS Stop retains history for offline reading
+PASS Failed durable preference write reports failure
+PASS Failed preference write restores in-memory recording options
+PASS Recording preferences remain writable after failure recovery
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Explicit stop persisted before helper shutdown
+PASS Recovery controls saved durably
+PASS Recovery and reboot controls persist independently
+PASS Background connect cannot bypass explicit stop or recovery off
+PASS No foreground recovery requested after explicit stop
+PASS Stop retains history for offline reading
+PASS Failed durable preference write reports failure
+PASS Failed preference write restores in-memory recording options
+PASS Recording preferences remain writable after failure recovery
+PASS 11 feature assertions (recovery), API 35. Synthetic validation only.
+

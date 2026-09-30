@@ -45,7 +45,7 @@ class HistoryHome(
     private val diagnosticsButton=ui.button(s(R.string.diagnostics),action=diagnostics)
     private val bar=LinearLayout(ui.activity)
     private val header=ui.column()
-    private var renderedStatus:Pair<RecorderState,Boolean>?=null
+    private var renderedStatus:Triple<RecorderState,Boolean,Boolean>?=null
     data class Anchor(val id:Long,val position:Int,val top:Int)
     fun anchor():Anchor {
         val position=list.firstVisiblePosition
@@ -134,13 +134,14 @@ class HistoryHome(
         emptyIcon.setImageResource(if(failed)R.drawable.ic_warning else if(query.isNotEmpty())R.drawable.ic_search else R.drawable.ic_clipboard)
         retryButton.visibility=if(failed)View.VISIBLE else View.GONE
         diagnosticsButton.visibility=if(failed)View.VISIBLE else View.GONE
-        status(state,total>0)
+        status(state,total>0,page.status.getBoolean("explicitStop"))
     }
-    private fun status(state:RecorderState,hasHistory:Boolean) {
-        if(renderedStatus==(state to hasHistory))return
-        renderedStatus=state to hasHistory
+    private fun status(state:RecorderState,hasHistory:Boolean,stoppedByUser:Boolean) {
+        val key=Triple(state,hasHistory,stoppedByUser)
+        if(renderedStatus==key)return
+        renderedStatus=key
         status.removeAllViews();status.setPadding(0,0,0,ui.dp(12));status.background=null
-        val compact=state in listOf(RecorderState.RECORDING,RecorderState.LISTENING,RecorderState.PAUSED)
+        val compact=!stoppedByUser && state in listOf(RecorderState.RECORDING,RecorderState.LISTENING,RecorderState.PAUSED)
         if(compact) {
             val row=LinearLayout(ui.activity).apply { gravity=Gravity.CENTER_VERTICAL;minimumHeight=ui.dp(48) }
             if(state==RecorderState.PAUSED)row.addView(ImageView(ui.activity).apply {
@@ -154,7 +155,7 @@ class HistoryHome(
             if(state==RecorderState.LISTENING)row.addView(ui.button(s(R.string.connection_test),action=test))
             status.addView(row);return
         }
-        val (title,body)=when(state) {
+        val (title,body)=if(stoppedByUser)R.string.user_stopped_title to R.string.user_stopped_body else when(state) {
             RecorderState.MISSING->R.string.missing_title to R.string.missing_body
             RecorderState.STOPPED->if(hasHistory)R.string.unavailable_title to R.string.unavailable_body else R.string.start_recording to R.string.start_shizuku
             RecorderState.PERMISSION->R.string.permission_title to R.string.permission_body
@@ -166,15 +167,28 @@ class HistoryHome(
         if(hasHistory) {
             val row=LinearLayout(ui.activity).apply { gravity=Gravity.CENTER_VERTICAL;minimumHeight=ui.dp(48) }
             row.addView(ui.text(s(title),14f,true),LinearLayout.LayoutParams(0,-2,1f))
-            row.addView(ui.button(s(if(state==RecorderState.PERMISSION)R.string.connect else R.string.setup_help)) {
-                if(state==RecorderState.PERMISSION)connect() else help()
-            })
+            val label=when {
+                stoppedByUser->R.string.start_recorder
+                state==RecorderState.CONNECTING->R.string.connecting
+                state in listOf(RecorderState.MISSING,RecorderState.UNSUPPORTED)->R.string.setup_help
+                state==RecorderState.STOPPED->R.string.open_shizuku
+                state==RecorderState.PERMISSION->R.string.connect
+                else->R.string.reconnect
+            }
+            row.addView(ui.button(s(label)) {
+                when {
+                    stoppedByUser->connect()
+                    state in listOf(RecorderState.MISSING,RecorderState.UNSUPPORTED)->help()
+                    state==RecorderState.STOPPED->openShizuku()
+                    else->connect()
+                }
+            }.apply { isEnabled=state!=RecorderState.CONNECTING })
             status.addView(row);return
         }
         val box=ui.column().apply { background=ui.shape(ui.color(R.color.secondary_surface),16);setPadding(ui.dp(16),ui.dp(12),ui.dp(16),ui.dp(8)) }
         box.addView(ui.title(s(title),16f));box.addView(ui.space(4));box.addView(ui.text(s(body),14f,true))
         val actions=LinearLayout(ui.activity)
-        when(state) {
+        if(stoppedByUser)actions.addView(ui.button(s(R.string.start_recorder),action=connect)) else when(state) {
             RecorderState.CONNECTING->actions.addView(ProgressBar(ui.activity).apply { isIndeterminate=true },LinearLayout.LayoutParams(ui.dp(24),ui.dp(36)))
             RecorderState.MISSING->{ actions.addView(ui.button(s(R.string.setup_help),action=help));actions.addView(ui.button(s(R.string.try_again),action=connect)) }
             RecorderState.PERMISSION->actions.addView(ui.button(s(R.string.connect),action=connect))

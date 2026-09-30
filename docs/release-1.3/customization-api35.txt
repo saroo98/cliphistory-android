@@ -1,0 +1,20 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS All-off recovery choices saved
+PASS Optional quick access and motion controls persist Off
+PASS Disabled tile is unavailable to SystemUI
+PASS All-off preferences do not start recovery
+PASS Malformed legacy presentation values use compatible defaults
+PASS All-off recreation shows no optional popup
+PASS All-off settings survive recreation
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS All-off recovery choices saved
+PASS Optional quick access and motion controls persist Off
+PASS Disabled tile is unavailable to SystemUI
+PASS All-off preferences do not start recovery
+PASS Malformed legacy presentation values use compatible defaults
+PASS All-off recreation shows no optional popup
+PASS All-off settings survive recreation
+PASS 9 feature assertions (customization), API 35. Synthetic validation only.
+

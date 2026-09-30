@@ -22,13 +22,15 @@ class DetailPages(private val ui:Ui) {
     }
     fun help(back:()->Unit,website:(String)->Unit,manager:()->Unit,connect:()->Unit,licenses:()->Unit):View=page(s(R.string.help_privacy),back) { content,_ ->
         content.addView(ui.title(s(R.string.help_setup),18f));content.addView(ui.space(8))
-        listOf(R.string.setup_install,R.string.setup_debugging,R.string.setup_pair,R.string.setup_start,R.string.setup_authorise).forEach {
+        listOf(R.string.setup_install,R.string.setup_debugging,R.string.setup_pair,R.string.setup_start,R.string.setup_authorise,R.string.setup_background,R.string.setup_reboot).forEach {
             ui.paragraph(content,s(it))
         }
         ui.actionRow(content,s(R.string.download_shizuku)){website("https://shizuku.rikka.app/download/")}
         ui.actionRow(content,s(R.string.official_setup_guide)){website("https://shizuku.rikka.app/guide/setup/")}
         ui.actionRow(content,s(R.string.open_shizuku),action=manager)
         ui.actionRow(content,s(R.string.connect),action=connect)
+        ui.actionRow(content,s(R.string.background_reliability)){ (ui.activity as MainActivity).showBackgroundGuide() }
+        ui.actionRow(content,s(R.string.connection_test)){ (ui.activity as MainActivity).runConnectionGuideTest() }
         content.addView(ui.space(20))
         listOf(
             R.string.help_gboard to R.string.help_gboard_body,
@@ -57,6 +59,11 @@ class DetailPages(private val ui:Ui) {
             s(R.string.device) to Build.MODEL,
             s(R.string.android_version) to "${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}",
             s(R.string.mode) to s(if(offline)R.string.offline_mode else R.string.recorder_mode),
+            s(R.string.duplicate_handling) to s(if(b.getInt("duplicateMode")==1)R.string.duplicates_consecutive else R.string.duplicates_unique),
+            s(R.string.automatic_recovery) to (b.getString("recoveryMessage").orEmpty().ifEmpty {
+                val options=app.cliphistory.client.RecorderPreferences(ui.activity).options()
+                s(if(options.automatic && !options.explicitlyStopped)R.string.enabled else R.string.disabled)
+            }),
             s(R.string.last_checked) to b.getLong("checkedAt").takeIf { it>0 }?.let { java.text.DateFormat.getTimeInstance().format(java.util.Date(it)) }.orEmpty(),
             s(R.string.daemon_uid) to if(offline)s(R.string.not_connected) else b.getInt("uid").toString(),
             s(R.string.listener) to flag("listening",R.string.registered,R.string.not_registered),

@@ -44,13 +44,16 @@ class MainActivity:Activity() {
     private var restoredCount=40
     private var restoredAnchor:HistoryHome.Anchor?=null
     private var diagnosticPage:DetailPages.DiagnosticPage?=null
+    private var settingsPage:SettingsPage.Page?=null
+    private var pendingWelcome=false
+    private var restoredSettingsScroll=0
     private var operationIssue=""
     private var snackbar:TextView?=null
     private val dialogs=mutableSetOf<Dialog>()
     private var menu:PopupWindow?=null
     private var recorderContent:LinearLayout?=null
     private var recorderDialog:Dialog?=null
-    private val changed:()->Unit={ if(visible)refresh() }
+    private val changed:()->Unit={ if(visible){refresh();main.post { maybeShowPrompts() }} }
     private val searchChanged=Runnable { if(visible)refresh(reset=true) }
     private val back=OnBackInvokedCallback { if(pageKind=="licenses")help() else closePage() }
     private fun s(id:Int)=getString(id)
@@ -58,11 +61,14 @@ class MainActivity:Activity() {
     override fun attachBaseContext(newBase:Context) { super.attachBaseContext(AppSettings.themedContext(newBase)) }
     override fun onCreate(state:Bundle?) {
         super.onCreate(state)
-        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        settings=AppSettings(this)
+        ScreenPrivacy.apply(this,settings)
         @Suppress("DEPRECATION")
         window.setDecorFitsSystemWindows(false)
         val light=resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK!=Configuration.UI_MODE_NIGHT_YES
-        settings=AppSettings(this);ui=Ui(this);pages=DetailPages(ui)
+        ui=Ui(this);pages=DetailPages(ui)
+        pendingWelcome=state?.getBoolean("pending_welcome") ?: isLauncherIntent(intent)
+        restoredSettingsScroll=state?.getInt("settings_scroll",0)?:0
         root=FrameLayout(this).apply { setBackgroundColor(ui.color(R.color.canvas)) }
         home=HistoryHome(ui,::showMenu,{ client.connect(true) },{ client.openShizuku() },::help,::recorder,
             { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview)
@@ -105,10 +111,20 @@ class MainActivity:Activity() {
             "licenses"->showPage("licenses",pages.licenses(::help))
             "preview"->{previewId=state.getLong("preview",-1);pageKind="restore-preview"}
             "diagnostics"->pageKind="restore-diagnostics"
+            "settings"->showSettings()
         }
     }
     override fun onStart() {
-        super.onStart();visible=true;client.addListener(changed);client.connect(false);refresh()
+        super.onStart();visible=true;applyPrivacy();client.addListener(changed);client.connect(false);refresh()
+    }
+    override fun onPostResume() { super.onPostResume();main.post { maybeShowPrompts() } }
+    override fun onNewIntent(intent:Intent) {
+        super.onNewIntent(intent);setIntent(intent)
+        if(isLauncherIntent(intent)){pendingWelcome=true;main.post { maybeShowPrompts() }}
+    }
+    private fun isLauncherIntent(intent:Intent?)=intent?.action==Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER)
+    private fun applyPrivacy() {
+        ScreenPrivacy.apply(this,settings);dialogs.forEach { ScreenPrivacy.apply(it.window,settings) }
     }
     override fun onStop() {
         visible=false;request++;navigation++;client.cancelPageReads();client.removeListener(changed);main.removeCallbacksAndMessages(null)
@@ -118,6 +134,8 @@ class MainActivity:Activity() {
     override fun onSaveInstanceState(out:Bundle) {
         out.putString("query",home.search.text.toString());out.putString("page",pageKind);out.putLong("preview",previewId)
         out.putInt("loaded_count",maxOf(rows.size,restoredCount))
+        out.putBoolean("pending_welcome",pendingWelcome)
+        if(pageKind=="settings")out.putInt("settings_scroll",findScroll(page)?.scrollY?:0)
         val anchor=restoredAnchor?:home.anchor()
         out.putLong("anchor_id",anchor.id);out.putInt("anchor_position",anchor.position);out.putInt("anchor_top",anchor.top)
         super.onSaveInstanceState(out)
@@ -136,7 +154,7 @@ class MainActivity:Activity() {
             loadedQuery=query
             latest=Bundle(result.status).apply {
                 if(result.issue.isNotEmpty())putString("issue",result.issue)
-                putString("operationIssue",operationIssue);putLong("checkedAt",System.currentTimeMillis())
+                putString("operationIssue",operationIssue);putString("recoveryMessage",client.recoveryMessage);putLong("checkedAt",System.currentTimeMillis())
             }
             offline=result.offline;generation=result.generation
             home.show(result,rows,recorderState(client.connectionStage(),latest.getBoolean("paused"),latest.getBoolean("active"),latest.getString("selfTest")=="PASS",latest.getString("issue").orEmpty().isNotEmpty()),query)
@@ -145,10 +163,12 @@ class MainActivity:Activity() {
             restoredCount=maxOf(40,rows.size)
             recorderContent?.let { fillRecorder(it,recorderDialog!!) }
             if(pageKind=="diagnostics")diagnosticPage?.update?.invoke(latest,offline)
+            if(pageKind=="settings")settingsPage?.update?.invoke(latest)
             when(pageKind) {
                 "restore-preview"->{pageKind="";preview(previewId)}
                 "restore-diagnostics"->{pageKind="";diagnostics()}
             }
+            main.post { maybeShowPrompts() }
         }
         // Binder pages remain bounded to 40 items. Refresh all previously loaded pages
         // before replacing the list so observer updates do not discard the scroll anchor.
@@ -181,7 +201,8 @@ class MainActivity:Activity() {
         if(showCancel)actions.addView(ui.button(s(R.string.cancel)) { dialog.dismiss() })
         actions.addView(ui.button(s(positive),danger=danger) { dialog.dismiss();action() });box.addView(actions)
         val scroll=ScrollView(this).apply { addView(box) };dialog.setContentView(scroll)
-        dialog.window?.apply { addFlags(WindowManager.LayoutParams.FLAG_SECURE);setBackgroundDrawableResource(android.R.color.transparent) }
+        ScreenPrivacy.apply(dialog.window,settings)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         track(dialog).show();dialog.window?.setLayout(minOf(ui.dp(400),windowManager.currentWindowMetrics.bounds.width()-ui.dp(40)),-2)
     }
     private fun notifyUser(id:Int) {
@@ -222,7 +243,8 @@ class MainActivity:Activity() {
             if(!visible || isFinishing || isDestroyed)return@command
             if(!response.getBoolean("ok")) {
                 operationIssue=response.getString("issue","OPERATION_FAILED")
-                if(token==navigation)sheet(R.string.operation_failed) { box,dialog ->
+                if(operationIssue=="ENTRY_MISSING") { if(token==navigation)notifyUser(R.string.entry_gone) }
+                else if(token==navigation)sheet(R.string.operation_failed) { box,dialog ->
                 ui.paragraph(box,s(R.string.operation_body))
                 box.addView(ui.button(s(R.string.view_diagnostics)){dialog.dismiss();diagnostics()})
                 box.addView(ui.button(s(R.string.done)){dialog.dismiss()})
@@ -298,6 +320,7 @@ class MainActivity:Activity() {
         option(R.string.add_tile_menu,action=::addTile)
         option(R.string.connection_test,client.connected(),action=::connectionTest)
         option(R.string.diagnostics,action=::diagnostics)
+        option(R.string.settings,action=::showSettings)
         option(R.string.appearance,action=::appearance)
         option(R.string.copy_behavior,action=::copyBehavior)
         option(R.string.help_privacy,action=::help)
@@ -359,6 +382,7 @@ class MainActivity:Activity() {
         }
     }
     private fun requestTile() {
+        if(!settings.tileEnabled){notifyUser(R.string.tile_disabled_notice);return}
         try {
             getSystemService(StatusBarManager::class.java).requestAddTileService(ComponentName(this,ClipboardTileService::class.java),s(R.string.tile_name),Icon.createWithResource(this,R.drawable.ic_clipboard),mainExecutor) { result ->
                 if(visible)notifyUser(if(result==StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED || result==StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED)R.string.tile_available else R.string.tile_manual)
@@ -382,6 +406,109 @@ class MainActivity:Activity() {
             val body=ui.column();box.addView(body);recorderContent=body;fillRecorder(body,d)
         }
         recorderDialog=dialog
+    }
+    private fun findScroll(view:View?):ScrollView? {
+        if(view is ScrollView)return view
+        if(view is ViewGroup)for(index in 0 until view.childCount)findScroll(view.getChildAt(index))?.let { return it }
+        return null
+    }
+    private fun showSettings() {
+        val created=SettingsPage(ui,pages,settings,client).create(latest,::closePage,{ action ->
+            when(action) {
+                SettingsPage.Action.LIMIT->limitDialog()
+                SettingsPage.Action.DUPLICATES->duplicateDialog()
+                SettingsPage.Action.START->client.connect(true)
+                SettingsPage.Action.STOP->confirm(R.string.stop_recorder,R.string.stop_recorder_body,R.string.stop_recorder) {
+                    client.stopRecording { result ->
+                        if(visible) {
+                            if(!result.getBoolean("ok")){operationIssue=result.getString("issue","");notifyUser(R.string.preference_failed)}
+                            refresh()
+                        }
+                    }
+                }
+                SettingsPage.Action.TILE_ADD->addTile()
+                SettingsPage.Action.APPEARANCE->appearance()
+                SettingsPage.Action.BATTERY->backgroundHelp()
+                SettingsPage.Action.WELCOME->showWelcome()
+                SettingsPage.Action.SUPPORT->support()
+                SettingsPage.Action.GUIDE->help()
+                SettingsPage.Action.NOTIFICATIONS->requestRecoveryNotifications()
+            }
+        },{ issue ->
+            if(issue.isNotEmpty()){operationIssue=issue;notifyUser(R.string.preference_failed)}
+            applyPrivacy();updateCopyHint();refresh()
+        })
+        settingsPage=created;showPage("settings",created.view)
+        created.view.post { findScroll(created.view)?.scrollTo(0,restoredSettingsScroll);restoredSettingsScroll=0 }
+    }
+    private fun duplicateDialog() {
+        if(!client.connected()){message(R.string.not_connected,R.string.connect_mutation);return}
+        sheet(R.string.duplicate_handling) { box,dialog ->
+            ui.paragraph(box,s(R.string.duplicates_body))
+            listOf(DuplicateMode.UNIQUE_TEXT to R.string.duplicates_unique,DuplicateMode.CONSECUTIVE_ONLY to R.string.duplicates_consecutive).forEach { (mode,label) ->
+                box.addView(ui.button(s(label),primary=latest.getInt("duplicateMode")==mode.value) {
+                    dialog.dismiss();command({it.setDuplicateMode(mode.value)})
+                })
+            }
+        }
+    }
+    private fun requestRecoveryNotifications() {
+        if(checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)!=android.content.pm.PackageManager.PERMISSION_GRANTED)
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),72)
+        else {
+            val intent=Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(android.provider.Settings.EXTRA_APP_PACKAGE,packageName)
+            try { startActivity(intent) } catch (_:Exception) { BackgroundSettings(this).open(packageName) }
+        }
+    }
+    private fun backgroundHelp(suggestion:Boolean=false) {
+        val dialog=sheet(R.string.background_reliability) { box,d ->
+            val battery=BackgroundSettings(this)
+            ui.paragraph(box,s(R.string.background_optional));ui.paragraph(box,battery.status())
+            if(client.recoveryMessage.isNotEmpty())ui.paragraph(box,client.recoveryMessage)
+            ui.actionRow(box,s(R.string.open_app_battery)) { d.dismiss();if(!battery.open(packageName))notifyUser(R.string.battery_manual) }
+            ui.actionRow(box,s(R.string.open_shizuku_battery)) { d.dismiss();if(!battery.open("moe.shizuku.privileged.api"))notifyUser(R.string.battery_manual) }
+            ui.actionRow(box,s(R.string.battery_optimization_list)) { d.dismiss();if(!battery.openOptimizationList())notifyUser(R.string.battery_manual) }
+            ui.actionRow(box,s(R.string.recovery_notification)) { d.dismiss();requestRecoveryNotifications() }
+            box.addView(ui.button(s(R.string.not_now)){d.dismiss()})
+        }
+        if(suggestion)dialog.setOnDismissListener {
+            dialogs.remove(dialog)
+            if(visible)settings.backgroundSeen=true
+        }
+    }
+    fun showBackgroundGuide() { backgroundHelp() }
+    fun runConnectionGuideTest() { connectionTest() }
+    private fun maybeShowPrompts() {
+        if(!visible || isFinishing || isDestroyed || dialogs.isNotEmpty() || menu?.isShowing==true || page!=null)return
+        if(pendingWelcome) {
+            pendingWelcome=false
+            if(settings.welcome=="each" || (settings.welcome=="once" && !settings.welcomeSeen)) { showWelcome();return }
+        }
+        if(settings.backgroundSuggestion && !settings.backgroundSeen && client.preferences.options().setupCompleted)
+            backgroundHelp(true)
+    }
+    private fun showWelcome() {
+        val dialog=sheet(R.string.welcome_title) { box,d ->
+            ui.paragraph(box,s(R.string.welcome_body))
+            box.addView(ui.button(s(R.string.welcome_continue),primary=true){settings.welcomeSeen=true;d.dismiss();main.post { maybeShowPrompts() }})
+            box.addView(ui.button(s(R.string.support_project)){settings.welcomeSeen=true;d.dismiss();support()})
+        }
+        dialog.setOnDismissListener {
+            dialogs.remove(dialog)
+            if(visible)settings.welcomeSeen=true else pendingWelcome=true
+        }
+    }
+    private fun support() {
+        sheet(R.string.support_project) { box,dialog ->
+            ui.paragraph(box,s(R.string.support_optional))
+            ui.actionRow(box,s(R.string.leave_feedback)) { dialog.dismiss();openWebsite("https://github.com/saroo98/cliphistory-android/issues/new") }
+            ui.actionRow(box,s(R.string.star_github)) { dialog.dismiss();openWebsite("https://github.com/saroo98/cliphistory-android") }
+            ui.actionRow(box,s(R.string.share_app)) {
+                dialog.dismiss()
+                startActivity(Intent.createChooser(Intent(Intent.ACTION_SEND).setType("text/plain")
+                    .putExtra(Intent.EXTRA_TEXT,"https://github.com/saroo98/cliphistory-android"),s(R.string.share_app)))
+            }
+        }
     }
     private fun fillRecorder(box:LinearLayout,dialog:Dialog) {
         box.removeAllViews()

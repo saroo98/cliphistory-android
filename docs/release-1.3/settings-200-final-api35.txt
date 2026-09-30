@@ -1,0 +1,42 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Settings group: Recording
+PASS Settings group: Quick access
+PASS Settings group: Privacy
+PASS Settings group: Appearance
+PASS Settings group: About
+PASS Screenshots initially blocked
+PASS Screenshots enabled live
+PASS Welcome follows enabled screenshots
+PASS Screenshots disabled live
+PASS Recents privacy independently persisted
+PASS Motion off overrides system motion
+PASS Recorder mutation disabled offline
+PASS Settings page survives rotation
+PASS Settings survive recreation
+PASS Battery states described separately
+PASS Activity page not cancelled by independent tile read
+PASS Tile read uses valid offline snapshot
+PASS Actual OS captures hide the app surface when screenshots are blocked
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Settings group: Recording
+PASS Settings group: Quick access
+PASS Settings group: Privacy
+PASS Settings group: Appearance
+PASS Settings group: About
+PASS Screenshots initially blocked
+PASS Screenshots enabled live
+PASS Welcome follows enabled screenshots
+PASS Screenshots disabled live
+PASS Recents privacy independently persisted
+PASS Motion off overrides system motion
+PASS Recorder mutation disabled offline
+PASS Settings page survives rotation
+PASS Settings survive recreation
+PASS Battery states described separately
+PASS Activity page not cancelled by independent tile read
+PASS Tile read uses valid offline snapshot
+PASS Actual OS captures hide the app surface when screenshots are blocked
+PASS 20 feature assertions (settings), API 35. Synthetic validation only.
+
