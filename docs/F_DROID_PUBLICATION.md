@@ -18,7 +18,7 @@ The release build uses AGP 9.1.1, Gradle 9.3.1, JDK 17, platform `android-37.0` 
 
 ## Validation performed
 
-F-Droid server 2.4.5 metadata lint passes with current fdroiddata categories. Its source scan reports zero fatal findings. Isolated Linux compilation succeeds. The source tag must be used for reproducibility so Android's embedded source revision matches. Final signing and byte comparison results are in `docs/release-1.2/RELEASE.md`.
+F-Droid server 2.4.5 metadata lint passes with current fdroiddata categories. Its public-tag source scan reports zero fatal findings and its signed-APK scan succeeds. Windows and Linux clones produce identical unsigned APKs. Copying the upstream signature to the Linux build reproduces the signed APK byte for byte and that signature verifies. The build recipe pins the full source revision so Android's embedded source revision matches. Final signing and comparison results are in `docs/release-1.2/RELEASE.md`.
 
 No signing key, password, device history, SDK cache, emulator log or test APK is published. The APK requests only Shizuku permission and is not debuggable. No proprietary runtime SDK, network client, ad or analytics library is used. Shizuku manager remains an external prerequisite; its installation and runtime requirements are disclosed in the listing and in the app.
 

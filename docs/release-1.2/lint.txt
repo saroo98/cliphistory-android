@@ -1,44 +1,8 @@
-app\src\main\java\app\cliphistory\daemon\PlatformClipboardBridge.kt:30: Warning: Accessing internal APIs via reflection is not supported and may not work on all devices or in the future [PrivateApi]
-        val serviceManager = Class.forName("android.os.ServiceManager")
-                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-app\src\main\java\app\cliphistory\daemon\PlatformClipboardBridge.kt:33: Warning: Accessing internal APIs via reflection is not supported and may not work on all devices or in the future [PrivateApi]
-        val iface = Class.forName("android.content.IClipboard")
-                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-app\src\main\java\app\cliphistory\daemon\PlatformClipboardBridge.kt:34: Warning: Accessing internal APIs via reflection is not supported and may not work on all devices or in the future [PrivateApi]
-        val stub = Class.forName("android.content.IClipboard\$Stub")
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-app\src\main\java\app\cliphistory\daemon\PlatformClipboardBridge.kt:36: Warning: Accessing internal APIs via reflection is not supported and may not work on all devices or in the future [PrivateApi]
-        val callbackClass = Class.forName(ClipboardArguments.LISTENER)
-                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-   Explanation for issues of type "PrivateApi":
-   Using reflection to access hidden/private Android APIs is not safe; it will
-   often not work on devices from other vendors, and it may suddenly stop
-   working (if the API is removed) or crash spectacularly (if the API behavior
-   changes, since there are no guarantees for compatibility).
-
-   https://developer.android.com/preview/restrictions-non-sdk-interfaces
-
-gradle\wrapper\gradle-wrapper.properties:3: Warning: A newer version of Gradle than 9.3.1 is available: 9.8.0 [AndroidGradlePluginVersion]
-distributionUrl=https\://services.gradle.org/distributions/gradle-9.3.1-bin.zip
-                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-   Explanation for issues of type "AndroidGradlePluginVersion":
-   This detector looks for usage of the Android Gradle Plugin where the
-   version you are using is not the current stable release. Using older
-   versions is fine, and there are cases where you deliberately want to stick
-   with an older version. However, you may simply not be aware that a more
-   recent version is available, and that is what this lint check helps find.
-
-app\src\main\res\mipmap-anydpi-v26: Warning: This folder configuration (v26) is unnecessary; minSdkVersion is 34. Merge all the resources in this folder into mipmap-anydpi. [ObsoleteSdkInt]
-
-   Explanation for issues of type "ObsoleteSdkInt":
-   This check flags version checks that are not necessary, because the
-   minSdkVersion (or surrounding known API level) is already at least as high
-   as the version checked for.
-
-   Similarly, it also looks for resources in -vNN folders, such as values-v14
-   where the version qualifier is less than or equal to the minSdkVersion,
-   where the contents should be merged into the best folder.
-
-0 errors, 6 warnings
+Clean public tag v1.2.0, Windows and Linux release lint
+PrivateApi: Accessing internal APIs via reflection is not supported and may not work on all devices or in the future
+PrivateApi: Accessing internal APIs via reflection is not supported and may not work on all devices or in the future
+PrivateApi: Accessing internal APIs via reflection is not supported and may not work on all devices or in the future
+PrivateApi: Accessing internal APIs via reflection is not supported and may not work on all devices or in the future
+AndroidGradlePluginVersion: A newer version of Gradle than 9.3.1 is available: 9.8.0
+0 errors, 5 warnings
+No baseline or disabled checks.

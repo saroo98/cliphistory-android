@@ -32,8 +32,8 @@ The script:
 3. Obtains Google's Windows command-line tools when missing and validates the archive size and checksum in Google's HTTPS repository metadata. The bootstrap-tools/JDK patch release can change; app/plugin/dependency versions remain specified above.
 4. Presents `sdkmanager --licenses` interactively. It does not pipe automatic acceptance. Then installs API 37, Build Tools 36.0.0 and platform-tools.
 5. Creates `local.properties`, an owner-specific RSA signing key and local password files under `.signing/`, only when needed.
-6. Downloads Gradle 9.3.1 and validates the publisher's SHA-256 checksum before extracting/executing it.
-7. Runs `:app:testDebugUnitTest`, `:app:lintRelease`, `:app:assembleRelease`, then APK signature, permission and target/debuggable inspection.
+6. Uses the official Gradle wrapper to download Gradle 9.3.1 with its pinned SHA-256 checksum.
+7. Runs `:app:testDebugUnitTest`, `:app:lintRelease`, `:app:assembleRelease` with `-PunsignedRelease`, then signs through `apksigner --alignment-preserved true` and checks the signature, alignment, permissions and target/debuggable status.
 8. Only after those commands succeed, copies the signed output to `ClipHistory-1.2.0.apk` and writes its SHA-256 file.
 
 Build output is recorded in `build-windows.log`. The source, clipboard data and key are not uploaded by our scripts. Ordinary build tools connect to their repositories to download dependencies. If downloads are blocked on your network, the script stops rather than switching to an untrusted APK mirror.
@@ -67,6 +67,10 @@ Actual installation and device acceptance tests are separate from compilation. F
 ```
 
 The output is `app/build/outputs/apk/release/app-release-unsigned.apk`. This option explicitly ignores local personal signing files. Clean public checkouts are unsigned by default. F-Droid builds from `fdroid/metadata/app.cliphistory.yml`; no keystore or password is required. The release uses upstream signature verification through `Binaries`, to preserve the installed signing identity when F-Droid can reproduce the APK.
+
+For the exact published binary, clone the public Git repository and check out `v1.2.0` (`5739fb2bfbe26023aa02782a83eb2eb7443d126d`). AGP embeds this revision in the APK. An extracted source archive is convenient for development but has no Git revision, so its APK is not expected to have the same digest.
+
+Sign the unsigned output separately using the private existing key and Build Tools 36.0.0 `apksigner sign --alignment-preserved true`. Supply passwords through environment variable names, never literal command arguments. The alignment option avoids a [known signature-copying incompatibility](https://github.com/obfusk/apksigcopier#what-about-signatures-made-by-apksigner-from-build-tools--3500-rc1). Version 1.2.0 was reproduced from Windows and Linux clones, then checked with apksigcopier 1.1.1 and signature verification. See `docs/release-1.2/RELEASE.md` for digests.
 
 ## Isolated physical validation
 

@@ -1,0 +1,29 @@
+Production source: 5739fb2bfbe26023aa02782a83eb2eb7443d126d (v1.2.0)
+Windows unsigned SHA-256: c8e05e4e0e2a0feab3a784a2320e4de8026234b31bf968ef5c4b15fd5b172ccf
+Linux unsigned SHA-256: c8e05e4e0e2a0feab3a784a2320e4de8026234b31bf968ef5c4b15fd5b172ccf
+PASS: unsigned APK bytes match.
+Upstream signed SHA-256: 7eb1043dc6c33cba080a2567e35c32b223981305fa90c0783b4efc21673b481d
+Linux signature-copy SHA-256: 7eb1043dc6c33cba080a2567e35c32b223981305fa90c0783b4efc21673b481d
+PASS: apksigcopier 1.1.1 copying to Linux unsigned APK reproduces all signed bytes.
+PASS: Linux apksigner independently verifies that reproduced APK.
+Signing: Build Tools 36.0.0, --alignment-preserved true, existing private key.
+PASS: alignment check -c -P 16 4.
+PASS: updated Windows helper signing block produces identical final APK.
+
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): false
+Verified using v3 scheme (APK Signature Scheme v3): true
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=ClipHistory Personal Build
+Signer #1 certificate SHA-256 digest: ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82
+Signer #1 certificate SHA-1 digest: af24fab0894e1f5831e183fe57e5a1392c0ac8ad
+Signer #1 certificate MD5 digest: bcf4db7b3ab61b95498c826984df6f8e
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 3072
+Signer #1 public key SHA-256 digest: 520fc31eb60e745bd1c4874e33e2748abdafdee43af70d93ad00bbc20be867a6
+Signer #1 public key SHA-1 digest: cfb3e3f989cf4b4ffb1ec851c13dd1f579c532e8
+Signer #1 public key MD5 digest: efd73e27898041e6db8b99e99bbbbee3

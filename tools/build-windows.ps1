@@ -167,13 +167,26 @@ try {
     [IO.File]::WriteAllText((Join-Path $Root 'local.properties'), "sdk.dir=$Escaped`n", [Text.Encoding]::ASCII)
     Prepare-Signing $JavaHome
     & (Join-Path $Root 'gradlew.bat') `
-        --no-daemon :app:testDebugUnitTest :app:lintRelease :app:assembleRelease
+        --no-daemon -PunsignedRelease :app:testDebugUnitTest :app:lintRelease :app:assembleRelease
     if ($LASTEXITCODE -ne 0) { throw 'Compilation, tests or lint failed. No success is claimed. Read build-windows.log.' }
+    $UnsignedApk = Join-Path $Root 'app\build\outputs\apk\release\app-release-unsigned.apk'
+    if (!(Test-Path $UnsignedApk)) { throw 'Unsigned release APK was not produced.' }
     $Apk = Join-Path $Root 'app\build\outputs\apk\release\app-release.apk'
-    if (!(Test-Path $Apk)) { throw 'Signed release APK was not produced.' }
     $BuildTools = Join-Path $Sdk 'build-tools\36.0.0'
+    $env:CLIPHISTORY_SIGN_PASS = [IO.File]::ReadAllText((Join-Path $Root '.signing\password.txt')).Trim()
+    try {
+        # Keep Gradle's alignment so F-Droid can copy and verify the upstream signature.
+        & (Join-Path $BuildTools 'apksigner.bat') sign `
+            --ks (Join-Path $Root '.signing\cliphistory.jks') --ks-key-alias cliphistory `
+            --ks-pass env:CLIPHISTORY_SIGN_PASS --key-pass env:CLIPHISTORY_SIGN_PASS `
+            --alignment-preserved true --v1-signing-enabled false --v2-signing-enabled true `
+            --v3-signing-enabled true --v4-signing-enabled false --out $Apk $UnsignedApk
+        if ($LASTEXITCODE -ne 0) { throw 'Release signing failed.' }
+    } finally { Remove-Item Env:\CLIPHISTORY_SIGN_PASS -ErrorAction SilentlyContinue }
     & (Join-Path $BuildTools 'apksigner.bat') verify --verbose --print-certs $Apk
     if ($LASTEXITCODE -ne 0) { throw 'APK signature verification failed.' }
+    & (Join-Path $BuildTools 'zipalign.exe') -c -P 16 4 $Apk
+    if ($LASTEXITCODE -ne 0) { throw 'APK alignment verification failed.' }
     $Aapt = Join-Path $BuildTools 'aapt2.exe'
     $Permissions = (& $Aapt dump permissions $Apk 2>&1 | Out-String)
     if ($LASTEXITCODE -ne 0) { throw 'Could not inspect APK permissions.' }

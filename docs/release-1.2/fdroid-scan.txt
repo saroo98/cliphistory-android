@@ -1,5 +1,23 @@
+warning: refs/tags/v1.2.0 a4bb9240a672e174e14d90d01e33f0661c13cd7a is not a commit!
+Note: switching to '5739fb2bfbe26023aa02782a83eb2eb7443d126d'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by switching back to a branch.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -c with the switch command. Example:
+
+  git switch -c <new-branch-name>
+
+Or undo this operation with:
+
+  git switch -
+
+Turn off this advice by setting config variable advice.detachedHead to false
+
 INFO:root:Using <build workspace>/sdk/build-tools/36.0.0/apksigner
 INFO:root:Removing gradlew at gradlew
 INFO:root:Removing gradlew.bat at gradlew.bat
 INFO:root:Removing gradle-wrapper.jar at gradle/wrapper/gradle-wrapper.jar
-F-Droid source scan fatal findings: 0
+Public tag source scan fatal findings: 0

@@ -1,0 +1,5 @@
+2026-09-30 08:30:46,860 INFO: Using <build workspace>/sdk/build-tools/36.0.0/apksigner
+2026-09-30 08:30:46,862 INFO: Scanning APK with dexdump for known non-free classes.
+2026-09-30 08:30:47,330 INFO: Scanning APK for extra signing blocks.
+
+Scanner exit code: 0

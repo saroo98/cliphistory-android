@@ -1,0 +1,11 @@
+Temporary read-only API 36 emulator, synthetic data only.
+Signed 1.1.0 install: Success
+Signed 1.2.0 install -r over 1.1.0: Success
+Cold launch: Status ok, app.cliphistory/.ui.MainActivity, 375 ms
+Installed versionCode=3 minSdk=34 targetSdk=37 versionName=1.2.0
+No DEBUGGABLE flag.
+Requested permission: moe.shizuku.manager.permission.API_V23
+Own Activity resumed and visible in native UI hierarchy.
+Physical device: separate validation test and application packages removed after live checks.
+Validation shell helper stopped after checking its UID and process name.
+Normal phone application still installed; its history was not cleared.
