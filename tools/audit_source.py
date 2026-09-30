@@ -1,0 +1,88 @@
+#!/usr/bin/env python3
+"""Static delivery guards. This does NOT compile Android or inspect a built APK."""
+from pathlib import Path
+import re
+import sys
+import xml.etree.ElementTree as ET
+
+ROOT = Path(__file__).resolve().parents[1]
+MAIN = ROOT / "app/src/main"
+ANDROID = "{http://schemas.android.com/apk/res/android}"
+results: list[tuple[str, bool]] = []
+
+def check(name: str, condition: bool) -> None:
+    results.append((name, bool(condition)))
+    print(f"{'PASS' if condition else 'FAIL'}  {name}")
+
+def text(path: str) -> str:
+    return (ROOT / path).read_text(encoding="utf-8")
+
+manifest = ET.parse(MAIN / "AndroidManifest.xml").getroot()
+app = manifest.find("application")
+assert app is not None
+permissions = {p.get(ANDROID + "name") for p in manifest.findall("uses-permission")}
+check("source requests only the Shizuku API permission", permissions == {"moe.shizuku.manager.permission.API_V23"})
+check("source disables Android backup", app.get(ANDROID + "allowBackup") == "false" and app.get(ANDROID + "fullBackupContent") == "false")
+check("source disables cleartext traffic", app.get(ANDROID + "usesCleartextTraffic") == "false")
+providers = app.findall("provider")
+check("Shizuku provider protected by system signature permission", len(providers) == 1 and providers[0].get(ANDROID + "permission") == "android.permission.INTERACT_ACROSS_USERS_FULL")
+services = app.findall("service")
+check("only declared Android service is protected Quick Settings tile", len(services) == 1 and services[0].get(ANDROID + "permission") == "android.permission.BIND_QUICK_SETTINGS_TILE")
+check("one launcher Activity", len(app.findall("activity")) == 1 and len(app.findall("activity/intent-filter/action")) == 1)
+for element in [app, *app.findall("activity"), *services]:
+    name = element.get(ANDROID + "name", "")
+    if name.startswith("."):
+        path = MAIN / "java/app/cliphistory" / (name[1:].replace(".", "/") + ".kt")
+        check(f"manifest class exists: {name}", path.is_file())
+for xml in sorted(MAIN.rglob("*.xml")):
+    ET.parse(xml)
+check("all source XML parses", True)
+
+sources = list((MAIN / "java").rglob("*.kt"))
+source = "\n".join(p.read_text() for p in sources)
+check("no unfinished production implementation markers", not re.search(r"\bTODO\s*\(|NotImplementedError|IMPLEMENT_ME|FIXME", source))
+check("no runtime network client imports", not re.search(r"import\s+(java\.net|okhttp|io\.ktor|retrofit|com\.google\.firebase)\b", source))
+check("no external process execution", not re.search(r"Runtime\.getRuntime\(\)\.exec|ProcessBuilder\(", source))
+check("no Accessibility or keyboard components", "AccessibilityService" not in source and "InputMethodService" not in source)
+check("no repeating clipboard polling mechanism", not re.search(r"Timer\(|scheduleAtFixedRate|while\s*\(true\)|Thread\.sleep", source))
+check("history screen protects screenshots", "FLAG_SECURE" in text("app/src/main/java/app/cliphistory/ui/MainActivity.kt"))
+check("tile uses immutable PendingIntent and unlock", "FLAG_IMMUTABLE" in text("app/src/main/java/app/cliphistory/ui/ClipboardTileService.kt") and "unlockAndRun" in source)
+check("normal app uses private no-backup files", "noBackupFilesDir" in text("app/src/main/java/app/cliphistory/client/PrivateHistory.kt"))
+check("shell does not truncate or chmod private files", not re.search(r"ftruncate|Os\.chmod|setLength\(", "\n".join(p.read_text() for p in (MAIN / "java/app/cliphistory/daemon").glob("*.kt"))))
+bridge = text("app/src/main/java/app/cliphistory/daemon/PlatformClipboardBridge.kt")
+check("system callback UID and identity are checked", "getCallingUid() != 1000" in bridge and "clearCallingIdentity" in bridge and "restoreCallingIdentity" in bridge)
+check("sensitive flag handled before text extraction", bridge.index("if (sensitive)") < bridge.index("val raw"))
+check("clipboard source is not coerced through content providers", "coerceToText(" not in bridge and "getItemAt(0).text" in bridge)
+daemon = text("app/src/main/java/app/cliphistory/daemon/ClipboardUserService.kt")
+aidl = text("app/src/main/aidl/app/cliphistory/ipc/IClipboardDaemon.aidl")
+methods = re.findall(r"\b(?:Bundle|String|void)\s+(\w+)\([^;]*?\)\s*=\s*\d+\s*;", aidl)
+check("all AIDL entrypoints implemented", all(re.search(r"override fun " + name + r"\(", daemon) for name in methods) and len(methods) == 13)
+for name in methods:
+    if name == "destroy":
+        continue
+    start = daemon.index("override fun " + name + "(")
+    body = daemon[start:]
+    next_method = body.find("override fun ", len("override fun "))
+    if next_method >= 0:
+        body = body[:next_method]
+    check(f"owner-UID guard on {name}", "requireOwner()" in body)
+check("Shizuku destroy transaction matches documented constant", "destroy() = 16777114" in aidl)
+check("helper watches Shizuku server rather than UI lifetime", "IBinder shizukuServer" in aidl and "server.linkToDeath" in daemon and "leaseAlive=false" in daemon)
+check("replacement/unlinked private data is handled", "attachedFileIds!=incomingIds" in daemon and "st_nlink" in text("app/src/main/java/app/cliphistory/daemon/FdAccess.kt"))
+check("daemon uses bounded queue", "ArrayBlockingQueue<Runnable>(256)" in daemon)
+check("IPC history is paged", "count in 1..40" in daemon and "text.take(180)" in daemon)
+check("self-test uses tested probe tracker", "ProbeTracker()" in daemon and "probe.match" in daemon)
+build = text("app/build.gradle.kts")
+check("compile and target API 37", "compileSdk = 37" in build and "targetSdk = 37" in build)
+check("release is not marked debuggable", "isDebuggable = false" in build)
+check("build pins Shizuku dependencies", build.count(":13.1.5") == 2)
+check("Windows script does not silently accept SDK licences", "--licenses" in text("tools/build-windows.ps1") and not re.search(r"yes\s*\||'y'\s*\|", text("tools/build-windows.ps1")))
+check("Windows build gates actual APK signature and permissions", "apksigner.bat" in text("tools/build-windows.ps1") and "Unexpected permission in built APK" in text("tools/build-windows.ps1"))
+for path in ("README.md", "START_HERE.md", "BUILDING.md", "DEVICE_TESTS.md", "SECURITY.md", "VERIFICATION.md", "LICENSE", "THIRD_PARTY_NOTICES.md", "docs/SOURCES.md", "BUILD_WINDOWS.cmd", "gradlew", "gradlew.bat"):
+    check(f"delivery file: {path}", (ROOT / path).is_file())
+check("no signing material distributed", not (ROOT / ".signing").exists())
+check("host report contains real final test result", "RESULT 50/50 passed" in text("reports/core-tests.txt"))
+failed = [name for name, ok in results if not ok]
+print(f"RESULT {len(results)-len(failed)}/{len(results)} static source checks passed")
+print("Android build, merged-manifest, APK and physical-device tests are NOT implied by these checks.")
+sys.exit(1 if failed else 0)

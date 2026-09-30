@@ -1,0 +1,15 @@
+.gradle/
+.tools/
+.signing/
+**/build/
+local.properties
+*.iml
+.idea/
+.DS_Store
+*.apk
+*.apk.sha256
+/build-windows.log
+/apk-permissions.txt
+.DS_Store
+__pycache__/
+*.pyc

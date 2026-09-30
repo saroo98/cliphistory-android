@@ -1,0 +1,17 @@
+# ClipHistory design
+
+Approved scope: Pixel 8 Pro, Android 17 (API 37), Gboard unchanged; non-root Shizuku via wireless debugging. Native text-history app and Quick Settings launcher tile, no server, account, advertising, networking, accessibility service, overlay or keyboard.
+
+## Components
+A daemon-mode Shizuku UserService (shell UID 2000) owns a clipboard Binder listener. A runtime-signature-checked bridge invokes the phone's own IClipboard Stub proxy, not hard-coded system transaction numbers. Binder identity is cleared before privileged reads. The listener reads immediately, before queuing persistence. IPC is restricted to the owning app UID. Shizuku's own destroy transaction also accepts shell/root.
+
+A single daemon worker serializes storage and mutations. The app creates two credential-encrypted, no-backup, private files and transfers open descriptors. The daemon validates read/write access on initialization; permission/SELinux errors are surfaced, never silently replaced with public storage. Generation-numbered, SHA-256-checked snapshots alternate with fsync before acknowledging a save. Recovery chooses the newest valid generation. Delete, clear and limit reduction rewrite both slots, so the ordinary recovery slot does not retain deleted records after successful completion. This is logical deletion, not a forensic flash-wipe guarantee.
+
+Default 100 clips; limit 20–500. Exact text and newlines retained, no HTML/URI coercion; only consecutive duplicate entries suppressed. Explicitly sensitive clips skipped. Text limit 64 KiB UTF-8 per entry, with visible skipped counts rather than silent truncation. UI uses paged previews to avoid Binder's transaction-size limit; full text is fetched per item. No sensitive content or clipboard text in diagnostic logs. Backup disabled, history window protected from screenshots/Recents previews.
+
+The UI is one native Activity: status, search, history, copy, delete, clear, limit, pause/resume, add tile, diagnostics and an explicit device capture test. The tile unlocks the phone and opens history; it never represents cached status as current. Previously saved history is readable while Shizuku is unavailable. Offline mutation is blocked to avoid racing a possibly live daemon. Foreground connection status is not proof of background reliability. The device test writes clearly labelled sample clipboard content only after confirmation, then checks daemon-captured IDs and durable storage.
+
+## Limits and validation
+No universal or 100% guarantee: the clipboard listener receives notifications, not an immutable history of every rapidly replaced clip. System restrictions, lock-screen behavior, work profiles, Shizuku termination, reboot, and vendor/build differences can affect access. Non-root Shizuku must be restarted after reboot; reopen ClipHistory after starting it. The daemon is independent of the UI process but not immortal. No automatic boot-start claim and no battery-life claim without measurement.
+
+Host-side tests must execute real history/storage logic, including byte limits, Unicode, corruption, truncated writes, failed fsync, duplicate handling, rolling limits and deletion. Android compilation, APK inspection, instrumentation and Pixel tests are separate gates. Never label them passed when unavailable. Build environment currently has a Kotlin/JDK compiler but no Android SDK, Gradle, emulator or network downloads. No precompiled APK is available at design time.

@@ -1,0 +1,63 @@
+# Pixel 8 Pro / Android 17 acceptance checks
+
+**Status at delivery: NOT RUN.** These are required real-device checks, not claims that they passed. A core-unit-test result and an APK build cannot replace these tests.
+
+Use harmless test text, not passwords or private messages. Do not clear or alter valuable history to run a test without first deciding that it is safe to do so. The app intentionally has no cloud backup/export in this version.
+
+## First gate: installation and connection
+
+Install a successfully compiled APK and leave Gboard as the default keyboard. Start Shizuku in wireless-debugging mode, open ClipHistory and tap Connect. Allow its Shizuku permission.
+
+Diagnostics should show daemon UID 2000, the actual Android API level, listener registration and verified private storage. A failed connection is not a partial pass. Copy the diagnostic report or keep the build error; do not send raw clipboard data.
+
+Run the app's Connection test after reading its confirmation. It replaces the current Android clipboard with a unique harmless string, exercises the real callback and performs a durable write/read of unchanged history. PASS must appear in Diagnostics. Confirm the history count did not increase and a full history did not lose an item. A late or repeated test callback is meant to be filtered too.
+
+If the Android hidden API layout, shell permission or SELinux descriptor access fails, stop at this gate. Do not enable Accessibility, disable SELinux or root the device to disguise the failure.
+
+## Ordinary background capture
+
+With recording active, leave ClipHistory and copy distinct harmless texts from Chrome, a notes/editor app, and the messaging apps you normally use. Do not reopen the history app between copies. Include a multiline text and Unicode such as `کوردی فارسی 中文 🙂`.
+
+Reopen history. Check the contents and newest-first order. Tap an older item; the app should return to the previous screen. Paste through Gboard and compare the complete text, including spacing/newlines. Search should return matching saved texts without changing them.
+
+Swiping an app out of Recents and killing its ordinary process are different from Force stop. Test Recents removal first. For an explicit process-death check, use an already-authorised ADB connection from your own PC, leave the app in the background, and run:
+
+```sh
+adb shell am kill app.cliphistory
+```
+
+Do not mistake that command's completion for proof that the process was killed; inspect processes where possible. Copy more test text elsewhere, then reopen history. Recording should have continued in the shell helper. Force stop is not a supported promise of continuous recording; do not use it as the normal way to pause the recorder.
+
+## Rolling limit
+
+On disposable test history with limit 100, copy numbered strings `CH-001` through `CH-101` at a human pace while the history UI is closed. There should be 100 entries: `CH-101` at the top and `CH-002` at the bottom, with `CH-001` no longer in the current list. Lower the limit to 20 and confirm the oldest entries are removed. Raise it again and confirm that previously removed entries do not reappear.
+
+Copy `A`, `A` consecutively: one saved entry. Copy `A`, `B`, `A`: the two A entries are allowed because a different saved text intervened.
+
+## Recovery and pause
+
+Pause the recorder from the menu, copy a harmless secret-like canary elsewhere, and confirm it is not archived. Restart Shizuku/reconnect and confirm the paused setting persists. Resume recording and confirm new copies are saved.
+
+Stop Shizuku while the app is closed. Copy a distinct text. Restart Shizuku and reopen ClipHistory. The missing interval must not be falsely reported as captured; old committed history should still be available. New copies after reconnection should be saved.
+
+Reboot the phone. Before restarting Shizuku, the app may show saved history but must not claim active recording. Start Shizuku and reopen ClipHistory, then test a fresh copy. Non-root restart is a manual requirement, not a bug hidden by a green status icon.
+
+For disposable data only, also test Android's Clear storage and uninstall/reinstall behavior. Previously cleared history must not be resurrected from a surviving helper's memory. The implementation checks replacement file identities and rejects unlinked backing files; this platform behavior still requires device validation.
+
+## Privacy, permission and size boundaries
+
+Use only a synthetic marked-sensitive clip, not an actual password, to test sensitive filtering. The app checks `android.content.extra.IS_SENSITIVE`; an app that does not mark its own secret cannot be recognised reliably by that flag. Oversized UTF-8 text should increment the skipped counter rather than appearing truncated.
+
+Revoke ClipHistory's Shizuku permission and confirm that recording stops or access is denied. Re-authorise it, reopen the app and check a new copy. Verify that other unprivileged apps cannot bind directly to the private history interface.
+
+History should not be readable while the lock screen is active. The tile should ask for unlocking. Screenshots/Recents previews of the history Activity should be blocked. The diagnostic report must contain no copied text.
+
+## Longer-run evidence
+
+Before treating the app as dependable, repeat normal copy/paste use over several hours, including device idle periods and switching networks/apps. Check recorded counts/content, reconnect behavior, memory use and battery impact on the actual phone. There is no benchmarked battery or memory claim in this delivery.
+
+Excessively fast clipboard changes may overwrite intermediate system clipboard values before a listener can retrieve them. Record such misses honestly. The helper has a bounded queue and reports overload drops; a historical drop must not be concealed by a generic “active” message.
+
+## Exit criteria
+
+Record the APK hash, app version, Android build/security patch, Shizuku version and each result. Mark PASS only after observing the expected behavior. Leave unexecuted cases NOT RUN. An unresolved Android compile, connection, data-loss, privacy or background-capture failure means device acceptance has not passed.
