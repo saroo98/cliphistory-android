@@ -13,6 +13,8 @@ Complete MIT and Apache licence texts and the Kotlin notice are included in `app
 
 `LICENSES/` also includes JUnit's EPL-1.0 licence (test dependency 4.13.2) and the Gradle distribution notice for the official Gradle wrapper. These development components are not runtime libraries in the APK. Gradle and AGP use Apache-2.0. SDK and JDK distributions are installed separately and retain their own licences.
 
-Shizuku manager is a separate prerequisite, not bundled in this source or APK. Obtain it from its official upstream and review its own licence and notices. ClipHistory does not use its logo or branding.
+Shizuku manager is a separate prerequisite, not bundled in this source or APK. Its [official source](https://github.com/RikkaApps/Shizuku) is [Apache-2.0 licensed](https://github.com/RikkaApps/Shizuku/blob/master/LICENSE). Obtain it from its official upstream and review its own notices. ClipHistory does not use its logo or branding.
+
+The app's original launcher artwork, native interface and synthetic store captures are covered by the project's MIT licence. No separate font binary or external stock artwork is bundled. Android provides the system typeface at runtime.
 
 Upstreams: https://github.com/RikkaApps/Shizuku-API, https://github.com/JetBrains/kotlin, https://github.com/JetBrains/java-annotations, https://android.googlesource.com/platform/frameworks/support/, https://github.com/junit-team/junit4, https://github.com/gradle/gradle.

@@ -8,6 +8,8 @@ Public source: https://github.com/saroo98/cliphistory-android. Signed APKs are i
 
 This release fixes layout, lifecycle and diagnostics defects, improves bounded snapshot processing and cached offline paging, and includes complete setup and licence information. Build and device evidence is in `VERIFICATION.md`. The F-Droid recipe is `fdroid/metadata/app.cliphistory.yml`, with store text and images in `fastlane/metadata/android/`.
 
+The upstream project welcomes F-Droid inclusion under its MIT licence. Submission details and the prepared merge-request description are in `docs/F_DROID_SUBMISSION.md` and `docs/F_DROID_MERGE_REQUEST.md`. Bugs and compatibility reports can be filed in this repository's issue tracker.
+
 F-Droid publication requires its independent review and build verification. Providing an APK and source does not mean it is already listed in the main repository.
 
 ## What is implemented
@@ -26,7 +28,7 @@ F-Droid publication requires its independent review and build verification. Prov
 
 On Windows, extract the ZIP fully, then double-click **`BUILD_WINDOWS.cmd`**. Read `START_HERE.md` for the short walkthrough and `BUILDING.md` for details.
 
-Once a build has succeeded, install the generated `ClipHistory-1.2.0.apk`, start Shizuku, open ClipHistory, tap **Connect** and approve Shizuku access. From the three-dot menu, run **Connection test** and add the Quick Settings tile. Keep Gboard selected as your keyboard.
+Once a build has succeeded, install the generated `ClipHistory-1.2.0.apk`, start Shizuku, open ClipHistory and follow the connection prompt to approve Shizuku access. From the three-dot menu, run **Connection test** and add the Quick Settings tile. Keep Gboard selected as your keyboard.
 
 After a phone reboot, restart non-root Shizuku and reopen ClipHistory. Copies made before the recorder resumes cannot be reconstructed. Existing saved history is independent of Gboard's own expiry timer.
 

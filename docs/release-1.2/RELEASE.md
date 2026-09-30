@@ -50,6 +50,8 @@ The toolchain is AGP 9.1.1, official checksum-pinned Gradle 9.3.1, JVM target 17
 
 F-Droid server 2.4.5 metadata lint passes with current fdroiddata category configuration. The source scanner reports zero fatal findings for the public tag. Its signed-APK scanner exits with code 0, including the non-free class and extra signing-block checks. No custom scan exemption or disabled lint baseline was added. Clean-tag Android lint has 0 errors and 5 warnings: four internal clipboard API warnings and one pinned Gradle version suggestion.
 
+The metadata recipe itself also passes `fdroid build --test --scan-binary --no-tarball app.cliphistory:3` locally. F-Droid downloads the public binary, successfully compares the build and validates the allowed signer. Readmeta, rewritemeta, checkupdates and lint succeed. See `fdroid-recipe-build.txt` and `../F_DROID_SUBMISSION.md`. GitLab CI and main-repository review have not run. The user's guide check changes submission metadata/documentation only; production source and signed APK digest remain unchanged.
+
 ## Behavior verified
 
 - 50 core cases, six recorder-state tests and six release-data tests pass. The v1 storage format remains byte compatible; malformed UTF-8 and corrupt snapshots are rejected.

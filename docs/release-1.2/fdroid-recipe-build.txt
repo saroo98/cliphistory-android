@@ -1,0 +1,26 @@
+2026-09-30 09:04:47,154 INFO: Using <build workspace>/sdk/build-tools/36.0.0/apksigner
+2026-09-30 09:04:47,154 INFO: Creating log directory
+2026-09-30 09:04:47,158 INFO: Building version 1.2.0 (3) of app.cliphistory
+2026-09-30 09:04:47,164 INFO: Getting source for revision 5739fb2bfbe26023aa02782a83eb2eb7443d126d
+2026-09-30 09:04:50,078 INFO: Creating local.properties file at build/app.cliphistory/local.properties
+2026-09-30 09:04:50,079 INFO: Creating local.properties file at build/app.cliphistory/app/local.properties
+2026-09-30 09:04:50,081 INFO: Cleaning Gradle project...
+2026-09-30 09:04:56,692 INFO: Scanning source for common problems...
+2026-09-30 09:04:56,695 INFO: Removing gradle-wrapper.jar at gradle/wrapper/gradle-wrapper.jar
+2026-09-30 09:04:56,712 INFO: Building Gradle project...
+2026-09-30 09:05:29,456 INFO: Successfully built version 1.2.0 of app.cliphistory from 5739fb2bfbe26023aa02782a83eb2eb7443d126d
+2026-09-30 09:05:29,532 INFO: Scanning APK with dexdump for known non-free classes.
+2026-09-30 09:05:29,954 INFO: Scanning APK for extra signing blocks.
+2026-09-30 09:05:29,975 INFO: Created directory for storing developer supplied reference binaries: 'tmp/binaries'
+2026-09-30 09:05:29,975 INFO: ...retrieving https://github.com/saroo98/cliphistory-android/releases/download/v1.2.0/ClipHistory-1.2.0.apk
+2026-09-30 09:05:30,733 INFO: ...successfully verified
+2026-09-30 09:05:30,733 INFO: compared built binary to supplied reference binary successfully
+2026-09-30 09:05:30,738 INFO: supplied reference binary has allowed signer ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82
+2026-09-30 09:05:30,738 INFO: success: app.cliphistory
+2026-09-30 09:05:30,738 INFO: Finished
+2026-09-30 09:05:30,738 INFO: 1 build succeeded
+
+Metadata local test: no force or skipped scans.
+Built unsigned SHA-256: c8e05e4e0e2a0feab3a784a2320e4de8026234b31bf968ef5c4b15fd5b172ccf
+PASS: recipe output matches clean public-tag Windows/Linux unsigned APKs.
+Local environment only; GitLab CI and F-Droid inclusion are pending.

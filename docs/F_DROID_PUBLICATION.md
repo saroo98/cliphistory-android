@@ -13,6 +13,7 @@ Application ID: `app.cliphistory`. Version name `1.2.0`, code `3`. Licence MIT. 
 - `LICENSE`, `LICENSES/`, `THIRD_PARTY_NOTICES.md` and the APK's readable licence screen: app and dependency notices.
 - `BUILDING.md`, `DEVICE_TESTS.md`, `VERIFICATION.md` and `docs/release-1.2/`: reproducible build instructions, device coverage and selected evidence.
 - Signed APK, SHA-256 and complete source archive in the GitHub release.
+- `docs/F_DROID_SUBMISSION.md` and `docs/F_DROID_MERGE_REQUEST.md`: current guide/template checks, submission evidence and ready-to-use project details.
 
 The release build uses AGP 9.1.1, Gradle 9.3.1, JDK 17, platform `android-37.0` and Build Tools 36.0.0. The official Gradle wrapper is checksum pinned. F-Droid's standard scanner may remove wrapper files and select the matching installed Gradle distribution. No custom scanning exemption is required.
 
@@ -24,7 +25,9 @@ No signing key, password, device history, SDK cache, emulator log or test APK is
 
 ## Inclusion workflow
 
-F-Droid publishes applications after reviewing source and reproducing their builds; a developer APK alone is insufficient. Submit the supplied metadata and public release source through its Request for Packaging / fdroiddata workflow. Maintainers may adjust the recipe for the current build server or request additional dependency and compatibility evidence. The `Binaries` field requests verification against the upstream signed APK so the existing signing identity can be retained when reproduction succeeds.
+F-Droid publishes applications after reviewing source and reproducing their builds; a developer APK alone is insufficient. The current guide recommends a metadata merge request to fdroiddata. Its exact file is `metadata/app.cliphistory.yml`; descriptions and graphics remain upstream in Fastlane. A prepared request description and the remaining public-fork/CI steps are in `docs/F_DROID_SUBMISSION.md`. Maintainers may adjust the recipe for the current build server or request additional dependency and compatibility evidence. The `Binaries` field requests verification against the upstream signed APK so the existing signing identity can be retained when reproduction succeeds.
+
+The actual local fdroidserver recipe test succeeds, including source/APK scans, downloading the public reference APK, binary verification and allowed signer verification. Readmeta, rewritemeta, update discovery and lint were also checked. This is separate from GitLab CI and main-server verification.
 
 This handoff is prepared for that review. It does not claim an accepted packaging request, merged fdroiddata change or main-repository listing. Those are external decisions and must be reported only after they occur.
 
