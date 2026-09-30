@@ -5,7 +5,7 @@ Verified during implementation on 2026-09-30. Results apply to the named configu
 | Area | Verified evidence | Limit |
 |---|---|---|
 | History | Exact-text unique default; A/B/A/B produces B/A; consecutive-only remains selectable; strict UTF-8, bounds and corrupt-frame rejection pass | Equality preserves spaces and Unicode; no normalization |
-| Migration | Six migration tests cover V1/V2 and interrupted/mirror writes; signed 1.1 and 1.2 upgrades on API 35 preserve text, pause and limits | Upgrade runs used an earlier candidate with the same core code; V2 downgrade unsupported |
+| Migration | Six migration tests cover V1/V2 and interrupted/mirror writes; final signed 1.1 and 1.2 upgrades on API 35 preserve text, pause, limits and UID | Synthetic fixtures only; V2 downgrade unsupported |
 | Recorder | 33 live API 35 assertions cover real shell capture, policies, private persistence, stale IDs, filtering, sustained copies, Stop during attach and real failed preference writes | Disposable synthetic fixtures only |
 | Recovery | API 35 helper/app death, recovery Off, native Recents Clear all with recovery On/Off, Task Manager Stop and Force stop verified | Unknown stop descriptions fail closed; OEM differences require testing |
 | Reboot | Actual API 35 emulator reboot with resumption On/Off and pause preservation | Non-root Shizuku must be started after reboot |
@@ -28,10 +28,14 @@ Thirty warm Pixel openings in the isolated validation variant:
 - SystemUI/accessibility entry availability: p50 **662 ms**, p95 **704 ms**, maximum **716 ms**.
 - These are different stages. Pre-draw does not prove full presentation or touch availability.
 
+After the measured row-reservation fix, thirty further openings preserve identical window sizes. App-loaded pre-draw p50 98.62ms, p95 123.97ms, maximum 147.35ms; SystemUI/accessibility p95 711ms. The final 12-trial timed schedule passes, with all 1,147 encoded frames reviewed and no app deadline miss in 300 app-window frame records. One late presentation is classified SurfaceFlinger Scheduling. Android's own launch animation remains. These runs use the isolated debug validation variant, not the signed production APK.
+
 A 50-copy session with a 20-entry cap completed in 1,816 ms with correct retained entries and zero reported queue drops. During a separate 1,800.579-second API 36 idle observation the same helper survived, CPU user/system ticks remained 21/36 and PSS changed from 39,114 to 38,924 KiB. Kernel wakeups were **not measured**. No clipboard polling, idle watchdog, wake lock or scheduled alarm was added.
 
 ## Boundaries
 
 Pixel 8 Pro: Android 17 beta CP41.260828.004.A8. Owned emulators: API 34, 35 and 36. Test APKs/fixtures do not ship. Physical tests target `app.cliphistory.validation`; production history is never seeded or cleared by the harness.
+
+The final original-key 1.3 APK was subsequently installed over the phone's production 1.1 app with `adb install -r`. Android accepted the update and retained the application UID. The actual installed base APK matches SHA-256 `13fa9570bb2c7e4df7be34b0e4dcb2a92c278113d91ec6f7f43a1061dba1d070`. Production clipboard/history text was not read or exported. The disposable validation app, test APK and validation tile were removed afterwards. A first upgrade requires opening ClipHistory and explicitly connecting to complete the new recovery setup; no production Start, Stop or copying action was automated.
 
 No multi-day battery soak, exhaustive TalkBack audio audit, every OEM/future platform, or F-Droid main-repository acceptance is claimed. Internal clipboard interfaces remain the main compatibility risk.

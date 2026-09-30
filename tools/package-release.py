@@ -15,7 +15,7 @@ assert Path(str(apk)+'.sha256').read_text(encoding='ascii').split()[0] == hashli
 archive=root.parent/f'ClipHistory-{version}-complete.zip'
 files=[p for p in root.iterdir() if p.is_file() and (p.suffix=='.md' or p.name in {'.gitignore','.gitattributes','LICENSE','BUILD_WINDOWS.cmd','build.gradle.kts','settings.gradle.kts','gradle.properties','gradlew','gradlew.bat',apk.name,apk.name+'.sha256'})]
 files.append(root/'app/build.gradle.kts')
-for folder in ('app/src','gradle','LICENSES','tools','docs','fastlane','fdroid/metadata'):
+for folder in ('app/src','gradle','LICENSES','tools','docs','fastlane','fdroid/metadata','fdroid/submission'):
     files.extend(p for p in (root/folder).rglob('*') if p.is_file() and '__pycache__' not in p.parts)
 files=sorted(set(files))
 canonical=None

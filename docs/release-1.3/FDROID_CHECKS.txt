@@ -1,0 +1,35 @@
+fdroid-metadata.txt
+
+2026-09-30 18:56:59,261 INFO: Using <local-linux-workspace>/sdk/build-tools/36.0.0/apksigner
+2026-09-30 18:56:59,395 INFO: Using <local-linux-workspace>/sdk/build-tools/36.0.0/apksigner
+2026-09-30 18:56:59,397 INFO: Rewriting 'app.cliphistory'
+2026-09-30 18:56:59,534 INFO: Using <local-linux-workspace>/sdk/build-tools/36.0.0/apksigner
+
+
+fdroid-checkupdates.txt
+
+2026-09-30 19:14:58,816 INFO: Using <local-linux-workspace>/sdk/build-tools/36.0.0/apksigner
+2026-09-30 19:14:58,819 INFO: Processing app.cliphistory
+
+
+fdroid-recipe-build.txt
+
+2026-09-30 19:00:41,068 INFO: Using <local-linux-workspace>/sdk/build-tools/36.0.0/apksigner
+2026-09-30 19:00:41,072 INFO: Building version 1.3.0 (4) of app.cliphistory
+2026-09-30 19:00:41,078 INFO: Getting source for revision a72134900c574a354a366b24c979f7903b6ace35
+2026-09-30 19:00:44,389 INFO: Creating local.properties file at build/app.cliphistory/local.properties
+2026-09-30 19:00:44,390 INFO: Creating local.properties file at build/app.cliphistory/app/local.properties
+2026-09-30 19:00:44,391 INFO: Cleaning Gradle project...
+2026-09-30 19:00:50,400 INFO: Scanning source for common problems...
+2026-09-30 19:00:50,402 INFO: Removing gradle-wrapper.jar at gradle/wrapper/gradle-wrapper.jar
+2026-09-30 19:00:50,418 INFO: Building Gradle project...
+2026-09-30 19:01:18,153 INFO: Successfully built version 1.3.0 of app.cliphistory from a72134900c574a354a366b24c979f7903b6ace35
+2026-09-30 19:01:18,200 INFO: Scanning APK with dexdump for known non-free classes.
+2026-09-30 19:01:18,621 INFO: Scanning APK for extra signing blocks.
+2026-09-30 19:01:18,639 INFO: ...retrieving https://github.com/saroo98/cliphistory-android/releases/download/v1.3.0/ClipHistory-1.3.0.apk
+2026-09-30 19:01:19,501 INFO: ...successfully verified
+2026-09-30 19:01:19,501 INFO: compared built binary to supplied reference binary successfully
+2026-09-30 19:01:19,504 INFO: supplied reference binary has allowed signer ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82
+2026-09-30 19:01:19,505 INFO: success: app.cliphistory
+2026-09-30 19:01:19,505 INFO: Finished
+2026-09-30 19:01:19,505 INFO: 1 build succeeded

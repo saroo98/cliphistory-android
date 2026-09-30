@@ -1,0 +1,300 @@
+{
+  "configuration": "Pixel 8 Pro, Android 17 beta CP41.260828.004.A8, isolated debug validation app, final measured-row fix",
+  "idle_seconds": 840,
+  "wall_seconds": 1096.203,
+  "encoded_frames": 1147.0,
+  "trials": [
+    {
+      "trial": 1,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 99,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "50.890000",
+          "first_finish_after_touch_up_ms": "65.510000",
+          "last_finish_after_touch_up_ms": "743.230000",
+          "max_frame_ms": "14.620000"
+        }
+      ]
+    },
+    {
+      "trial": 2,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 92,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "65.900000",
+          "first_finish_after_touch_up_ms": "85.750000",
+          "last_finish_after_touch_up_ms": "754.230000",
+          "max_frame_ms": "19.840000"
+        }
+      ]
+    },
+    {
+      "trial": 3,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 93,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "47.090000",
+          "first_finish_after_touch_up_ms": "64.620000",
+          "last_finish_after_touch_up_ms": "735.070000",
+          "max_frame_ms": "17.530000"
+        }
+      ]
+    },
+    {
+      "trial": 4,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 99,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "24",
+          "first_start_after_touch_up_ms": "68.470000",
+          "first_finish_after_touch_up_ms": "71.610000",
+          "last_finish_after_touch_up_ms": "735.260000",
+          "max_frame_ms": "7.980000"
+        },
+        {
+          "present_type": "Unspecified Present",
+          "jank_type": "Non Animating",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "47.650000",
+          "first_finish_after_touch_up_ms": "68.780000",
+          "last_finish_after_touch_up_ms": "68.780000",
+          "max_frame_ms": "21.140000"
+        }
+      ]
+    },
+    {
+      "trial": 5,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 101,
+      "app_frame_groups": [
+        {
+          "present_type": "Early Present",
+          "jank_type": "SurfaceFlinger Scheduling, App Resynced Jitter",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "113.310000",
+          "first_finish_after_touch_up_ms": "121.800000",
+          "last_finish_after_touch_up_ms": "121.800000",
+          "max_frame_ms": "8.490000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "23",
+          "first_start_after_touch_up_ms": "115.230000",
+          "first_finish_after_touch_up_ms": "121.930000",
+          "last_finish_after_touch_up_ms": "785.080000",
+          "max_frame_ms": "13.850000"
+        },
+        {
+          "present_type": "Unspecified Present",
+          "jank_type": "Non Animating",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "90.100000",
+          "first_finish_after_touch_up_ms": "113.170000",
+          "last_finish_after_touch_up_ms": "113.170000",
+          "max_frame_ms": "23.070000"
+        }
+      ]
+    },
+    {
+      "trial": 6,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 94,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "44.890000",
+          "first_finish_after_touch_up_ms": "61.340000",
+          "last_finish_after_touch_up_ms": "732.570000",
+          "max_frame_ms": "16.460000"
+        }
+      ]
+    },
+    {
+      "trial": 7,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 92,
+      "app_frame_groups": [
+        {
+          "present_type": "Late Present",
+          "jank_type": "SurfaceFlinger Scheduling",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "55.620000",
+          "first_finish_after_touch_up_ms": "63.820000",
+          "last_finish_after_touch_up_ms": "63.820000",
+          "max_frame_ms": "8.200000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "Buffer Stuffing",
+          "frames": "11",
+          "first_start_after_touch_up_ms": "57.500000",
+          "first_finish_after_touch_up_ms": "63.960000",
+          "last_finish_after_touch_up_ms": "144.320000",
+          "max_frame_ms": "11.370000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "13",
+          "first_start_after_touch_up_ms": "40.310000",
+          "first_finish_after_touch_up_ms": "54.320000",
+          "last_finish_after_touch_up_ms": "729.230000",
+          "max_frame_ms": "14.010000"
+        }
+      ]
+    },
+    {
+      "trial": 8,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 94,
+      "app_frame_groups": [
+        {
+          "present_type": "Early Present",
+          "jank_type": "SurfaceFlinger Scheduling, App Resynced Jitter",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "70.050000",
+          "first_finish_after_touch_up_ms": "74.440000",
+          "last_finish_after_touch_up_ms": "74.440000",
+          "max_frame_ms": "4.380000"
+        },
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "23",
+          "first_start_after_touch_up_ms": "75.610000",
+          "first_finish_after_touch_up_ms": "78.410000",
+          "last_finish_after_touch_up_ms": "737.870000",
+          "max_frame_ms": "9.840000"
+        },
+        {
+          "present_type": "Unspecified Present",
+          "jank_type": "Non Animating",
+          "frames": "1",
+          "first_start_after_touch_up_ms": "52.420000",
+          "first_finish_after_touch_up_ms": "74.220000",
+          "last_finish_after_touch_up_ms": "74.220000",
+          "max_frame_ms": "21.810000"
+        }
+      ]
+    },
+    {
+      "trial": 9,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 92,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "45.860000",
+          "first_finish_after_touch_up_ms": "60.470000",
+          "last_finish_after_touch_up_ms": "722.880000",
+          "max_frame_ms": "14.600000"
+        }
+      ]
+    },
+    {
+      "trial": 10,
+      "idle_seconds": 60,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 100,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "52.970000",
+          "first_finish_after_touch_up_ms": "72.250000",
+          "last_finish_after_touch_up_ms": "748.490000",
+          "max_frame_ms": "19.280000"
+        }
+      ]
+    },
+    {
+      "trial": 11,
+      "idle_seconds": 120,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 100,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "59.450000",
+          "first_finish_after_touch_up_ms": "75.700000",
+          "last_finish_after_touch_up_ms": "754.660000",
+          "max_frame_ms": "16.250000"
+        }
+      ]
+    },
+    {
+      "trial": 12,
+      "idle_seconds": 120,
+      "native_tap": true,
+      "stable": true,
+      "closed_with_one_tap": true,
+      "encoded_frames": 91,
+      "app_frame_groups": [
+        {
+          "present_type": "On-time Present",
+          "jank_type": "None",
+          "frames": "25",
+          "first_start_after_touch_up_ms": "53.150000",
+          "first_finish_after_touch_up_ms": "68.330000",
+          "last_finish_after_touch_up_ms": "730.160000",
+          "max_frame_ms": "15.170000"
+        }
+      ]
+    }
+  ],
+  "limitations": "Variable-frame-rate encoded video, not every physical refresh. No production clipboard text or raw device media is included. First app frames precede the remaining Android icon expansion/fade. Cumulative gfxinfo jank is excluded."
+}

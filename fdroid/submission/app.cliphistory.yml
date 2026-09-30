@@ -14,13 +14,6 @@ Repo: https://github.com/saroo98/cliphistory-android.git
 Binaries: https://github.com/saroo98/cliphistory-android/releases/download/v%v/ClipHistory-%v.apk
 
 Builds:
-  - versionName: 1.2.0
-    versionCode: 3
-    commit: 5739fb2bfbe26023aa02782a83eb2eb7443d126d
-    subdir: app
-    gradle:
-      - yes
-
   - versionName: 1.3.0
     versionCode: 4
     commit: a72134900c574a354a366b24c979f7903b6ace35

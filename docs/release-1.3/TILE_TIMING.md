@@ -14,15 +14,27 @@ All **1,158 encoded frames** were decoded in presentation order and reviewed as 
 - Trial 10 contains one late app frame: `App Deadline Missed, App Resynced Jitter`, 29.68 ms. Startup packets in trials 5, 8 and 11 were overwritten in the original shared buffer. No zero-jank claim is supported.
 - The later 30-opening test separates app pre-draw and accessibility availability; see `COVERAGE.md`.
 
-The native driver now separates frame timeline and ftrace buffers. The second full run on the current candidate also passed **12/12**, with 840 seconds idle and 1,098.407 seconds wall time. All **1,183 encoded frames** were decoded and reviewed. Each panel stayed open and closed with one tap. All twelve traces retained startup input and reported no positive error statistics in the trace processor.
+The native driver now separates frame timeline and ftrace buffers. The second full run before the measured row-reservation fix also passed **12/12**, with 840 seconds idle and 1,098.407 seconds wall time. All **1,183 encoded frames** were decoded and reviewed. Each panel stayed open and closed with one tap. All twelve traces retained startup input and reported no positive error statistics in the trace processor.
 
 The second run contains 297 app-window frame records, with two late presentations: trial 2 (20.05 ms) and trial 12 (23.18 ms), both labelled `App Deadline Missed, App Resynced Jitter`. These counts describe this bounded observation, not every device refresh or future opening. The trial 12 trace includes a 12.47 ms window relayout with resize; a separate instrumentation observation checks whether content loading changes the measured window size. The icon expansion/fade remains visible. Literal zero delay, zero extra system animation and zero late frames have **not** been achieved.
 
-Selected numeric results are in `TILE_NUMBERS.json`. Accessibility XML dump timings include the dump's own several-second overhead and are not app loading measurements. Cumulative `dumpsys gfxinfo` counters are not counted as per-trial jank.
+Selected second-run numeric results are in `TILE_NUMBERS.json`; final results are in `TILE_FINAL_NUMBERS.json`. Accessibility XML dump timings include the dump's own several-second overhead and are not app loading measurements. Cumulative `dumpsys gfxinfo` counters are not counted as per-trial jank.
 
 ## Measured resize fix
 
-Thirty additional openings confirmed that a two-line native button measured 194px, while its 64dp reservation was 192px. The loading window was 993px tall and became 995px when entries arrived. The app now reserves the height of the same native two-line button at the current font scale. Thirty openings on that fix retain an identical **1080x999px** window throughout loading; app-loaded pre-draw p95 is **123.97ms**, maximum **147.35ms**. The full timed schedule is being repeated on this code.
+Thirty additional openings confirmed that a two-line native button measured 194px, while its 64dp reservation was 192px. The loading window was 993px tall and became 995px when entries arrived. The app now reserves the height of the same native two-line button at the current font scale. Thirty openings on that fix retain an identical **1080x999px** window throughout loading; app-loaded pre-draw p95 is **123.97ms**, maximum **147.35ms**.
+
+The third full timed schedule on the fix passed **12/12**, with 840 seconds idle and **1,096.203 seconds** wall time. All **1,147 encoded frames** were reviewed in order. No immediate dismissal or 2–4 second binding stall recurred. First app-frame completion was **54.32–113.17ms after touch-up**, which precedes completion of Android's visible launch animation. All twelve traces retained startup and reported no positive parser-error statistics. The 300 app-window frame records have **no App Deadline Missed classification**; one late presentation is labelled **SurfaceFlinger Scheduling** (8.20ms frame duration). That is a bounded observation, not a universal zero-jank guarantee. The system icon expansion/fade remains visible.
+
+| Final app-window classification | Records |
+|---|---|
+| On-time Present / None | 283 |
+| On-time Present / Buffer Stuffing | 11 |
+| Early Present / SurfaceFlinger Scheduling, App Resynced Jitter | 2 |
+| Late Present / SurfaceFlinger Scheduling | 1 |
+| Unspecified Present / Non Animating | 3 |
+
+No app deadline miss does not mean every record has a None classification. These compositor observations remain part of the disclosed result.
 
 The API 34 emulator's first test attempt after repeated replacement/add/remove operations encountered a tile cached as unavailable with stale SystemUI bindings. Rebooting the owned emulator cleared that precondition and the native 20-assertion suite passed. API 36 passed directly. These observations do not establish every manufacturer/update path.
 

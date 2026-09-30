@@ -24,6 +24,8 @@ Tap the eye button, or hold an entry and choose **View full text** to read it. U
 
 Open **Settings** for duplicate handling, recovery, reboot resumption, explicit Start/Stop, optional battery guidance, floating or full-history tile mode, screen privacy, motion and welcome options.
 
+After upgrading from 1.1 or 1.2, open ClipHistory and tap **Connect** once to complete the new recovery setup. The saved pause and history limit are preserved by migration; an explicit restart after a recorded Stop deliberately resumes recording.
+
 After reboot, unlock and start Shizuku again. Enabled recovery attempts reconnection once Shizuku is available and Android permits it. Otherwise reopen ClipHistory and reconnect. Copies made before reconnection cannot be recovered. The **Always-on guide** explains the steps.
 
 Screenshots and screen recording are blocked by default. Enable **Allow screenshots** when desired; Recents hiding is independent. Version 1.3 migrates saved history to v2, so downgrading to older releases is unsupported. Update with the same signer without uninstalling to preserve history.

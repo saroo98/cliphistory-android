@@ -1,0 +1,60 @@
+[
+  {
+    "old_version": "1.1.0",
+    "new_version": "1.3.0",
+    "api": "35",
+    "same_uid": true,
+    "signed_in_place_update": true,
+    "old_offline_fixture_verified": true,
+    "slots": [
+      {
+        "format": 2,
+        "count": 2,
+        "limit": 20,
+        "paused": true,
+        "mode": 0,
+        "generation": 11
+      },
+      {
+        "format": 2,
+        "count": 2,
+        "limit": 20,
+        "paused": true,
+        "mode": 0,
+        "generation": 10
+      }
+    ],
+    "new_apk_sha256": "13fa9570bb2c7e4df7be34b0e4dcb2a92c278113d91ec6f7f43a1061dba1d070",
+    "fixture": "Synthetic v1 duplicate, Unicode and whitespace history; root adbd only for fixture access; shell UID 2000 recorder",
+    "target": "Owned disposable API 35 emulator"
+  },
+  {
+    "old_version": "1.2.0",
+    "new_version": "1.3.0",
+    "api": "35",
+    "same_uid": true,
+    "signed_in_place_update": true,
+    "old_offline_fixture_verified": true,
+    "slots": [
+      {
+        "format": 2,
+        "count": 2,
+        "limit": 20,
+        "paused": true,
+        "mode": 0,
+        "generation": 11
+      },
+      {
+        "format": 2,
+        "count": 2,
+        "limit": 20,
+        "paused": true,
+        "mode": 0,
+        "generation": 10
+      }
+    ],
+    "new_apk_sha256": "13fa9570bb2c7e4df7be34b0e4dcb2a92c278113d91ec6f7f43a1061dba1d070",
+    "fixture": "Synthetic v1 duplicate, Unicode and whitespace history; root adbd only for fixture access; shell UID 2000 recorder",
+    "target": "Owned disposable API 35 emulator"
+  }
+]
