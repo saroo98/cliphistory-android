@@ -18,4 +18,3 @@ PASS Real private storage and owner-stop checks succeed
 PASS No captures or queue drops during paused attachment
 PASS Paused validation recorder stopped durably
 PASS 9 feature assertions (paused-connection), API 37. Synthetic validation only.
-

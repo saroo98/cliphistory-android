@@ -39,4 +39,3 @@ PASS Panel Close bounds settled
 PASS Close removes actual dialog window
 PASS Close dismisses floating panel
 PASS 20 feature assertions (tile), API 36. Synthetic validation only.
-

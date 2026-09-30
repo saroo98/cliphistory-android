@@ -16,4 +16,3 @@ PASS Full maximum length text opens
 Full text: 1040 ms; heap limit 256 MiB
 Encode 2758 bytes: 0 ms
 PASS 5 release assertions (capacity). Synthetic data only.
-

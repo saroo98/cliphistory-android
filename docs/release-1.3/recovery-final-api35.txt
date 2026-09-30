@@ -21,4 +21,3 @@ PASS Failed durable preference write reports failure
 PASS Failed preference write restores in-memory recording options
 PASS Recording preferences remain writable after failure recovery
 PASS 11 feature assertions (recovery), API 35. Synthetic validation only.
-

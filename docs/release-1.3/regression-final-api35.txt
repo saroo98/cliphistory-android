@@ -25,4 +25,3 @@ PASS File changes invalidate cached history (BOTH_SNAPSHOTS_UNREADABLE)
 PASS Diagnostics reports current file corruption
 Encode 2758 bytes: 0 ms
 PASS 12 release assertions (regression). Synthetic data only.
-

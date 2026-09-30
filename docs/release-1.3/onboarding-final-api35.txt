@@ -47,4 +47,3 @@ PASS Guide includes step 1: 6
 PASS Guide includes step 1: 7
 PASS Guide exposes Shizuku and connection-test actions
 PASS 24 feature assertions (onboarding), API 35. Synthetic validation only.
-

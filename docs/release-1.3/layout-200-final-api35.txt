@@ -23,4 +23,3 @@ PASS Large-text landscape results remain reachable
 PASS Sheet fits current window
 PASS Sheet handle dismisses panel
 PASS 11 release assertions (layout). Synthetic data only.
-

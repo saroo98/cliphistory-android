@@ -68,4 +68,3 @@ PASS Explicit Start resumes a deliberately stopped recorder
 PASS Failed first-setup persistence removes attached helper
 PASS Failed setup is not reported complete and saves pause before removing capture
 PASS 33 release assertions (live). Synthetic data only.
-

@@ -21,4 +21,3 @@ PASS confirmation window follows live screenshot control
 PASS Actual OS capture protects, exposes and protects confirmation surface
 PASS Settings expose labelled switches with 48dp targets and enabled controls are focusable
 PASS 11 feature assertions (privacy), API 35. Synthetic validation only.
-

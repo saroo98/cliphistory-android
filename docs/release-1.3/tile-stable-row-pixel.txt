@@ -486,4 +486,3 @@ PASS Performance panel dismissed 30
 Actual SystemUI tile invocation (statusbar command) to available entries, 30 warm openings: p50=665 ms, p95=711 ms, max=727 ms
 PASS Thirty warm latest-three loads meet p95 <= 500 ms
 PASS 227 feature assertions (tile-performance), API 37. Synthetic validation only.
-

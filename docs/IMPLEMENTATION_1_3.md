@@ -19,5 +19,3 @@ Approved scope: the supplied 1.3 plan. Existing native Views, one module, Shizuk
 | 13 | Release documentation and F-Droid evidence | In progress: README, startup, build, security, device checklist, Fastlane description and changelog updated; fresh evidence gathered separately from 1.2. Exact clean-source reproduction/recipe and public handoff pending |
 
 Completion requires durable history migration, selectable behavior, meaningful unit and runtime validation, accurate platform limits, a verified signed APK, and a reviewed final diff. Publication acceptance is an external result and must not be invented. Non-root Shizuku still requires starting after reboot.
-
-

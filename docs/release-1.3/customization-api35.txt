@@ -17,4 +17,3 @@ PASS Malformed legacy presentation values use compatible defaults
 PASS All-off recreation shows no optional popup
 PASS All-off settings survive recreation
 PASS 9 feature assertions (customization), API 35. Synthetic validation only.
-
