@@ -166,7 +166,7 @@ try {
     }
     [IO.File]::WriteAllText((Join-Path $Root 'local.properties'), "sdk.dir=$Escaped`n", [Text.Encoding]::ASCII)
     Prepare-Signing $JavaHome
-    & powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'gradle.ps1') `
+    & (Join-Path $Root 'gradlew.bat') `
         --no-daemon :app:testDebugUnitTest :app:lintRelease :app:assembleRelease
     if ($LASTEXITCODE -ne 0) { throw 'Compilation, tests or lint failed. No success is claimed. Read build-windows.log.' }
     $Apk = Join-Path $Root 'app\build\outputs\apk\release\app-release.apk'
@@ -189,10 +189,12 @@ try {
     if ($LASTEXITCODE -ne 0 -or $Badging -notmatch "targetSdkVersion:'37'" -or $Badging -match 'application-debuggable') {
         throw 'APK target/debuggable audit failed.'
     }
-    $Result = Join-Path $Root 'ClipHistory-1.1.0.apk'
+    $Version = [regex]::Match([IO.File]::ReadAllText((Join-Path $Root 'app/build.gradle.kts')), 'versionName\s*=\s*"([^"]+)"').Groups[1].Value
+    if (!$Version) { throw 'Release version is missing.' }
+    $Result = Join-Path $Root "ClipHistory-$Version.apk"
     Copy-Item -Force $Apk $Result
     $Digest = (Get-FileHash $Result -Algorithm SHA256).Hash.ToLowerInvariant()
-    [IO.File]::WriteAllText("$Result.sha256", "$Digest  ClipHistory-1.1.0.apk`n", [Text.Encoding]::ASCII)
+    [IO.File]::WriteAllText("$Result.sha256", "$Digest  ClipHistory-$Version.apk`n", [Text.Encoding]::ASCII)
     Write-Host ''
     Write-Host 'APK built, tested at the JVM level, linted and signature/permission-checked.' -ForegroundColor Green
     Write-Host $Result

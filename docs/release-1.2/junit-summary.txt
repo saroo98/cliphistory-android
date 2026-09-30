@@ -1,0 +1,4 @@
+app.cliphistory.CoreJUnitTest: tests=1, failures=0, errors=0
+app.cliphistory.RecorderStateTest: tests=6, failures=0, errors=0
+app.cliphistory.ReleaseDataTest: tests=6, failures=0, errors=0
+CoreSuite executes 50 core cases inside its JUnit wrapper.

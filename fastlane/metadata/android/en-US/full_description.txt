@@ -1,0 +1,15 @@
+Keep a calm, searchable history of copied plain text on your device.
+
+• Tap to copy, or open full text with the eye button.
+• Search the entire saved text, including long entries.
+• Pause recording, choose a limit from 20 to 500 entries, and clear or delete saved text.
+• Use light, dark or system appearance and a Quick Settings tile.
+• Read saved history offline when the recorder is stopped.
+
+Requires Android 14 or newer, the primary device profile, and Shizuku API 13 or newer running in non-root shell mode. Shizuku is a separate app. Guided setup explains installation, wireless-debugging pairing, starting the service and granting access. Shizuku must be started again after reboot.
+
+No internet permission, account, advertising, analytics or cloud service. Your usual keyboard stays unchanged. History uses private no-backup storage and the app blocks screenshots.
+
+Text over 64 KiB, unsupported payloads and clips marked sensitive are skipped. Clips that are not marked sensitive may still contain private information. The Android internal clipboard interface can vary across devices and OS updates. Root-mode recording and work profiles are not supported in this release.
+
+Source and issue tracker: https://github.com/saroo98/cliphistory-android

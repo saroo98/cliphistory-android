@@ -40,6 +40,11 @@ class MainActivity:Activity() {
     private var page:View?=null
     private var pageKind=""
     private var previewId=-1L
+    private var navigation=0L
+    private var restoredCount=40
+    private var restoredAnchor:HistoryHome.Anchor?=null
+    private var diagnosticPage:DetailPages.DiagnosticPage?=null
+    private var operationIssue=""
     private var snackbar:TextView?=null
     private val dialogs=mutableSetOf<Dialog>()
     private var menu:PopupWindow?=null
@@ -47,7 +52,7 @@ class MainActivity:Activity() {
     private var recorderDialog:Dialog?=null
     private val changed:()->Unit={ if(visible)refresh() }
     private val searchChanged=Runnable { if(visible)refresh(reset=true) }
-    private val back=OnBackInvokedCallback { closePage() }
+    private val back=OnBackInvokedCallback { if(pageKind=="licenses")help() else closePage() }
     private fun s(id:Int)=getString(id)
 
     override fun attachBaseContext(newBase:Context) { super.attachBaseContext(AppSettings.themedContext(newBase)) }
@@ -60,7 +65,7 @@ class MainActivity:Activity() {
         settings=AppSettings(this);ui=Ui(this);pages=DetailPages(ui)
         root=FrameLayout(this).apply { setBackgroundColor(ui.color(R.color.canvas)) }
         home=HistoryHome(ui,::showMenu,{ client.connect(true) },{ client.openShizuku() },::help,::recorder,
-            { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics)
+            { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview)
         root.addView(home.root,FrameLayout.LayoutParams(-1,-1));setContentView(root)
         window.insetsController?.setSystemBarsAppearance(if(light)WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS else 0,
             WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS)
@@ -68,28 +73,36 @@ class MainActivity:Activity() {
             val bars=insets.getInsets(WindowInsets.Type.systemBars() or WindowInsets.Type.displayCutout())
             val ime=insets.getInsets(WindowInsets.Type.ime())
             view.setPadding(bars.left,bars.top,bars.right,maxOf(bars.bottom,ime.bottom))
-            home.hint.visibility=if(ime.bottom>bars.bottom)View.GONE else View.VISIBLE
+            home.keyboard(ime.bottom>bars.bottom)
             insets
         }
         root.requestApplyInsets()
         home.search.setText(state?.getString("query").orEmpty())
+        loadedQuery=home.search.text.toString()
+        restoredCount=state?.getInt("loaded_count",40)?.coerceIn(40,MAX_LIMIT)?:40
+        if(state?.containsKey("anchor_position")==true)restoredAnchor=HistoryHome.Anchor(state.getLong("anchor_id",-1),state.getInt("anchor_position"),state.getInt("anchor_top"))
         home.clear.visibility=if(home.search.text.isEmpty())View.GONE else View.VISIBLE
         home.search.addTextChangedListener(object:TextWatcher {
             override fun beforeTextChanged(s:CharSequence?,start:Int,count:Int,after:Int){}
             override fun onTextChanged(s:CharSequence?,start:Int,before:Int,count:Int) {
                 home.clear.visibility=if(s.isNullOrEmpty())View.GONE else View.VISIBLE
-                request++;main.removeCallbacks(searchChanged);main.postDelayed(searchChanged,150)
+                request++;client.cancelPageReads();main.removeCallbacks(searchChanged);main.postDelayed(searchChanged,150)
             }
             override fun afterTextChanged(s:Editable?){}
         })
         home.search.setOnEditorActionListener { _,_,_ -> hideKeyboard();true }
-        home.list.setOnItemClickListener { _,_,position,_ -> if(position<home.adapter.count)copyEntry(home.adapter.getItem(position).id) }
+        home.list.setOnItemClickListener { _,_,position,_ ->
+            val index=position-home.list.headerViewsCount
+            if(index in 0 until home.adapter.count)copyEntry(home.adapter.getItem(index).id)
+        }
         home.list.setOnItemLongClickListener { _,_,position,_ ->
-            if(position<home.adapter.count)entryActions(home.adapter.getItem(position));true
+            val index=position-home.list.headerViewsCount
+            if(index in 0 until home.adapter.count)entryActions(home.adapter.getItem(index));true
         }
         updateCopyHint()
         when(state?.getString("page")) {
             "help"->help()
+            "licenses"->showPage("licenses",pages.licenses(::help))
             "preview"->{previewId=state.getLong("preview",-1);pageKind="restore-preview"}
             "diagnostics"->pageKind="restore-diagnostics"
         }
@@ -98,11 +111,15 @@ class MainActivity:Activity() {
         super.onStart();visible=true;client.addListener(changed);client.connect(false);refresh()
     }
     override fun onStop() {
-        visible=false;request++;client.removeListener(changed);main.removeCallbacksAndMessages(null)
+        visible=false;request++;navigation++;client.cancelPageReads();client.removeListener(changed);main.removeCallbacksAndMessages(null)
+        snackbar?.let { root.removeView(it) };snackbar=null
         dialogs.toList().forEach { it.dismiss() };menu?.dismiss();super.onStop()
     }
     override fun onSaveInstanceState(out:Bundle) {
         out.putString("query",home.search.text.toString());out.putString("page",pageKind);out.putLong("preview",previewId)
+        out.putInt("loaded_count",maxOf(rows.size,restoredCount))
+        val anchor=restoredAnchor?:home.anchor()
+        out.putLong("anchor_id",anchor.id);out.putInt("anchor_position",anchor.position);out.putInt("anchor_top",anchor.top)
         super.onSaveInstanceState(out)
     }
     private fun hideKeyboard() { getSystemService(InputMethodManager::class.java)?.hideSoftInputFromWindow(home.search.windowToken,0);home.search.clearFocus() }
@@ -110,17 +127,24 @@ class MainActivity:Activity() {
     private fun refresh(append:Boolean=false,reset:Boolean=false) {
         val token=++request;val query=home.search.text.toString();val offset=if(append)rows.size else 0
         if(append && query!=loadedQuery) { refresh(reset=true);return }
-        val wanted=if(reset || query!=loadedQuery)40 else maxOf(40,rows.size)
+        val wanted=if(reset || query!=loadedQuery)40 else maxOf(restoredCount,40,rows.size)
         home.more.isEnabled=false
         fun receive(result:DaemonClient.Page) {
             if(!visible || token!=request)return
             if(append && result.generation!=generation) { refresh();return }
             rows=if(append)(rows+result.rows).distinctBy { it.id } else result.rows
             loadedQuery=query
-            latest=result.status;offline=result.offline;generation=result.generation
+            latest=Bundle(result.status).apply {
+                if(result.issue.isNotEmpty())putString("issue",result.issue)
+                putString("operationIssue",operationIssue);putLong("checkedAt",System.currentTimeMillis())
+            }
+            offline=result.offline;generation=result.generation
             home.show(result,rows,recorderState(client.connectionStage(),latest.getBoolean("paused"),latest.getBoolean("active"),latest.getString("selfTest")=="PASS",latest.getString("issue").orEmpty().isNotEmpty()),query)
-            if(reset)home.list.setSelection(0)
+            if(reset){restoredAnchor=null;restoredCount=40;home.list.setSelection(0)}
+            else restoredAnchor?.let { anchor -> home.list.post { home.restore(anchor) };restoredAnchor=null }
+            restoredCount=maxOf(40,rows.size)
             recorderContent?.let { fillRecorder(it,recorderDialog!!) }
+            if(pageKind=="diagnostics")diagnosticPage?.update?.invoke(latest,offline)
             when(pageKind) {
                 "restore-preview"->{pageKind="";preview(previewId)}
                 "restore-diagnostics"->{pageKind="";diagnostics()}
@@ -153,6 +177,7 @@ class MainActivity:Activity() {
         val dialog=Dialog(this)
         box.addView(ui.title(s(title)));box.addView(ui.space(16));ui.paragraph(box,s(body))
         val actions=LinearLayout(this).apply { gravity=Gravity.END }
+        if(resources.configuration.fontScale>1.3f)actions.orientation=LinearLayout.VERTICAL
         if(showCancel)actions.addView(ui.button(s(R.string.cancel)) { dialog.dismiss() })
         actions.addView(ui.button(s(positive),danger=danger) { dialog.dismiss();action() });box.addView(actions)
         val scroll=ScrollView(this).apply { addView(box) };dialog.setContentView(scroll)
@@ -172,13 +197,17 @@ class MainActivity:Activity() {
         getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText(label,text));true
     } catch (_:Exception) {message(R.string.copy_failed_title,R.string.copy_failed_body);false}
     private fun copyEntry(id:Long) {
-        client.getText(id) { text ->
-            if(!visible || isFinishing || isDestroyed)return@getText
+        val token=++navigation
+        client.getText(id) { result ->
+            if(!visible || isFinishing || isDestroyed || token!=navigation)return@getText
+            if(result.issue.isNotEmpty()){operationIssue=result.issue;notifyUser(R.string.history_read_failed);refresh();return@getText}
+            operationIssue=""
+            val text=result.text
             if(text==null){notifyUser(R.string.entry_gone);closePage();refresh();return@getText}
             if(putClipboard(s(R.string.app_name),text)) {
                 if(settings.returnAfterCopy)finish() else {
                     notifyUser(R.string.copied)
-                    val index=rows.indexOfFirst { it.id==id }-home.list.firstVisiblePosition
+                    val index=rows.indexOfFirst { it.id==id }+home.list.headerViewsCount-home.list.firstVisiblePosition
                     val row=home.list.getChildAt(index)
                     row?.setBackgroundColor(ui.color(R.color.selected))
                     row?.postDelayed({row.setBackgroundColor(Color.TRANSPARENT)},300)
@@ -188,14 +217,18 @@ class MainActivity:Activity() {
     }
     private fun command(action:(IClipboardDaemon)->Bundle,after:((Bundle)->Unit)?=null) {
         if(!client.connected()){message(R.string.not_connected,R.string.connect_mutation);return}
+        val token=navigation
         client.command(action) { response ->
             if(!visible || isFinishing || isDestroyed)return@command
-            if(!response.getBoolean("ok"))sheet(R.string.operation_failed) { box,dialog ->
+            if(!response.getBoolean("ok")) {
+                operationIssue=response.getString("issue","OPERATION_FAILED")
+                if(token==navigation)sheet(R.string.operation_failed) { box,dialog ->
                 ui.paragraph(box,s(R.string.operation_body))
                 box.addView(ui.button(s(R.string.view_diagnostics)){dialog.dismiss();diagnostics()})
                 box.addView(ui.button(s(R.string.done)){dialog.dismiss()})
+                }
             }
-            else {latest=response;after?.invoke(response)}
+            else {operationIssue="";latest=response;if(token==navigation)after?.invoke(response)}
             refresh()
         }
     }
@@ -212,18 +245,25 @@ class MainActivity:Activity() {
         }
     }
     private fun showPage(kind:String,view:View) {
+        navigation++
+        if(kind!="diagnostics")diagnosticPage=null
         hideKeyboard();page?.let { root.removeView(it) }
         if(page==null)onBackInvokedDispatcher.registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT,back)
         pageKind=kind;page=view;home.root.visibility=View.GONE;root.addView(view,FrameLayout.LayoutParams(-1,-1))
     }
     private fun closePage() {
+        navigation++
         if(page==null)return
-        page?.let { root.removeView(it) };page=null;pageKind="";previewId=-1
+        page?.let { root.removeView(it) };page=null;pageKind="";previewId=-1;diagnosticPage=null
         onBackInvokedDispatcher.unregisterOnBackInvokedCallback(back);home.root.visibility=View.VISIBLE
     }
     private fun preview(id:Long) {
-        client.getText(id) { text ->
-            if(!visible || isFinishing || isDestroyed)return@getText
+        val token=++navigation
+        client.getText(id) { result ->
+            if(!visible || isFinishing || isDestroyed || token!=navigation)return@getText
+            if(result.issue.isNotEmpty()){operationIssue=result.issue;notifyUser(R.string.history_read_failed);refresh();return@getText}
+            operationIssue=""
+            val text=result.text
             if(text==null){notifyUser(R.string.entry_gone);return@getText}
             previewId=id
             showPage("preview",pages.page(s(R.string.saved_text),::closePage) { content,footer ->
@@ -235,12 +275,16 @@ class MainActivity:Activity() {
             })
         }
     }
-    private fun help() { showPage("help",pages.help(::closePage)) }
+    private fun help() { showPage("help",pages.help(::closePage,::openWebsite,{client.openShizuku()},{client.connect(true)}) { showPage("licenses",pages.licenses(::help)) }) }
+    private fun openWebsite(url:String) {
+        try { startActivity(Intent(Intent.ACTION_VIEW,android.net.Uri.parse(url))) }
+        catch (_:ActivityNotFoundException){notifyUser(R.string.browser_missing)}
+    }
     private fun diagnostics() {
-        val snapshot=Bundle(latest);val disconnected=offline
-        showPage("diagnostics",pages.diagnostics(snapshot,disconnected,::closePage) {
-            if(putClipboard(s(R.string.diagnostics),pages.report(snapshot,disconnected)))notifyUser(R.string.copied)
-        })
+        val details=pages.diagnostics(latest,offline,::closePage) {
+            if(putClipboard(s(R.string.diagnostics),pages.report(latest,offline)))notifyUser(R.string.copied)
+        }
+        diagnosticPage=details;showPage("diagnostics",details.view)
     }
     private fun showMenu(anchor:View) {
         hideKeyboard()
@@ -268,7 +312,7 @@ class MainActivity:Activity() {
         sheet(R.string.history_limit) { box,dialog ->
             ui.paragraph(box,s(R.string.limit_body));box.addView(ui.text(s(R.string.saved_texts),13f,true))
             val field=EditText(this).apply {
-                inputType=InputType.TYPE_CLASS_NUMBER;setText(latest.getInt("limit",DEFAULT_LIMIT).toString());selectAll()
+                inputType=InputType.TYPE_CLASS_NUMBER;setText(java.text.NumberFormat.getIntegerInstance().apply { isGroupingUsed=false }.format(latest.getInt("limit",DEFAULT_LIMIT)));selectAll()
                 textSize=18f;setTextColor(ui.ink);background=ui.shape(ui.color(R.color.surface),12,ui.color(R.color.divider))
                 setPadding(ui.dp(16),ui.dp(12),ui.dp(16),ui.dp(12));contentDescription=s(R.string.saved_texts)
                 filters=arrayOf(InputFilter.LengthFilter(4))
@@ -347,6 +391,10 @@ class MainActivity:Activity() {
         pages.keyValue(box,s(R.string.clipboard_event),s(if(test=="PASS" || test=="STORAGE_FAILED")R.string.received else R.string.not_confirmed))
         pages.keyValue(box,s(R.string.storage_check),s(if(!offline && latest.getBoolean("storageVerified"))R.string.passed else R.string.not_confirmed))
         pages.keyValue(box,s(R.string.recording),s(if(!offline && latest.getBoolean("active"))R.string.active else R.string.inactive))
+        if(!offline && latest.getLong("queueDrops")>0) {
+            pages.keyValue(box,s(R.string.missed_copies),latest.getLong("queueDrops").toString())
+            ui.paragraph(box,s(R.string.missed_body))
+        }
         if(test=="STORAGE_FAILED")ui.paragraph(box,s(R.string.test_storage_failed))
         if(test=="NO_CALLBACK_RECEIVED")ui.paragraph(box,s(R.string.test_failed_body))
         box.addView(ui.space(16));ui.paragraph(box,s(R.string.test_boundary))

@@ -1,6 +1,5 @@
 package app.cliphistory.core
 
-import java.io.*
 import java.nio.ByteBuffer
 import java.nio.charset.CodingErrorAction
 import java.security.MessageDigest
@@ -13,20 +12,24 @@ object SnapshotCodec {
 
     fun encode(s: Snapshot): ByteArray {
         validate(s)
-        val buffer = ByteArrayOutputStream()
-        DataOutputStream(buffer).use { out ->
-            out.writeInt(MAGIC); out.writeInt(VERSION)
-            out.writeLong(s.generation); out.writeInt(s.limit); out.writeLong(s.nextId)
-            out.writeBoolean(s.paused); out.writeInt(s.entries.size)
-            for (entry in s.entries) {
-                val text = entry.text.toByteArray(Charsets.UTF_8)
-                out.writeLong(entry.id); out.writeLong(entry.timestamp)
-                out.writeInt(text.size); out.write(text)
+        // Encode each text once and allocate the final frame once. The v1 bytes
+        // stay identical, without growing/copying a 32 MiB stream repeatedly.
+        val texts=s.entries.map { entry ->
+            entry.text.toByteArray(Charsets.UTF_8).also { bytes ->
+                if(bytes.size>MAX_TEXT_BYTES || String(bytes,Charsets.UTF_8)!=entry.text)throw StoreException("INVALID_TEXT")
             }
         }
-        val body = buffer.toByteArray()
-        if (body.size + HASH_SIZE > MAX_SNAPSHOT_BYTES) throw StoreException("SNAPSHOT_TOO_LARGE")
-        return body + MessageDigest.getInstance("SHA-256").digest(body)
+        val bodyLength=33L+texts.sumOf { 20L+it.size }
+        if(bodyLength+HASH_SIZE>MAX_SNAPSHOT_BYTES)throw StoreException("SNAPSHOT_TOO_LARGE")
+        val bytes=ByteArray(bodyLength.toInt()+HASH_SIZE)
+        val out=ByteBuffer.wrap(bytes)
+        out.putInt(MAGIC);out.putInt(VERSION);out.putLong(s.generation);out.putInt(s.limit);out.putLong(s.nextId)
+        out.put(if(s.paused)1.toByte() else 0.toByte());out.putInt(s.entries.size)
+        s.entries.forEachIndexed { index,entry ->
+            out.putLong(entry.id);out.putLong(entry.timestamp);out.putInt(texts[index].size);out.put(texts[index])
+        }
+        val hash=MessageDigest.getInstance("SHA-256").run { update(bytes,0,bodyLength.toInt());digest() }
+        hash.copyInto(bytes,bodyLength.toInt());return bytes
     }
 
     fun decode(bytes: ByteArray): Snapshot {
@@ -35,25 +38,25 @@ object SnapshotCodec {
         val hash = MessageDigest.getInstance("SHA-256").run { update(bytes, 0, bodyLength); digest() }
         if (!MessageDigest.isEqual(hash, bytes.copyOfRange(bodyLength, bytes.size))) throw StoreException("CHECKSUM_MISMATCH")
         try {
-            DataInputStream(ByteArrayInputStream(bytes, 0, bodyLength)).use { input ->
-                if (input.readInt() != MAGIC || input.readInt() != VERSION) throw StoreException("UNSUPPORTED_SNAPSHOT")
-                val generation = input.readLong(); val limit = input.readInt(); val nextId = input.readLong()
-                val pausedByte = input.readUnsignedByte()
-                if (pausedByte !in 0..1) throw StoreException("INVALID_PAUSE_FLAG")
-                val count = input.readInt()
-                if (count !in 0..MAX_LIMIT) throw StoreException("INVALID_ENTRY_COUNT")
-                val entries = ArrayList<Entry>(count)
-                repeat(count) {
-                    val id = input.readLong(); val timestamp = input.readLong(); val length = input.readInt()
-                    if (length !in 1..MAX_TEXT_BYTES || length > input.available()) throw StoreException("INVALID_TEXT_LENGTH")
-                    val text = ByteArray(length); input.readFully(text)
-                    val decoded = Charsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT)
-                        .onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(text)).toString()
-                    entries.add(Entry(id, timestamp, decoded))
-                }
-                if (input.available() != 0) throw StoreException("TRAILING_DATA")
-                return Snapshot(generation, limit, nextId, pausedByte == 1, entries.toList()).also(::validate)
+            val input=ByteBuffer.wrap(bytes,0,bodyLength)
+            if (input.int != MAGIC || input.int != VERSION) throw StoreException("UNSUPPORTED_SNAPSHOT")
+            val generation = input.long; val limit = input.int; val nextId = input.long
+            val pausedByte = input.get().toInt()
+            if (pausedByte !in 0..1) throw StoreException("INVALID_PAUSE_FLAG")
+            val count = input.int
+            if (count !in 0..MAX_LIMIT) throw StoreException("INVALID_ENTRY_COUNT")
+            val entries = ArrayList<Entry>(count)
+            val decoder=Charsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT)
+            repeat(count) {
+                val id = input.long; val timestamp = input.long; val length = input.int
+                if (length !in 1..MAX_TEXT_BYTES || length > input.remaining()) throw StoreException("INVALID_TEXT_LENGTH")
+                val text=input.slice().apply { limit(length) }
+                val decoded=decoder.reset().decode(text).toString()
+                input.position(input.position()+length)
+                entries.add(Entry(id, timestamp, decoded))
             }
+            if (input.remaining() != 0) throw StoreException("TRAILING_DATA")
+            return Snapshot(generation, limit, nextId, pausedByte == 1, entries.toList()).also(::validate)
         } catch (e: StoreException) { throw e
         } catch (_: Exception) { throw StoreException("MALFORMED_SNAPSHOT") }
     }
@@ -63,8 +66,9 @@ object SnapshotCodec {
         var previousId = s.nextId
         for (entry in s.entries) {
             if (entry.id <= 0 || entry.id >= previousId || entry.timestamp < 0 || entry.text.isEmpty()) throw StoreException("INVALID_ENTRY")
-            val bytes = entry.text.toByteArray(Charsets.UTF_8)
-            if (entry.text.length > MAX_TEXT_BYTES || bytes.size > MAX_TEXT_BYTES || String(bytes, Charsets.UTF_8) != entry.text) throw StoreException("INVALID_TEXT")
+            // decode already checked byte length and strict UTF-8. encode checks
+            // byte length and surrogate validity while obtaining its text bytes.
+            if (entry.text.length > MAX_TEXT_BYTES) throw StoreException("INVALID_TEXT")
             previousId = entry.id
         }
     }

@@ -1,0 +1,35 @@
+PASS Actual Shizuku connection
+PASS Shell listener and durable private storage, API 36
+PASS Set validation history limit
+PASS Clear only synthetic validation history
+PASS Arm live callback test
+PASS Real self-test passes without saving nonce
+Producer package: app.cliphistory.test, target: app.cliphistory
+PASS Synthetic producer is foreground
+PASS Another app captures while history is backgrounded
+PASS Consecutive duplicates skipped
+PASS Pause prevents capture
+PASS Marked sensitive payload skipped
+PASS Oversized payload skipped
+PASS Full Unicode and whitespace preserved
+PASS Live missing entry distinguished from error
+PASS History returns after background capture
+PASS Foreground for clipboard restoration
+PASS Actual Shizuku connection
+PASS Shell listener and durable private storage, API 36
+PASS Set validation history limit
+PASS Clear only synthetic validation history
+PASS Arm live callback test
+PASS Real self-test passes without saving nonce
+PASS Synthetic producer is foreground
+PASS Another app captures while history is backgrounded
+PASS Consecutive duplicates skipped
+PASS Pause prevents capture
+PASS Marked sensitive payload skipped
+Oversize counters: saved=1, count=1, oversized=1, unsupported=0
+PASS Oversized payload skipped
+PASS Full Unicode and whitespace preserved
+PASS Live missing entry distinguished from error
+PASS History returns after background capture
+PASS Foreground for clipboard restoration
+PASS 16 release assertions (live). Synthetic data only.

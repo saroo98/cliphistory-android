@@ -2,7 +2,7 @@
 
 ## Verification boundary
 
-The Windows release build, core tests, lint and APK signature/permission checks passed on 2026-09-13. See `VERIFICATION.md`. Build verification does not establish hidden-API, SELinux or lifecycle behavior on the phone.
+Current release evidence is in `VERIFICATION.md`. Windows and Linux source builds and isolated physical-device checks are recorded separately. Device coverage does not guarantee compatibility across all Android manufacturers or future OS updates.
 
 ## Pinned app toolchain
 
@@ -34,7 +34,7 @@ The script:
 5. Creates `local.properties`, an owner-specific RSA signing key and local password files under `.signing/`, only when needed.
 6. Downloads Gradle 9.3.1 and validates the publisher's SHA-256 checksum before extracting/executing it.
 7. Runs `:app:testDebugUnitTest`, `:app:lintRelease`, `:app:assembleRelease`, then APK signature, permission and target/debuggable inspection.
-8. Only after those commands succeed, copies the signed output to `ClipHistory-1.1.0.apk` and writes its SHA-256 file.
+8. Only after those commands succeed, copies the signed output to `ClipHistory-1.2.0.apk` and writes its SHA-256 file.
 
 Build output is recorded in `build-windows.log`. The source, clipboard data and key are not uploaded by our scripts. Ordinary build tools connect to their repositories to download dependencies. If downloads are blocked on your network, the script stops rather than switching to an untrusted APK mirror.
 
@@ -44,9 +44,7 @@ If Windows SmartScreen, organisational policy or SDK licensing prevents the boot
 
 ## Gradle launchers
 
-`gradlew`, `gradlew.bat` and `tools/gradle.*` are small **text bootstraps**, not a disguised official Gradle wrapper JAR. They download a checksum-verified distribution and invoke it. A wrapper binary could not be downloaded in this chat, so none has been fabricated or embedded.
-
-Once Gradle is available, `./gradlew wrapper --gradle-version 9.3.1 --distribution-type bin` can generate the conventional wrapper for your local checkout. Android Studio can also use the locally downloaded `.tools/gradle-9.3.1` installation.
+The official Gradle 9.3.1 wrapper is checked in, including its generated JAR and scripts. Its distribution is pinned by SHA-256 in `gradle/wrapper/gradle-wrapper.properties`. The optional `tools/gradle.*` text launchers remain available for older workflows; the Windows build uses the official wrapper.
 
 ## Linux / macOS with an installed SDK
 
@@ -61,3 +59,21 @@ The debug APK is generated under `app/build/outputs/apk/debug/`. It is debug-sig
 ## After compilation
 
 Actual installation and device acceptance tests are separate from compilation. Follow `DEVICE_TESTS.md`. A green Gradle result does not establish that Shizuku's shell process can read/write the passed descriptors or access your exact Android 17 clipboard implementation.
+
+## Unsigned release and F-Droid
+
+```sh
+./gradlew --no-daemon -PunsignedRelease :app:assembleRelease
+```
+
+The output is `app/build/outputs/apk/release/app-release-unsigned.apk`. This option explicitly ignores local personal signing files. Clean public checkouts are unsigned by default. F-Droid builds from `fdroid/metadata/app.cliphistory.yml`; no keystore or password is required. The release uses upstream signature verification through `Binaries`, to preserve the installed signing identity when F-Droid can reproduce the APK.
+
+## Isolated physical validation
+
+```sh
+./gradlew -PvalidationBuild :app:assembleDebug :app:assembleDebugAndroidTest
+adb install -r app/build/outputs/apk/debug/app-debug.apk
+adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
+```
+
+This creates `app.cliphistory.validation`, visibly labelled ClipHistory validation, alongside the normal app. Start Shizuku and grant this separate app access. Never seed personal production history for tests. Instrumentation modes `regression`, `layout`, `capacity` and `live` are described in `DEVICE_TESTS.md`. Build without `validationBuild` for the normal application.

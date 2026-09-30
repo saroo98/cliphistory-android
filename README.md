@@ -1,21 +1,21 @@
 # ClipHistory
 
-A local clipboard-history companion for Gboard. Designed for **Pixel 8 Pro / Android 17**, with **Shizuku started through wireless debugging**. It is not a keyboard and does not modify Gboard.
+A local clipboard-history companion for Android, with **Shizuku started in non-root shell mode**. It is not a keyboard and does not modify Gboard.
 
-## Delivery status
+## Release 1.2.0
 
-A signed **ClipHistory-1.1.0.apk** is included. Built on Windows on 2026-09-13 for API 37 (Android 17), minimum API 34.
+Public source: https://github.com/saroo98/cliphistory-android. Signed APKs are in the repository's Releases page. Android API 34 or later is required; compile and target are API 37.
 
-Android compilation, 50 core regression checks, six presentation-state tests, release lint (0 errors, 14 warnings), APK signing verification, and permission inspection passed. The APK requests only Shizuku permission and has no INTERNET permission. Emulator UI tests and rendered layout inspection cover the new interface, including larger text. See `docs/REDESIGN_DELIVERY.md` for the design coverage.
+This release fixes layout, lifecycle and diagnostics defects, improves bounded snapshot processing and cached offline paging, and includes complete setup and licence information. Build and device evidence is in `VERIFICATION.md`. The F-Droid recipe is `fdroid/metadata/app.cliphistory.yml`, with store text and images in `fastlane/metadata/android/`.
 
-Physical Pixel integration and long-term background/reboot behavior remain untested. See `VERIFICATION.md` for evidence and `DEVICE_TESTS.md` for phone acceptance checks.
+F-Droid publication requires its independent review and build verification. Providing an APK and source does not mean it is already listed in the main repository.
 
 ## What is implemented
 
 - Text history with a default limit of **100**, configurable from **20 to 500**. Oldest entries drop from the current history as new entries arrive.
 - Event-driven background capture in a shell-UID Shizuku UserService. No Accessibility service, replacement keyboard, overlay, polling loop or ordinary foreground service.
 - App icon and a **Clipboard Quick Settings tile**. The tile opens history and requests unlocking when needed; it does not display a guessed recording status.
-- Redesigned light/dark history: search, tap-to-copy-and-return, long-press action sheet, full-text preview, clear history, limit setting and pause/resume.
+- Redesigned light/dark history: search, tap-to-copy-and-return, explicit full-text button, long-press action sheet, full-text preview, clear history, limit setting and pause/resume.
 - System / Light / Dark appearance and an optional copy-and-stay mode. Preferences persist across launches.
 - Exact plain-text content, including whitespace, newlines and Unicode. Consecutive identical saved texts do not consume extra slots.
 - Private, no-backup storage with checksummed, alternating snapshots and explicit corruption/error handling.
@@ -26,7 +26,7 @@ Physical Pixel integration and long-term background/reboot behavior remain untes
 
 On Windows, extract the ZIP fully, then double-click **`BUILD_WINDOWS.cmd`**. Read `START_HERE.md` for the short walkthrough and `BUILDING.md` for details.
 
-Once a build has succeeded, install the generated `ClipHistory-1.1.0.apk`, start Shizuku, open ClipHistory, tap **Connect** and approve Shizuku access. From the three-dot menu, run **Connection test** and add the Quick Settings tile. Keep Gboard selected as your keyboard.
+Once a build has succeeded, install the generated `ClipHistory-1.2.0.apk`, start Shizuku, open ClipHistory, tap **Connect** and approve Shizuku access. From the three-dot menu, run **Connection test** and add the Quick Settings tile. Keep Gboard selected as your keyboard.
 
 After a phone reboot, restart non-root Shizuku and reopen ClipHistory. Copies made before the recorder resumes cannot be reconstructed. Existing saved history is independent of Gboard's own expiry timer.
 
@@ -66,7 +66,8 @@ Explicit deletion, clearing, shrinking the limit and changing pause state update
 - `ui/`: native Android Activity, list adapter and Quick Settings tile.
 - `app/src/main/aidl/`: bounded, owner-checked IPC interface and change observer.
 - `tools/`: host tests, static source audit and local Gradle/Windows build bootstraps.
-- `reports/`: actual host test output and verification status. Red-stage logs are intentional historical failures before fixes, not final results.
+- `docs/release-1.2/`: selected synthetic test evidence.
+- `fdroid/` and `fastlane/`: build recipe and store metadata.
 
 ## Tests
 

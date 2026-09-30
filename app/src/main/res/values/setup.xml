@@ -1,0 +1,16 @@
+<resources>
+    <string name="setup_install">1. Install Shizuku from its official download page. ClipHistory uses its non-root mode to save clipboard text while this app is closed.</string>
+    <string name="setup_debugging">2. Connect to Wi-Fi. In Android Settings, enable Developer options if needed, then enable Wireless debugging. The official guide explains where these settings are on your phone.</string>
+    <string name="setup_pair">3. Open Shizuku and choose Pairing. In Wireless debugging, choose Pair device with pairing code. Enter Android’s code in Shizuku. Allow Shizuku notifications if its pairing flow asks for them.</string>
+    <string name="setup_start">4. In Shizuku, tap Start and wait for it to say that it is running. Pairing and starting are separate steps.</string>
+    <string name="setup_authorise">5. Return here and tap Connect. Allow ClipHistory to use Shizuku, then run the Connection test. Recording stores text locally until it rolls out of your chosen limit or you delete it. Pause before copying private text that another app might not mark sensitive.</string>
+    <string name="download_shizuku">Official Shizuku download</string>
+    <string name="official_setup_guide">Official setup guide</string>
+    <string name="source_code">Source code</string>
+    <string name="licenses">Open-source licenses</string>
+    <string name="last_checked">Last checked</string>
+    <string name="browser_missing">Install a browser to open this link.</string>
+    <string name="history_read_failed">Saved text could not be read. Check Diagnostics and try again.</string>
+    <string name="missed_copies">Missed clipboard events this session</string>
+    <string name="missed_body">Recording is available, but some earlier clipboard events were dropped during overload. Those copies cannot be recovered.</string>
+</resources>

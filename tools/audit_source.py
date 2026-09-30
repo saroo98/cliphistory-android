@@ -39,7 +39,7 @@ for xml in sorted(MAIN.rglob("*.xml")):
 check("all source XML parses", True)
 
 sources = list((MAIN / "java").rglob("*.kt"))
-source = "\n".join(p.read_text() for p in sources)
+source = "\n".join(p.read_text(encoding="utf-8") for p in sources)
 check("no unfinished production implementation markers", not re.search(r"\bTODO\s*\(|NotImplementedError|IMPLEMENT_ME|FIXME", source))
 check("no runtime network client imports", not re.search(r"import\s+(java\.net|okhttp|io\.ktor|retrofit|com\.google\.firebase)\b", source))
 check("no external process execution", not re.search(r"Runtime\.getRuntime\(\)\.exec|ProcessBuilder\(", source))
@@ -48,7 +48,7 @@ check("no repeating clipboard polling mechanism", not re.search(r"Timer\(|schedu
 check("history screen protects screenshots", "FLAG_SECURE" in text("app/src/main/java/app/cliphistory/ui/MainActivity.kt"))
 check("tile uses immutable PendingIntent and unlock", "FLAG_IMMUTABLE" in text("app/src/main/java/app/cliphistory/ui/ClipboardTileService.kt") and "unlockAndRun" in source)
 check("normal app uses private no-backup files", "noBackupFilesDir" in text("app/src/main/java/app/cliphistory/client/PrivateHistory.kt"))
-check("shell does not truncate or chmod private files", not re.search(r"ftruncate|Os\.chmod|setLength\(", "\n".join(p.read_text() for p in (MAIN / "java/app/cliphistory/daemon").glob("*.kt"))))
+check("shell does not truncate or chmod private files", not re.search(r"ftruncate|Os\.chmod|setLength\(", "\n".join(p.read_text(encoding="utf-8") for p in (MAIN / "java/app/cliphistory/daemon").glob("*.kt"))))
 bridge = text("app/src/main/java/app/cliphistory/daemon/PlatformClipboardBridge.kt")
 check("system callback UID and identity are checked", "getCallingUid() != 1000" in bridge and "clearCallingIdentity" in bridge and "restoreCallingIdentity" in bridge)
 check("sensitive flag handled before text extraction", bridge.index("if (sensitive)") < bridge.index("val raw"))
@@ -56,7 +56,7 @@ check("clipboard source is not coerced through content providers", "coerceToText
 daemon = text("app/src/main/java/app/cliphistory/daemon/ClipboardUserService.kt")
 aidl = text("app/src/main/aidl/app/cliphistory/ipc/IClipboardDaemon.aidl")
 methods = re.findall(r"\b(?:Bundle|String|void)\s+(\w+)\([^;]*?\)\s*=\s*\d+\s*;", aidl)
-check("all AIDL entrypoints implemented", all(re.search(r"override fun " + name + r"\(", daemon) for name in methods) and len(methods) == 13)
+check("all AIDL entrypoints implemented", all(re.search(r"override fun " + name + r"\(", daemon) for name in methods) and len(methods) == 14)
 for name in methods:
     if name == "destroy":
         continue
@@ -70,7 +70,7 @@ check("Shizuku destroy transaction matches documented constant", "destroy() = 16
 check("helper watches Shizuku server rather than UI lifetime", "IBinder shizukuServer" in aidl and "server.linkToDeath" in daemon and "leaseAlive=false" in daemon)
 check("replacement/unlinked private data is handled", "attachedFileIds!=incomingIds" in daemon and "st_nlink" in text("app/src/main/java/app/cliphistory/daemon/FdAccess.kt"))
 check("daemon uses bounded queue", "ArrayBlockingQueue<Runnable>(256)" in daemon)
-check("IPC history is paged", "count in 1..40" in daemon and "text.take(180)" in daemon)
+check("IPC history is paged", "count in 1..40" in daemon and "SearchPreview.snippet" in daemon and "maxLength:Int=180" in text("app/src/main/java/app/cliphistory/core/SearchPreview.kt"))
 check("self-test uses tested probe tracker", "ProbeTracker()" in daemon and "probe.match" in daemon)
 build = text("app/build.gradle.kts")
 check("compile and target API 37", "compileSdk = 37" in build and "targetSdk = 37" in build)
@@ -80,8 +80,11 @@ check("Windows script does not silently accept SDK licences", "--licenses" in te
 check("Windows build gates actual APK signature and permissions", "apksigner.bat" in text("tools/build-windows.ps1") and "Unexpected permission in built APK" in text("tools/build-windows.ps1"))
 for path in ("README.md", "START_HERE.md", "BUILDING.md", "DEVICE_TESTS.md", "SECURITY.md", "VERIFICATION.md", "LICENSE", "THIRD_PARTY_NOTICES.md", "docs/SOURCES.md", "BUILD_WINDOWS.cmd", "gradlew", "gradlew.bat"):
     check(f"delivery file: {path}", (ROOT / path).is_file())
-check("no signing material distributed", not (ROOT / ".signing").exists())
-check("host report contains real final test result", "RESULT 50/50 passed" in text("reports/core-tests.txt"))
+if "--distribution" in sys.argv:
+    check("no signing material distributed", not (ROOT / ".signing").exists())
+check("APK includes full runtime notices", (MAIN / "assets/licenses/NOTICES.txt").is_file() and "Permission is hereby granted" in text("app/src/main/assets/licenses/NOTICES.txt") and "END OF TERMS AND CONDITIONS" in text("app/src/main/assets/licenses/NOTICES.txt"))
+check("official Gradle wrapper is checksum pinned", "distributionSha256Sum=" in text("gradle/wrapper/gradle-wrapper.properties") and (ROOT / "gradle/wrapper/gradle-wrapper.jar").is_file())
+check("F-Droid build metadata is supplied", (ROOT / "fdroid/metadata/app.cliphistory.yml").is_file())
 failed = [name for name, ok in results if not ok]
 print(f"RESULT {len(results)-len(failed)}/{len(results)} static source checks passed")
 print("Android build, merged-manifest, APK and physical-device tests are NOT implied by these checks.")

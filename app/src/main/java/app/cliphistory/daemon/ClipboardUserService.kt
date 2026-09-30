@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.*
 import android.os.Process
 import app.cliphistory.core.*
+import app.cliphistory.BuildConfig
 import app.cliphistory.ipc.IClipboardDaemon
 import app.cliphistory.ipc.IHistoryObserver
 import java.util.concurrent.*
@@ -36,7 +37,7 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
     private val probe = ProbeTracker()
     private var storageVerified = false
     init {
-        require(context.packageName == "app.cliphistory" && ownerUid >= 10000) { "INVALID_OWNER_CONTEXT" }
+        require(context.packageName == BuildConfig.APPLICATION_ID && ownerUid >= 10000) { "INVALID_OWNER_CONTEXT" }
     }
     private fun requireOwner() {
         if (Binder.getCallingUid() != ownerUid) throw SecurityException("OWNER_UID_REQUIRED")
@@ -158,7 +159,9 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
     private fun statusInternal(): Bundle {
         val testState=probe.status(SystemClock.elapsedRealtime())
         val snapshot=repository?.state
-        val problem=lastIssue.ifEmpty { if(queueDrops.get()>0) "RECORDER_OVERLOADED_SOME_COPIES_MISSED" else "" }
+        // A past missed event is irreversible history, not a current storage or
+        // listener failure. Keep the counter visible without claiming capture stopped.
+        val problem=lastIssue
         return Bundle().apply {
             putBoolean("ok",true); putInt("uid",Process.myUid());putInt("sdk",Build.VERSION.SDK_INT)
             putBoolean("listening",bridge?.registered==true);putBoolean("connected",snapshot!=null)
@@ -188,7 +191,7 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
             Bundle().apply {
                 putBoolean("ok",true);putLong("generation",repo().state.generation);putInt("total",entries.size)
                 putLongArray("ids",page.map { it.id }.toLongArray());putLongArray("times",page.map { it.timestamp }.toLongArray())
-                putStringArray("previews",page.map { it.text.take(180) }.toTypedArray())
+                putStringArray("previews",page.map { SearchPreview.snippet(it.text,query) }.toTypedArray())
             }
         }
     }
@@ -196,6 +199,12 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
         requireOwner()
         return try { worker.submit<String?> { repo().state.entries.firstOrNull { it.id==id }?.text }.get(20,TimeUnit.SECONDS) }
         catch (_: Exception) { null }
+    }
+    override fun entry(id:Long):Bundle {
+        requireOwner()
+        return serial {
+            Bundle().apply { putBoolean("ok",true);putString("text",repo().state.entries.firstOrNull { it.id==id }?.text) }
+        }
     }
     override fun deleteEntry(id:Long):Bundle { requireOwner();return serial { repo().delete(id);notifyChanged();statusInternal() } }
     override fun clearHistory():Bundle { requireOwner();return serial { repo().clear();notifyChanged();statusInternal() } }

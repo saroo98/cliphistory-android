@@ -1,0 +1,18 @@
+PASS Capacity snapshot 1 readable
+PASS Capacity snapshot 2 readable
+PASS Initial 40 entries loaded
+PASS Capacity second page loaded
+PASS Full maximum length text opens
+Encode 32778065 bytes: 327 ms
+PASS Capacity snapshot 1 readable
+Offline read 1: 381 ms
+PASS Capacity snapshot 2 readable
+Offline read 2: 0 ms
+PASS Initial 40 entries loaded
+Launch to page: 423 ms
+PASS Capacity second page loaded
+Next page: 42 ms
+PASS Full maximum length text opens
+Full text: 455 ms; heap limit 192 MiB
+Encode 2757 bytes: 0 ms
+PASS 5 release assertions (capacity). Synthetic data only.

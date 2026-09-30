@@ -1,0 +1,5 @@
+INFO:root:Using <build workspace>/sdk/build-tools/36.0.0/apksigner
+INFO:root:Removing gradlew at gradlew
+INFO:root:Removing gradlew.bat at gradlew.bat
+INFO:root:Removing gradle-wrapper.jar at gradle/wrapper/gradle-wrapper.jar
+F-Droid source scan fatal findings: 0

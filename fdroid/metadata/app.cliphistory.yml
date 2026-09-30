@@ -1,0 +1,45 @@
+Categories:
+  - System
+License: MIT
+AuthorName: saroo98
+SourceCode: https://github.com/saroo98/cliphistory-android
+IssueTracker: https://github.com/saroo98/cliphistory-android/issues
+Changelog: https://github.com/saroo98/cliphistory-android/releases
+
+AutoName: ClipHistory
+Summary: Private clipboard history with an authorised Shizuku recorder
+Description: |-
+    Keep a rolling, searchable history of copied plain text on your device.
+    Tap an entry to copy it, view full text, pause recording, choose a history
+    limit, and open history from a Quick Settings tile. Light, dark and system
+    appearance are supported.
+
+    Requires Android 14 or later, the primary device profile, and Shizuku API 13
+    or newer running as the non-root shell user. Install and start Shizuku
+    separately. Guided setup is included. After reboot, start Shizuku again.
+    Saved history remains readable while Shizuku is stopped.
+
+    No internet permission, accounts, ads, analytics, cloud sync or keyboard
+    replacement. History is in private, no-backup storage; screenshots are
+    blocked. Clips marked sensitive, unsupported payloads and text over 64 KiB
+    are skipped. Sensitivity depends on the source app marking a clip correctly.
+    The recorder uses Android internal clipboard interfaces, so compatibility
+    can vary across operating system and manufacturer versions.
+
+RepoType: git
+Repo: https://github.com/saroo98/cliphistory-android.git
+Binaries: https://github.com/saroo98/cliphistory-android/releases/download/v%v/ClipHistory-%v.apk
+
+Builds:
+  - versionName: 1.2.0
+    versionCode: 3
+    commit: v1.2.0
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82
+AutoUpdateMode: Version
+UpdateCheckMode: Tags
+CurrentVersion: 1.2.0
+CurrentVersionCode: 3

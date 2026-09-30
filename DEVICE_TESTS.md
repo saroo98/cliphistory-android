@@ -1,6 +1,6 @@
 # Pixel 8 Pro / Android 17 acceptance checks
 
-**Status at delivery: NOT RUN.** These are required real-device checks, not claims that they passed. A core-unit-test result and an APK build cannot replace these tests.
+**Current evidence: see `VERIFICATION.md`.** This is the broader acceptance checklist, including tests beyond this release's device coverage. Do not infer every item passed from a successful build or connection test.
 
 Use harmless test text, not passwords or private messages. Do not clear or alter valuable history to run a test without first deciding that it is safe to do so. The app intentionally has no cloud backup/export in this version.
 
@@ -61,3 +61,17 @@ Excessively fast clipboard changes may overwrite intermediate system clipboard v
 ## Exit criteria
 
 Record the APK hash, app version, Android build/security patch, Shizuku version and each result. Mark PASS only after observing the expected behavior. Leave unexecuted cases NOT RUN. An unresolved Android compile, connection, data-loss, privacy or background-capture failure means device acceptance has not passed.
+
+## Automated isolated regression suites
+
+Build the validation variant described in `BUILDING.md` for a physical phone. Grant that separate application Shizuku access first.
+
+```sh
+adb shell am instrument -w -e suite live app.cliphistory.validation.test/app.cliphistory.UiSmokeInstrumentation
+```
+
+The live suite uses the test APK's separate clipboard producer, verifies real capture and restores the original clipboard as an opaque object. It clears only the validation app's synthetic history. The normal `app.cliphistory` package is not its target. The instrumented runner refuses synthetic seeding on a physical production package.
+
+On a disposable emulator with Shizuku stopped, build the normal debug app and run `-e suite regression`, `-e suite layout` or `-e suite capacity` against `app.cliphistory.test/app.cliphistory.UiSmokeInstrumentation`. Omit `suite` for the 26 UI checks and screenshot fixtures. Layout checks require an open software keyboard. Capacity uses 500 entries of 64 KiB, then restores small synthetic history.
+
+Stop the helper before fixture seeding: the helper is the single writer and must not hold different in-memory history while tests replace its files. The test APK and fixtures are never distributed in the production APK.

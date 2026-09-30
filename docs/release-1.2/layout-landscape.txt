@@ -1,0 +1,22 @@
+PASS Initial 40 entries loaded
+PASS Landscape entries restored
+PASS Keyboard visible
+PASS Keyboard dismissal action remains available at 2.0 text scale
+PASS Results control is above the system keyboard
+PASS Results action closes keyboard
+PASS Large-text landscape results remain reachable
+PASS Sheet fits current window
+PASS Sheet handle dismisses panel
+Encode 2757 bytes: 4 ms
+PASS Initial 40 entries loaded
+PASS Landscape entries restored
+PASS Keyboard visible
+List 0px, window 1080px, IME 890px
+PASS Keyboard dismissal action remains available at 2.0 text scale
+System keyboard occupies available landscape content; results action restores history.
+PASS Results control is above the system keyboard
+PASS Results action closes keyboard
+PASS Large-text landscape results remain reachable
+PASS Sheet fits current window
+PASS Sheet handle dismisses panel
+PASS 9 release assertions (layout). Synthetic data only.

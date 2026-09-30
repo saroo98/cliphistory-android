@@ -1,0 +1,6 @@
+<resources>
+    <string name="show_results">Show search results. Close keyboard.</string>
+    <item type="id" name="action_view_text" />
+    <string name="just_now">Just now</string>
+    <string name="dismiss_panel">Close panel. Drag down to dismiss.</string>
+</resources>

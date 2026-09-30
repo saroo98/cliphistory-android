@@ -16,5 +16,6 @@ interface IClipboardDaemon {
     void unregisterObserver(IHistoryObserver observer) = 9;
     Bundle armTest(String nonce) = 10;
     Bundle verifyStorage() = 11;
+    Bundle entry(long id) = 12;
     void destroy() = 16777114;
 }

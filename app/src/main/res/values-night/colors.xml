@@ -8,7 +8,5 @@
     <color name="accent">#B2D2B7</color>
     <color name="on_accent">#18271D</color>
     <color name="selected">#334C3A</color>
-    <color name="warning">#E2C084</color>
-    <color name="warning_surface">#392F20</color>
     <color name="danger">#F0AAA0</color>
 </resources>

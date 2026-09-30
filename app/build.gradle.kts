@@ -10,8 +10,9 @@ android {
         applicationId = "app.cliphistory"
         minSdk = 34
         targetSdk = 37
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.2.0"
+        manifestPlaceholders["appLabel"] = "@string/app_name"
         testInstrumentationRunner = "app.cliphistory.UiSmokeInstrumentation"
     }
     buildFeatures { aidl = true; buildConfig = true }
@@ -21,7 +22,7 @@ android {
     }
     val signingFile = rootProject.file(".signing/cliphistory.jks")
     val passwordFile = rootProject.file(".signing/password.txt")
-    if (signingFile.exists() && passwordFile.exists()) {
+    if (!providers.gradleProperty("unsignedRelease").isPresent && signingFile.exists() && passwordFile.exists()) {
         signingConfigs.create("personal") {
             storeFile = signingFile
             storePassword = passwordFile.readText().trim()
@@ -30,6 +31,13 @@ android {
         }
     }
     buildTypes {
+        getByName("debug") {
+            if (providers.gradleProperty("validationBuild").isPresent) {
+                applicationIdSuffix = ".validation"
+                versionNameSuffix = "-validation"
+                manifestPlaceholders["appLabel"] = "ClipHistory validation"
+            }
+        }
         getByName("release") {
             isMinifyEnabled = false // UserService entry point is reflectively loaded by Shizuku.
             isDebuggable = false

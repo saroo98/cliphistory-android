@@ -10,13 +10,16 @@ import app.cliphistory.ipc.IClipboardDaemon
 import app.cliphistory.ipc.IHistoryObserver
 import rikka.shizuku.Shizuku
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicLong
 
 class DaemonClient(private val context: Context) {
     data class Row(val id:Long,val time:Long,val preview:String)
     data class Page(val status:Bundle,val rows:List<Row>,val total:Int,val generation:Long,val offline:Boolean,val issue:String="")
+    data class TextResult(val text:String?,val issue:String="")
     private val main=Handler(Looper.getMainLooper())
     private val io=Executors.newSingleThreadExecutor { r -> Thread(r,"ClipHistory-client") }
     private val listeners=LinkedHashSet<() -> Unit>()
+    private val pageRequest=AtomicLong(0)
     @Volatile private var remote:IClipboardDaemon?=null
     @Volatile var message="Start Shizuku, then tap Connect.";private set
     private var connecting=false
@@ -110,7 +113,9 @@ class DaemonClient(private val context: Context) {
     }
     fun requestPage(query:String,offset:Int,callback:(Page)->Unit) {
         val service=remote
+        val token=pageRequest.incrementAndGet()
         io.execute {
+            if(token!=pageRequest.get())return@execute
             val result=try {
                 if(service!=null && service.asBinder().isBinderAlive) {
                     val status=service.status();val page=service.page(query.take(512),offset,40)
@@ -123,22 +128,49 @@ class DaemonClient(private val context: Context) {
                         Page(status,rows,page.getInt("total"),page.getLong("generation"),false)
                     }
                 } else {
-                    val snapshot=PrivateHistory.readOffline(context)
-                    val matched=snapshot.entries.filter { it.text.contains(query,ignoreCase=true) }
-                    val status=Bundle().apply { putInt("count",snapshot.entries.size);putInt("limit",snapshot.limit);putBoolean("paused",snapshot.paused) }
-                    Page(status,matched.drop(offset).take(40).map { Row(it.id,it.timestamp,it.text.take(180)) },matched.size,snapshot.generation,true)
+                    offlinePage(query,offset)
                 }
-            } catch(t:Throwable) {
-                Page(Bundle(),emptyList(),0,0,service==null,"HISTORY_READ_FAILED_${t.javaClass.simpleName}")
+            } catch(t:Exception) {
+                if(t is RemoteException) {
+                    main.post { if(remote===service)disconnected("Recorder disconnected. Saved history is available offline.") }
+                    try { offlinePage(query,offset) } catch(failure:Exception){failedPage(failure,true)}
+                } else failedPage(t,service==null)
             }
-            main.post { callback(result) }
+            main.post { if(token==pageRequest.get())callback(result) }
         }
     }
-    fun getText(id:Long,callback:(String?)->Unit) {
+    fun cancelPageReads() { pageRequest.incrementAndGet() }
+    private fun offlinePage(query:String,offset:Int):Page {
+        val snapshot=PrivateHistory.readOffline(context)
+        val matched=snapshot.entries.filter { it.text.contains(query,ignoreCase=true) }
+        val status=Bundle().apply { putInt("count",snapshot.entries.size);putInt("limit",snapshot.limit);putBoolean("paused",snapshot.paused) }
+        return Page(status,matched.drop(offset).take(40).map { Row(it.id,it.timestamp,SearchPreview.snippet(it.text,query)) },matched.size,snapshot.generation,true)
+    }
+    private fun readIssue(t:Exception)=when(t) {
+        is StoreException->t.reason
+        is SecurityException->"HISTORY_ACCESS_DENIED"
+        else->"HISTORY_READ_FAILED_${t.javaClass.simpleName}"
+    }
+    private fun failedPage(t:Exception,offline:Boolean):Page {
+        val issue=readIssue(t)
+        return Page(Bundle().apply { putString("issue",issue) },emptyList(),0,0,offline,issue)
+    }
+    fun getText(id:Long,callback:(TextResult)->Unit) {
         val service=remote
         io.execute {
-            val value=try { if(service!=null)service.text(id) else PrivateHistory.readOffline(context).entries.firstOrNull { it.id==id }?.text }
-            catch (_:Exception) { null }
+            fun offlineText()=TextResult(PrivateHistory.readOffline(context).entries.firstOrNull { it.id==id }?.text)
+            val value=try {
+                if(service!=null && service.asBinder().isBinderAlive) {
+                    val entry=service.entry(id)
+                    if(entry.getBoolean("ok"))TextResult(entry.getString("text"))
+                    else TextResult(null,entry.getString("issue","HISTORY_READ_FAILED").orEmpty())
+                }else offlineText()
+            } catch(t:Exception) {
+                if(t is RemoteException) {
+                    main.post { if(remote===service)disconnected("Recorder disconnected. Saved history is available offline.") }
+                    try { offlineText() } catch(failure:Exception){TextResult(null,readIssue(failure))}
+                }else TextResult(null,readIssue(t))
+            }
             main.post { callback(value) }
         }
     }

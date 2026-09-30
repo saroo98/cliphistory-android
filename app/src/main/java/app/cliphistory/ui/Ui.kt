@@ -2,6 +2,7 @@ package app.cliphistory.ui
 
 import android.app.Activity
 import android.app.Dialog
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
@@ -9,6 +10,10 @@ import android.graphics.drawable.RippleDrawable
 import android.view.*
 import android.widget.*
 import app.cliphistory.R
+
+private class SheetHandle(context:Context):FrameLayout(context) {
+    override fun performClick():Boolean { super.performClick();return true }
+}
 
 /** Small native View vocabulary shared by history, sheets and detail pages. */
 class Ui(val activity: Activity) {
@@ -71,10 +76,34 @@ class Ui(val activity: Activity) {
         val dialog=Dialog(activity)
         dialog.window?.apply { addFlags(WindowManager.LayoutParams.FLAG_SECURE);setBackgroundDrawableResource(android.R.color.transparent) }
         val box=column().apply { setPadding(dp(20),dp(12),dp(20),dp(20));background=shape(color(R.color.surface),24) }
-        box.addView(View(activity).apply { background=shape(color(R.color.divider),2) },LinearLayout.LayoutParams(dp(32),dp(4)).apply { gravity=Gravity.CENTER_HORIZONTAL;bottomMargin=dp(20) })
+        val handle=SheetHandle(activity).apply { minimumHeight=dp(48);contentDescription=activity.getString(R.string.dismiss_panel);isClickable=true;isFocusable=true }
+        handle.addView(View(activity).apply { background=shape(color(R.color.divider),2) },FrameLayout.LayoutParams(dp(32),dp(4),Gravity.CENTER))
+        handle.setOnClickListener { dialog.dismiss() }
+        var downY=0f
+        handle.setOnTouchListener { _,event ->
+            val decor=dialog.window?.decorView
+            when(event.actionMasked) {
+                MotionEvent.ACTION_DOWN->{downY=event.rawY;true}
+                MotionEvent.ACTION_MOVE->{decor?.translationY=(event.rawY-downY).coerceAtLeast(0f);true}
+                MotionEvent.ACTION_UP->{
+                    if(event.rawY-downY>dp(72))dialog.dismiss()
+                    else if(event.rawY-downY<android.view.ViewConfiguration.get(activity).scaledTouchSlop)handle.performClick()
+                    else if(android.animation.ValueAnimator.areAnimatorsEnabled())decor?.animate()?.translationY(0f)?.setDuration(120)?.start()
+                    else decor?.translationY=0f
+                    true
+                }
+                MotionEvent.ACTION_CANCEL->{decor?.translationY=0f;true}
+                else->false
+            }
+        }
+        box.addView(handle,LinearLayout.LayoutParams(-1,dp(48)))
         box.addView(title(title));box.addView(space(20));content(box,dialog)
         val scroll=object:ScrollView(activity) {
-            override fun onMeasure(w:Int,h:Int) { super.onMeasure(w,MeasureSpec.makeMeasureSpec((activity.windowManager.currentWindowMetrics.bounds.height()*.82).toInt(),MeasureSpec.AT_MOST)) }
+            override fun onMeasure(w:Int,h:Int) {
+                val screenLimit=(activity.windowManager.currentWindowMetrics.bounds.height()*.82).toInt()
+                val available=if(MeasureSpec.getMode(h)==MeasureSpec.UNSPECIFIED)screenLimit else minOf(screenLimit,MeasureSpec.getSize(h))
+                super.onMeasure(w,MeasureSpec.makeMeasureSpec(available,MeasureSpec.AT_MOST))
+            }
         }.apply { isFillViewport=false;addView(box);isVerticalScrollBarEnabled=false }
         dialog.setContentView(scroll)
         dialog.window?.apply {
@@ -82,7 +111,7 @@ class Ui(val activity: Activity) {
             setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
             setWindowAnimations(R.style.SheetMotion)
         }
-        dialog.show();dialog.window?.setLayout(-1,-2)
+        dialog.show();dialog.window?.setLayout(minOf(dp(600),activity.windowManager.currentWindowMetrics.bounds.width()),-2)
         return dialog
     }
 }

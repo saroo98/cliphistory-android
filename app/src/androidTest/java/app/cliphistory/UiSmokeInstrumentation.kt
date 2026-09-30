@@ -16,8 +16,14 @@ import java.io.File
 class UiSmokeInstrumentation:Instrumentation() {
     private lateinit var activity:MainActivity
     private var assertions=0
+    private var suite="ui"
     private val evidence get()=File(targetContext.filesDir,"ui-evidence").apply { mkdirs() }
-    override fun onCreate(arguments:Bundle?) { super.onCreate(arguments);start() }
+    override fun onCreate(arguments:Bundle?) { suite=arguments?.getString("suite","ui")?:"ui";super.onCreate(arguments);start() }
+    override fun runOnMainSync(runner:Runnable) {
+        var failure:Throwable?=null
+        super.runOnMainSync { try { runner.run() } catch(t:Throwable) { failure=t } }
+        failure?.let { throw it }
+    }
     private fun checkThat(condition:Boolean,message:String) { check(condition){message};assertions++ }
     private fun idle() { waitForIdleSync();SystemClock.sleep(180);waitForIdleSync() }
     private fun until(message:String,condition:()->Boolean) {
@@ -57,6 +63,11 @@ class UiSmokeInstrumentation:Instrumentation() {
     override fun onStart() {
         val report=Bundle()
         try {
+            check(BuildConfig.DEBUG && (Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk") || BuildConfig.APPLICATION_ID.endsWith(".validation"))) { "Synthetic tests require an emulator or the isolated validation application" }
+            if(suite!="ui") {
+                report.putString("stream",ReleaseChecks(this).run(suite))
+                finish(Activity.RESULT_OK,report);return
+            }
             val samples=listOf("Let's meet at 10:30 by the library.","https://example.com/notes","Keep the interface quiet. Make the next action obvious.","Oats\nCoffee\nGreen apples","The final draft is ready for review. I've added the updated measurements and the installation notes.","A little less, but better.")
             val now=System.currentTimeMillis()
             val entries=(0 until 73).map { i -> Entry(73L-i,now-i*240_000L,if(i<6)samples[i] else "Saved example ${73-i}") }
@@ -67,6 +78,12 @@ class UiSmokeInstrumentation:Instrumentation() {
             until("History did not load") { (field("home") as HistoryHome).adapter.count==40 }
             checkThat(activity.window.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE!=0,"History must remain secure")
             capture("S07-setup-with-offline-history")
+            runOnMainSync {
+                val icon=targetContext.packageManager.getApplicationIcon(targetContext.applicationInfo)
+                val bitmap=Bitmap.createBitmap(512,512,Bitmap.Config.ARGB_8888)
+                icon.setBounds(0,0,512,512);icon.draw(Canvas(bitmap))
+                File(evidence,"icon.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG,100,it) };bitmap.recycle()
+            }
             val home=field("home") as HistoryHome
             val status=Bundle().apply {putInt("count",73);putInt("limit",100);putBoolean("active",true);putBoolean("storageVerified",true);putString("selfTest","PASS")}
             val fixtureRows=entries.take(40).map { DaemonClient.Row(it.id,it.timestamp,it.text.take(180)) }
@@ -121,11 +138,14 @@ class UiSmokeInstrumentation:Instrumentation() {
             runOnMainSync { click(dialog().window!!.decorView,"Dark") }
             activity=waitForMonitorWithTimeout(monitor,8000) as? MainActivity ?: error("Appearance did not recreate")
             removeMonitor(monitor)
-            until("Dark reload failed") { (field("home") as HistoryHome).adapter.count==40 }
+            until("Appearance change discarded loaded history") { (field("home") as HistoryHome).adapter.count==73 }
             checkThat(AppSettings(targetContext).appearance=="dark","Dark preference not persisted")
             checkThat(activity.getColor(R.color.canvas)==Color.parseColor("#151B17"),"Dark palette not applied")
             capture("S02-dark-offline")
             runOnMainSync { invoke("help") };capture("S21-help")
+            runOnMainSync { click(field("page") as View,targetContext.getString(R.string.licenses)) }
+            until("Licence page failed") { field("pageKind")=="licenses" }
+            runOnMainSync { checkThat(texts(field("page") as View).any { it.contains("Permission is hereby granted") && it.contains("END OF TERMS AND CONDITIONS") },"Complete runtime licence notices missing") }
             runOnMainSync { invoke("closePage");invoke("diagnostics") };capture("S20-diagnostics-offline")
             runOnMainSync {
                 checkThat(texts(field("page") as View).none { it==samples[2] },"Diagnostics exposed clip text")

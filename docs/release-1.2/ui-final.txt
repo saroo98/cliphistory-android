@@ -1,0 +1,1 @@
+PASS: 29 assertions. Synthetic history, UI fixtures and preferences only; no Shizuku runtime claim.
