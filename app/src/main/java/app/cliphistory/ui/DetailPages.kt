@@ -59,7 +59,8 @@ class DetailPages(private val ui:Ui) {
             s(R.string.device) to Build.MODEL,
             s(R.string.android_version) to "${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}",
             s(R.string.mode) to s(if(offline)R.string.offline_mode else R.string.recorder_mode),
-            s(R.string.duplicate_handling) to s(if(b.getInt("duplicateMode")==1)R.string.duplicates_consecutive else R.string.duplicates_unique),
+            s(R.string.duplicate_handling) to s(if(!b.containsKey("duplicateMode"))R.string.not_confirmed
+                else if(b.getInt("duplicateMode")==1)R.string.duplicates_consecutive else R.string.duplicates_unique),
             s(R.string.automatic_recovery) to (b.getString("recoveryMessage").orEmpty().ifEmpty {
                 val options=app.cliphistory.client.RecorderPreferences(ui.activity).options()
                 s(if(options.automatic && !options.explicitlyStopped)R.string.enabled else R.string.disabled)

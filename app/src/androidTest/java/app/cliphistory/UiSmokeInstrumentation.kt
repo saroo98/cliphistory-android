@@ -79,7 +79,7 @@ class UiSmokeInstrumentation:Instrumentation() {
                 report.putString("stream",when(suite) {
                     "audit-navigation"->AuditNavigationChecks(this).run()
                     "audit-diagnostics"->AuditDiagnosticChecks(this).run()
-                    in listOf("quick-errors","accessibility","settings","privacy","tile","tile-performance","paused-connection","recovery","onboarding","customization")->FeatureChecks(this,arguments).run(suite)
+                    in listOf("command-errors","quick-errors","accessibility","settings","privacy","tile","tile-performance","paused-connection","recovery","onboarding","customization")->FeatureChecks(this,arguments).run(suite)
                     else->ReleaseChecks(this).run(suite)
                 })
                 finish(Activity.RESULT_OK,report);return

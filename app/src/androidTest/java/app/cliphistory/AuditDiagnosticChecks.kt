@@ -53,6 +53,20 @@ class AuditDiagnosticChecks(private val test:Instrumentation) {
             val initial=pages.diagnostics(fixture(),false,{}, {})
             checkThat(value(initial.view,key)==activity.getString(R.string.audit_test_not_run),"Missing self-test renders Not run")
             checkThat(pages.report(fixture(),false).lineSequence().any { it=="$key: NOT_RUN" },"Missing self-test report retains NOT_RUN")
+            val duplicateKey=activity.getString(R.string.duplicate_handling)
+            val unknownPolicy=activity.getString(R.string.not_confirmed)
+            checkThat(value(initial.view,duplicateKey)==unknownPolicy,"Missing duplicate policy renders Not confirmed")
+            checkThat(pages.report(fixture(),false).lineSequence().any { it=="$duplicateKey: $unknownPolicy" },"Missing duplicate policy report does not invent a preference")
+            for((mode,label) in listOf(0 to R.string.duplicates_unique,1 to R.string.duplicates_consecutive)) {
+                val known=fixture().apply { putInt("duplicateMode",mode) }
+                val expected=activity.getString(label)
+                checkThat(value(pages.diagnostics(known,false,{},{}).view,duplicateKey)==expected,"Initial known duplicate policy $mode remains accurate")
+                initial.update(known,false)
+                checkThat(value(initial.view,duplicateKey)==expected,"Updated known duplicate policy $mode remains accurate")
+                checkThat(pages.report(known,false).lineSequence().any { it=="$duplicateKey: $expected" },"Report preserves known duplicate policy $mode")
+            }
+            initial.update(fixture(),true)
+            checkThat(value(initial.view,duplicateKey)==unknownPolicy,"Failed offline update clears the previous duplicate policy")
             val cases=listOf(
                 "PASS" to R.string.passed,
                 "WAITING" to R.string.audit_test_waiting,

@@ -404,6 +404,71 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             checkThat(prefs.options().explicitlyStopped,"Paused validation recorder stopped durably")
         }
     }
+    private fun commandErrors() {
+        check(context.packageName.endsWith(".validation") && (Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk"))) {
+            "Rejected-command fixtures require an isolated disposable emulator"
+        }
+        val theme=arguments.getString("theme","light")!!
+        check(theme in listOf("light","dark")) { "Error capture theme must be light or dark" }
+        seed(paused=true,theme=theme)
+        val preferences=client.preferences
+        val configured=CountDownLatch(1)
+        main { client.updateRecovery(automatic=false,afterBoot=false) { checkThat(it,"Command fixture recovery disabled");configured.countDown() } }
+        check(configured.await(8,TimeUnit.SECONDS))
+        check(preferences.activate() && preferences.completeSetup())
+        try {
+            main { client.connect(true) }
+            await("Actual paused Shizuku connection for rejected commands") { client.connected() }
+            val daemon=DaemonClient::class.java.getDeclaredField("remote").apply { isAccessible=true }.get(client) as app.cliphistory.ipc.IClipboardDaemon
+            val before=daemon.status()
+            checkThat(before.getInt("uid")==2000 && before.getBoolean("paused") && before.getBoolean("listening"),"Real shell recorder is connected and paused")
+            PrivateHistory.invalidate()
+            val saved=PrivateHistory.readOffline(context)
+            fun failure():Dialog {
+                var dialog:Dialog?=null
+                main { dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().lastOrNull { it.isShowing } }
+                return dialog?:error("Actual operation-failure sheet absent")
+            }
+            fun rejectedCommand() {
+                val response=java.util.concurrent.atomic.AtomicReference<Bundle>()
+                val received=CountDownLatch(1)
+                // Main's connected guard and callback are real. Only the invalid
+                // argument bypasses the normal capacity field validation.
+                val action:(app.cliphistory.ipc.IClipboardDaemon)->Bundle={ service ->
+                    service.setLimit(MIN_LIMIT-1).also { response.set(it);received.countDown() }
+                }
+                main { MainActivity::class.java.declaredMethods.single { it.name=="command" && it.parameterCount==2 }
+                    .apply { isAccessible=true }.invoke(activity,action,null) }
+                check(received.await(8,TimeUnit.SECONDS))
+                checkThat(!response.get().getBoolean("ok") && response.get().getString("issue")=="LIMIT_MUST_BE_20_TO_500","Real daemon rejects invalid capacity before writing history")
+                await("Actual operation-failure sheet exposes both recovery controls") {
+                    node(context.getString(R.string.view_diagnostics))!=null && node(context.getString(R.string.done))!=null
+                }
+                main { checkThat(failure().window!!.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE!=0,"Operation-failure sheet retains screenshot protection") }
+                val after=daemon.status()
+                checkThat(after.getLong("generation")==before.getLong("generation") && after.getInt("count")==3 && after.getInt("limit")==before.getInt("limit"),"Rejected command leaves generation, count and capacity unchanged")
+            }
+            rejectedCommand();test.waitForIdleSync();capture("operation-failure-diagnostics",failure().window!!)
+            checkThat(node(context.getString(R.string.view_diagnostics))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,"Actual operation-failure View diagnostics control accepts activation")
+            await("Operation-failure Diagnostics opens its real page") { var ready=false;main { ready=field("pageKind")=="diagnostics" };ready }
+            main { checkThat(field("operationIssue")=="LIMIT_MUST_BE_20_TO_500","Diagnostics preserves the actual rejected-command issue") }
+            capture("operation-failure-diagnostics-page")
+            test.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+            await("System Back returns from operation Diagnostics") { var ready=false;main { ready=field("pageKind")=="" };ready }
+            rejectedCommand();test.waitForIdleSync();capture("operation-failure-done",failure().window!!)
+            val dialog=failure()
+            checkThat(node(context.getString(R.string.done))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,"Actual operation-failure Done control accepts activation")
+            await("Done dismisses the actual failure sheet and keeps Main visible") { var ready=false;main { ready=!dialog.isShowing && field("pageKind")=="" && activity.hasWindowFocus() };ready }
+            PrivateHistory.invalidate()
+            checkThat(PrivateHistory.readOffline(context)==saved,"Both rejected commands preserve the complete synthetic snapshot")
+        } finally {
+            val stopped=CountDownLatch(1)
+            main { client.stopRecording { stopped.countDown() } }
+            check(stopped.await(10,TimeUnit.SECONDS))
+            checkThat(preferences.options().explicitlyStopped,"Command fixture recorder stopped durably")
+            main { AppSettings(context).appearance="light" }
+        }
+    }
     private fun recovery() {
         seed()
         val preferences=RecorderPreferences(context)
@@ -566,6 +631,8 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             await("Failed-history Diagnostics opens its real page") {
                 var ready=false;main { ready=field("pageKind")=="diagnostics" };ready
             }
+            checkThat(node(context.getString(R.string.not_confirmed))!=null,"Failed-read Diagnostics identifies the unavailable duplicate policy")
+            capture("home-history-error-diagnostics")
             test.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
             await("Actual Back restores failed-history recovery controls") { node(context.getString(R.string.try_again))!=null }
             replace(valid)
@@ -645,7 +712,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         await("Leaving the Activity removes transient feedback") { var removed=false;main { removed=field("snackbar")==null };removed }
     }
     fun run(suite:String):String {
-        try { when(suite){"quick-errors"->quickErrors();"accessibility"->accessibility();"settings"->settings();"privacy"->modalPrivacy();"tile"->tile();"tile-performance"->tile(true);"paused-connection"->pausedConnection();"recovery"->recovery();"onboarding"->onboarding();"customization"->customization();else->error("Unknown feature suite") } }
+        try { when(suite){"command-errors"->commandErrors();"quick-errors"->quickErrors();"accessibility"->accessibility();"settings"->settings();"privacy"->modalPrivacy();"tile"->tile();"tile-performance"->tile(true);"paused-connection"->pausedConnection();"recovery"->recovery();"onboarding"->onboarding();"customization"->customization();else->error("Unknown feature suite") } }
         finally { if(::activity.isInitialized)main { activity.finish() } }
         return log.append("PASS $count feature assertions ($suite), API ${Build.VERSION.SDK_INT}. Synthetic validation only.\n").toString()
     }
