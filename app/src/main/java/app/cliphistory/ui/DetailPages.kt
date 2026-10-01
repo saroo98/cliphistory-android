@@ -21,7 +21,7 @@ class DetailPages(private val ui:Ui) {
         body(content,root);return root
     }
     fun help(back:()->Unit,website:(String)->Unit,manager:()->Unit,connect:()->Unit,licenses:()->Unit):View=page(s(R.string.help_privacy),back) { content,_ ->
-        content.addView(ui.title(s(R.string.help_setup),18f));content.addView(ui.space(8))
+        content.addView(ui.title(s(R.string.help_setup),18f).apply { isAccessibilityHeading=true });content.addView(ui.space(8))
         listOf(R.string.setup_install,R.string.setup_debugging,R.string.setup_pair,R.string.setup_start,R.string.setup_authorise,R.string.setup_background,R.string.setup_reboot).forEach {
             ui.paragraph(content,s(it))
         }
@@ -40,7 +40,7 @@ class DetailPages(private val ui:Ui) {
             R.string.help_limits to R.string.help_limits_body,
             R.string.help_screen to R.string.help_screen_body
         ).forEach { (title,body) ->
-            content.addView(ui.title(s(title),18f));content.addView(ui.space(8));ui.paragraph(content,s(body));content.addView(ui.space(8))
+            content.addView(ui.title(s(title),18f).apply { isAccessibilityHeading=true });content.addView(ui.space(8));ui.paragraph(content,s(body));content.addView(ui.space(8))
         }
         content.addView(ui.text(ui.activity.getString(R.string.version_license,BuildConfig.VERSION_NAME),13f,true))
         ui.actionRow(content,s(R.string.source_code)){website("https://github.com/saroo98/cliphistory-android")}
@@ -82,6 +82,17 @@ class DetailPages(private val ui:Ui) {
         s(R.string.api_signature) to b.getString("signature",s(R.string.not_connected))
     )
     fun report(b:Bundle,offline:Boolean)=(diagnosticRows(b,offline)+advanced(b,offline)).joinToString("\n") { "${it.first}: ${it.second}" }+"\n\n"+s(R.string.report_privacy)+"\n"+s(R.string.test_boundary)
+    private fun displayedValue(key:String,value:String):String {
+        if(key!=s(R.string.connection_test))return value
+        return when(value) {
+            "PASS"->s(R.string.passed)
+            "WAITING"->s(R.string.audit_test_waiting)
+            "NOT_RUN"->s(R.string.audit_test_not_run)
+            "STORAGE_FAILED"->s(R.string.audit_test_storage_failed)
+            "NO_CALLBACK_RECEIVED"->s(R.string.audit_test_no_event)
+            else->value
+        }
+    }
     fun keyValue(parent:LinearLayout,key:String,value:String):TextView {
         val block=ui.column().apply { setPadding(0,ui.dp(10),0,ui.dp(10)) }
         val text=ui.text(value,16f)
@@ -91,17 +102,23 @@ class DetailPages(private val ui:Ui) {
     fun diagnostics(b:Bundle,offline:Boolean,back:()->Unit,copy:()->Unit):DiagnosticPage {
         val values=LinkedHashMap<String,TextView>()
         val view=page(s(R.string.diagnostics),back) { content,root ->
-        diagnosticRows(b,offline).forEach { (key,value) -> values[key]=keyValue(content,key,value) }
+        diagnosticRows(b,offline).forEach { (key,value) -> values[key]=keyValue(content,key,displayedValue(key,value)) }
         val extra=ui.column().apply { visibility=View.GONE }
         advanced(b,offline).forEach { (key,value) -> values[key]=keyValue(extra,key,value) }
-        ui.actionRow(content,s(R.string.advanced_details)) { extra.visibility=if(extra.visibility==View.VISIBLE)View.GONE else View.VISIBLE }
+        lateinit var disclosure:View
+        disclosure=ui.actionRow(content,s(R.string.advanced_details)) {
+            val expanded=extra.visibility!=View.VISIBLE
+            extra.visibility=if(expanded)View.VISIBLE else View.GONE
+            disclosure.stateDescription=s(if(expanded)R.string.details_expanded else R.string.details_collapsed)
+        }.apply { stateDescription=s(R.string.details_collapsed) }
         content.addView(extra);content.addView(ui.space(16));ui.paragraph(content,s(R.string.report_privacy));ui.paragraph(content,s(R.string.test_boundary))
         root.addView(ui.button(s(R.string.copy_report),primary=true,action=copy))
         root.addView(ui.text(s(R.string.copies_clipboard),13f,true).apply { gravity=Gravity.CENTER;setPadding(0,ui.dp(8),0,ui.dp(8)) })
         }
         return DiagnosticPage(view) { current,disconnected ->
             (diagnosticRows(current,disconnected)+advanced(current,disconnected)).forEach { (key,value) ->
-                values[key]?.let { if(it.text.toString()!=value)it.text=value }
+                val displayed=displayedValue(key,value)
+                values[key]?.let { if(it.text.toString()!=displayed)it.text=displayed }
             }
         }
     }

@@ -49,7 +49,7 @@ class Ui(val activity: Activity) {
     fun divider()=View(activity).apply { setBackgroundColor(color(R.color.divider));layoutParams=LinearLayout.LayoutParams(-1,dp(1)) }
     fun space(height:Int)=View(activity).apply { layoutParams=LinearLayout.LayoutParams(1,dp(height)) }
     fun paragraph(parent:LinearLayout,value:CharSequence) { parent.addView(text(value,15f,true));parent.addView(space(16)) }
-    fun actionRow(parent:LinearLayout,value:String,icon:Int?=null,enabled:Boolean=true,danger:Boolean=false,action:()->Unit) {
+    fun actionRow(parent:LinearLayout,value:String,icon:Int?=null,enabled:Boolean=true,danger:Boolean=false,action:()->Unit):View {
         val row=LinearLayout(activity).apply {
             gravity=Gravity.CENTER_VERTICAL;minimumHeight=dp(52);setPadding(dp(12),dp(4),dp(12),dp(4))
             background=ripple(android.graphics.Color.TRANSPARENT,12);isEnabled=enabled
@@ -71,12 +71,13 @@ class Ui(val activity: Activity) {
             importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO
         },LinearLayout.LayoutParams(-1,-2))
         parent.addView(row)
+        return row
     }
     fun sheet(title:String,content:(LinearLayout,Dialog)->Unit):Dialog {
         val dialog=Dialog(activity)
         ScreenPrivacy.apply(dialog.window,AppSettings(activity))
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        val box=column().apply { setPadding(dp(20),dp(12),dp(20),dp(20));background=shape(color(R.color.surface),24) }
+        val box=column().apply { setPadding(dp(20),dp(12),dp(20),dp(20));background=shape(color(R.color.surface),24);accessibilityPaneTitle=title }
         val handle=SheetHandle(activity).apply { minimumHeight=dp(48);contentDescription=activity.getString(R.string.dismiss_panel);isClickable=true;isFocusable=true }
         handle.addView(View(activity).apply { background=shape(color(R.color.divider),2) },FrameLayout.LayoutParams(dp(32),dp(4),Gravity.CENTER))
         handle.setOnClickListener { dialog.dismiss() }
@@ -98,7 +99,7 @@ class Ui(val activity: Activity) {
             }
         }
         box.addView(handle,LinearLayout.LayoutParams(-1,dp(48)))
-        box.addView(title(title));box.addView(space(20));content(box,dialog)
+        box.addView(title(title).apply { isAccessibilityHeading=true });box.addView(space(20));content(box,dialog)
         val scroll=object:ScrollView(activity) {
             override fun onMeasure(w:Int,h:Int) {
                 val screenLimit=(activity.windowManager.currentWindowMetrics.bounds.height()*.82).toInt()

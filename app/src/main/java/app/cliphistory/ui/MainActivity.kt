@@ -9,6 +9,7 @@ import android.graphics.drawable.Icon
 import android.os.*
 import android.text.*
 import android.view.*
+import android.view.accessibility.AccessibilityManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import android.window.OnBackInvokedCallback
@@ -23,6 +24,7 @@ import java.util.Date
 import java.util.UUID
 
 class MainActivity:Activity() {
+    companion object { const val ACTION_OPEN_HISTORY="app.cliphistory.OPEN_HISTORY" }
     private val client get()=(application as ClipApplication).daemon
     private val main=Handler(Looper.getMainLooper())
     private lateinit var ui:Ui
@@ -47,6 +49,10 @@ class MainActivity:Activity() {
     private var settingsPage:SettingsPage.Page?=null
     private var pendingWelcome=false
     private var restoredSettingsScroll=0
+    private var helpFromSettings=false
+    private var helpSettingsScroll=0
+    private var helpScroll=0
+    private var restoredLicenseScroll=0
     private var operationIssue=""
     private var snackbar:TextView?=null
     private val dialogs=mutableSetOf<Dialog>()
@@ -55,12 +61,14 @@ class MainActivity:Activity() {
     private var recorderDialog:Dialog?=null
     private val changed:()->Unit={ if(visible){refresh();main.post { maybeShowPrompts() }} }
     private val searchChanged=Runnable { if(visible)refresh(reset=true) }
-    private val back=OnBackInvokedCallback { if(pageKind=="licenses")help() else closePage() }
+    private val back=OnBackInvokedCallback { backPage() }
     private fun s(id:Int)=getString(id)
 
     override fun attachBaseContext(newBase:Context) { super.attachBaseContext(AppSettings.themedContext(newBase)) }
     override fun onCreate(state:Bundle?) {
         super.onCreate(state)
+        val openHistory=intent.action==ACTION_OPEN_HISTORY
+        if(openHistory)intent.action=null
         settings=AppSettings(this)
         ScreenPrivacy.apply(this,settings)
         @Suppress("DEPRECATION")
@@ -69,6 +77,10 @@ class MainActivity:Activity() {
         ui=Ui(this);pages=DetailPages(ui)
         pendingWelcome=state?.getBoolean("pending_welcome") ?: isLauncherIntent(intent)
         restoredSettingsScroll=state?.getInt("settings_scroll",0)?:0
+        helpFromSettings=state?.getBoolean("help_from_settings",false)?:false
+        helpSettingsScroll=state?.getInt("help_settings_scroll",0)?:0
+        helpScroll=state?.getInt("help_scroll",0)?:0
+        restoredLicenseScroll=state?.getInt("licenses_scroll",0)?:0
         root=FrameLayout(this).apply { setBackgroundColor(ui.color(R.color.canvas)) }
         home=HistoryHome(ui,::showMenu,{ client.connect(true) },{ client.openShizuku() },::help,::recorder,
             { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview)
@@ -106,10 +118,10 @@ class MainActivity:Activity() {
             if(index in 0 until home.adapter.count)entryActions(home.adapter.getItem(index));true
         }
         updateCopyHint()
-        when(state?.getString("page")) {
-            "help"->help()
-            "licenses"->showPage("licenses",pages.licenses(::help))
-            "preview"->{previewId=state.getLong("preview",-1);pageKind="restore-preview"}
+        when(if(openHistory)null else state?.getString("page")) {
+            "help"->showHelp()
+            "licenses"->showLicenses()
+            "preview"->{previewId=state?.getLong("preview",-1)?:-1;pageKind="restore-preview"}
             "diagnostics"->pageKind="restore-diagnostics"
             "settings"->showSettings()
         }
@@ -120,6 +132,11 @@ class MainActivity:Activity() {
     override fun onPostResume() { super.onPostResume();main.post { maybeShowPrompts() } }
     override fun onNewIntent(intent:Intent) {
         super.onNewIntent(intent);setIntent(intent)
+        if(intent.action==ACTION_OPEN_HISTORY) {
+            intent.action=null
+            dialogs.toList().forEach { it.dismiss() };menu?.dismiss()
+            closePage();hideKeyboard()
+        }
         if(isLauncherIntent(intent)){pendingWelcome=true;main.post { maybeShowPrompts() }}
     }
     private fun isLauncherIntent(intent:Intent?)=intent?.action==Intent.ACTION_MAIN && intent.hasCategory(Intent.CATEGORY_LAUNCHER)
@@ -136,6 +153,10 @@ class MainActivity:Activity() {
         out.putInt("loaded_count",maxOf(rows.size,restoredCount))
         out.putBoolean("pending_welcome",pendingWelcome)
         if(pageKind=="settings")out.putInt("settings_scroll",findScroll(page)?.scrollY?:0)
+        out.putBoolean("help_from_settings",helpFromSettings)
+        out.putInt("help_settings_scroll",helpSettingsScroll)
+        out.putInt("help_scroll",if(pageKind=="help")findScroll(page)?.scrollY?:0 else helpScroll)
+        if(pageKind=="licenses")out.putInt("licenses_scroll",findScroll(page)?.scrollY?:0)
         val anchor=restoredAnchor?:home.anchor()
         out.putLong("anchor_id",anchor.id);out.putInt("anchor_position",anchor.position);out.putInt("anchor_top",anchor.top)
         super.onSaveInstanceState(out)
@@ -193,9 +214,12 @@ class MainActivity:Activity() {
     private fun sheet(title:Int,body:(LinearLayout,Dialog)->Unit)=track(ui.sheet(s(title),body))
     private fun message(title:Int,body:Int) { confirm(title,body,R.string.ok,false,showCancel=false) {} }
     private fun confirm(title:Int,body:Int,positive:Int,danger:Boolean=false,showCancel:Boolean=true,action:()->Unit) {
-        val box=ui.column().apply { setPadding(ui.dp(24),ui.dp(24),ui.dp(24),ui.dp(16));background=ui.shape(ui.color(R.color.surface),24) }
+        val box=ui.column().apply {
+            setPadding(ui.dp(24),ui.dp(24),ui.dp(24),ui.dp(16));background=ui.shape(ui.color(R.color.surface),24)
+            accessibilityPaneTitle=s(title)
+        }
         val dialog=Dialog(this)
-        box.addView(ui.title(s(title)));box.addView(ui.space(16));ui.paragraph(box,s(body))
+        box.addView(ui.title(s(title)).apply { isAccessibilityHeading=true });box.addView(ui.space(16));ui.paragraph(box,s(body))
         val actions=LinearLayout(this).apply { gravity=Gravity.END }
         if(resources.configuration.fontScale>1.3f)actions.orientation=LinearLayout.VERTICAL
         if(showCancel)actions.addView(ui.button(s(R.string.cancel)) { dialog.dismiss() })
@@ -212,7 +236,9 @@ class MainActivity:Activity() {
             accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE
         }
         snackbar=notice;root.addView(notice,FrameLayout.LayoutParams(-1,-2,Gravity.BOTTOM).apply { setMargins(ui.dp(20),0,ui.dp(20),ui.dp(8)) })
-        main.postDelayed({root.removeView(notice);if(snackbar===notice)snackbar=null},2200)
+        val timeout=getSystemService(AccessibilityManager::class.java)
+            ?.getRecommendedTimeoutMillis(2200,AccessibilityManager.FLAG_CONTENT_TEXT)?.coerceAtLeast(2200)?.toLong()?:2200L
+        main.postDelayed({root.removeView(notice);if(snackbar===notice)snackbar=null},timeout)
     }
     private fun putClipboard(label:String,text:String):Boolean=try {
         getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText(label,text));true
@@ -260,7 +286,7 @@ class MainActivity:Activity() {
         sheet(R.string.saved_text) { box,dialog ->
             box.addView(ui.text(row.preview).apply { maxLines=2;ellipsize=TextUtils.TruncateAt.END })
             box.addView(ui.text(android.text.format.DateUtils.getRelativeTimeSpanString(row.time),13f,true));box.addView(ui.space(16))
-            ui.actionRow(box,s(R.string.copy),R.drawable.ic_copy){dialog.dismiss();copyEntry(row.id)}
+            ui.actionRow(box,s(if(settings.returnAfterCopy)R.string.copy_return else R.string.copy),R.drawable.ic_copy){dialog.dismiss();copyEntry(row.id)}
             ui.actionRow(box,s(R.string.view_full),R.drawable.ic_eye){dialog.dismiss();preview(row.id)}
             ui.actionRow(box,s(R.string.delete),R.drawable.ic_delete,client.connected(),true){dialog.dismiss();delete(row.id)}
             if(!client.connected())ui.paragraph(box,s(R.string.connect_mutation))
@@ -275,9 +301,19 @@ class MainActivity:Activity() {
     }
     private fun closePage() {
         navigation++
-        if(page==null)return
+        if(page==null){pageKind="";previewId=-1;return}
         page?.let { root.removeView(it) };page=null;pageKind="";previewId=-1;diagnosticPage=null
+        helpFromSettings=false;helpSettingsScroll=0;helpScroll=0
         onBackInvokedDispatcher.unregisterOnBackInvokedCallback(back);home.root.visibility=View.VISIBLE
+    }
+    private fun backPage() {
+        when(pageKind) {
+            "licenses"->showHelp()
+            "help"->if(helpFromSettings) {
+                restoredSettingsScroll=helpSettingsScroll;helpFromSettings=false;showSettings()
+            } else closePage()
+            else->closePage()
+        }
     }
     private fun preview(id:Long) {
         val token=++navigation
@@ -297,7 +333,22 @@ class MainActivity:Activity() {
             })
         }
     }
-    private fun help() { showPage("help",pages.help(::closePage,::openWebsite,{client.openShizuku()},{client.connect(true)}) { showPage("licenses",pages.licenses(::help)) }) }
+    private fun help() { helpFromSettings=false;helpSettingsScroll=0;helpScroll=0;showHelp() }
+    private fun settingsHelp() {
+        helpFromSettings=true;helpSettingsScroll=findScroll(page)?.scrollY?:0;helpScroll=0;showHelp()
+    }
+    private fun showHelp() {
+        val view=pages.help(::backPage,::openWebsite,{client.openShizuku()},{client.connect(true)}) {
+            helpScroll=findScroll(page)?.scrollY?:0;showLicenses()
+        }
+        val scroll=helpScroll
+        showPage("help",view);view.post { findScroll(view)?.scrollTo(0,scroll) }
+    }
+    private fun showLicenses() {
+        val view=pages.licenses(::backPage)
+        val scroll=restoredLicenseScroll;restoredLicenseScroll=0
+        showPage("licenses",view);view.post { findScroll(view)?.scrollTo(0,scroll) }
+    }
     private fun openWebsite(url:String) {
         try { startActivity(Intent(Intent.ACTION_VIEW,android.net.Uri.parse(url))) }
         catch (_:ActivityNotFoundException){notifyUser(R.string.browser_missing)}
@@ -316,19 +367,17 @@ class MainActivity:Activity() {
             ui.actionRow(box,s(id),enabled=enabled,danger=danger){popup.dismiss();action()}
         }
         option(if(latest.getBoolean("paused"))R.string.resume_recording else R.string.pause_recording,client.connected()){command({it.setPaused(!latest.getBoolean("paused"))})}
-        option(R.string.history_limit,client.connected(),action=::limitDialog)
-        option(R.string.add_tile_menu,action=::addTile)
-        option(R.string.connection_test,client.connected(),action=::connectionTest)
-        option(R.string.diagnostics,action=::diagnostics)
         option(R.string.settings,action=::showSettings)
-        option(R.string.appearance,action=::appearance)
-        option(R.string.copy_behavior,action=::copyBehavior)
+        option(R.string.diagnostics,action=::diagnostics)
         option(R.string.help_privacy,action=::help)
         box.addView(ui.divider())
         option(R.string.clear_history,client.connected(),true){confirm(R.string.clear_title,R.string.clear_body,R.string.clear_history,true){command({it.clearHistory()}){notifyUser(R.string.cleared)}}}
         if(!client.connected())box.addView(ui.text(s(R.string.connect_mutation),13f,true).apply { setPadding(ui.dp(12),ui.dp(8),ui.dp(12),ui.dp(8)) })
         popup.contentView=ScrollView(this).apply { addView(box);isVerticalScrollBarEnabled=false }
-        popup.height=minOf(ui.dp(580),popup.getMaxAvailableHeight(anchor));menu=popup
+        val maxHeight=minOf(ui.dp(580),popup.getMaxAvailableHeight(anchor))
+        popup.contentView.measure(View.MeasureSpec.makeMeasureSpec(popup.width,View.MeasureSpec.EXACTLY),
+            View.MeasureSpec.makeMeasureSpec(maxHeight,View.MeasureSpec.AT_MOST))
+        popup.height=popup.contentView.measuredHeight;menu=popup
         popup.showAsDropDown(anchor,0,0,Gravity.END)
     }
     private fun limitDialog() {
@@ -342,6 +391,7 @@ class MainActivity:Activity() {
             }
             box.addView(field,LinearLayout.LayoutParams(-1,-2));box.addView(ui.space(12));ui.paragraph(box,s(R.string.limit_warning))
             val actions=LinearLayout(this).apply { gravity=Gravity.END }
+            if(resources.configuration.fontScale>1.3f)actions.orientation=LinearLayout.VERTICAL
             actions.addView(ui.button(s(R.string.cancel)){dialog.dismiss()})
             actions.addView(ui.button(s(R.string.save),primary=true){
                 val value=field.text.toString().toIntOrNull()
@@ -362,15 +412,6 @@ class MainActivity:Activity() {
                 if(mode!=settings.appearance){settings.appearance=mode;dialog.dismiss();recreate()}
             }
             box.addView(radios);box.addView(ui.space(12));ui.paragraph(box,s(R.string.system_hint))
-        }
-    }
-    private fun copyBehavior() {
-        sheet(R.string.copy_behavior) { box,_ ->
-            box.addView(Switch(this).apply {
-                text=s(R.string.return_after_copy);textSize=16f;setTextColor(ui.ink);minimumHeight=ui.dp(52)
-                isChecked=settings.returnAfterCopy;setOnCheckedChangeListener { _,checked -> settings.returnAfterCopy=checked;updateCopyHint() }
-            })
-            ui.paragraph(box,s(R.string.return_body));ui.paragraph(box,s(R.string.stay_body))
         }
     }
     private fun addTile() {
@@ -431,7 +472,7 @@ class MainActivity:Activity() {
                 SettingsPage.Action.BATTERY->backgroundHelp()
                 SettingsPage.Action.WELCOME->showWelcome()
                 SettingsPage.Action.SUPPORT->support()
-                SettingsPage.Action.GUIDE->help()
+                SettingsPage.Action.GUIDE->settingsHelp()
                 SettingsPage.Action.NOTIFICATIONS->requestRecoveryNotifications()
             }
         },{ issue ->
@@ -439,7 +480,8 @@ class MainActivity:Activity() {
             applyPrivacy();updateCopyHint();refresh()
         })
         settingsPage=created;showPage("settings",created.view)
-        created.view.post { findScroll(created.view)?.scrollTo(0,restoredSettingsScroll);restoredSettingsScroll=0 }
+        val scroll=restoredSettingsScroll;restoredSettingsScroll=0
+        created.view.post { findScroll(created.view)?.scrollTo(0,scroll) }
     }
     private fun duplicateDialog() {
         if(!client.connected()){message(R.string.not_connected,R.string.connect_mutation);return}

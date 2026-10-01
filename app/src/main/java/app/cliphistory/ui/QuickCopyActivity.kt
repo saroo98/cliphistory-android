@@ -29,6 +29,7 @@ class QuickCopyActivity:Activity() {
     private var loading=false
     private var dirty=false
     private var copying=false
+    private var populatedHeight=0
     private var nextNotice:Int?=null
     private val reload=Runnable { refresh() }
     private val changed:()->Unit={
@@ -56,7 +57,7 @@ class QuickCopyActivity:Activity() {
         val sample=entryButton("\n")
         sample.measure(View.MeasureSpec.makeMeasureSpec(dp(320),View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED))
-        rows.minimumHeight=3*(sample.measuredHeight+dp(8))
+        populatedHeight=3*(sample.measuredHeight+dp(8));rows.minimumHeight=populatedHeight
         notice=label(getString(R.string.quick_loading),14f,true)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
         // QS already animates its own collapse. Keep one stable, immediate panel
@@ -135,6 +136,7 @@ class QuickCopyActivity:Activity() {
             loading=false
             if(!unlocked()){dismiss();return@requestLatest}
             rows.removeAllViews()
+            rows.minimumHeight=if(page.issue.isEmpty() && page.rows.isNotEmpty())populatedHeight else 0
             if(page.issue.isNotEmpty()) {
                 notice.text=context.getString(R.string.quick_failed)
                 action(R.string.quick_retry){refresh()};action(R.string.open_app){dismiss();openApp()}
@@ -151,8 +153,8 @@ class QuickCopyActivity:Activity() {
             if(dirty){dirty=false;main.post(reload)}
         }
     }
-    private fun action(id:Int,click:()->Unit) { rows.addView(Button(context).apply {
-        text=context.getString(id);isAllCaps=false;minimumHeight=dp(48);setOnClickListener { click() }
+    private fun action(id:Int,click:()->Unit) { rows.addView(entryButton(context.getString(id)).apply {
+        maxLines=3;minimumHeight=dp(48);setOnClickListener { click() }
     },LinearLayout.LayoutParams(-1,-2)) }
     private fun copy(id:Long) {
         if(copying || closed || !unlocked())return
@@ -163,6 +165,7 @@ class QuickCopyActivity:Activity() {
             if(!unlocked()){dismiss();return@getText}
             if(result.issue.isNotEmpty()) {
                 notice.text=context.getString(R.string.quick_failed);rows.removeAllViews()
+                rows.minimumHeight=0
                 action(R.string.quick_retry){refresh()};action(R.string.open_app){dismiss();openApp()};return@getText
             }
             val text=result.text

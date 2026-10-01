@@ -45,7 +45,13 @@ class UiSmokeInstrumentation:Instrumentation() {
         val method=MainActivity::class.java.declaredMethods.single { it.name==name && it.parameterCount==args.size }
         method.isAccessible=true;method.invoke(activity,*args)
     }
-    private fun dialog():Dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().last()
+    private fun dialog():Dialog {
+        fun current()=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().last()
+        if(Looper.myLooper()==Looper.getMainLooper())return current()
+        lateinit var result:Dialog
+        runOnMainSync { result=current() }
+        return result
+    }
     private fun click(root:View,label:String) {
         var view=all(root).firstOrNull { it is TextView && it.text.toString()==label } ?: error("Missing control: $label")
         while(!view.isClickable && view.parent is View)view=view.parent as View
@@ -70,7 +76,12 @@ class UiSmokeInstrumentation:Instrumentation() {
         try {
             check(BuildConfig.DEBUG && (Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk") || BuildConfig.APPLICATION_ID.endsWith(".validation"))) { "Synthetic tests require an emulator or the isolated validation application" }
             if(suite!="ui") {
-                report.putString("stream",if(suite in listOf("settings","privacy","tile","tile-performance","paused-connection","recovery","onboarding","customization"))FeatureChecks(this,arguments).run(suite) else ReleaseChecks(this).run(suite))
+                report.putString("stream",when(suite) {
+                    "audit-navigation"->AuditNavigationChecks(this).run()
+                    "audit-diagnostics"->AuditDiagnosticChecks(this).run()
+                    in listOf("quick-errors","accessibility","settings","privacy","tile","tile-performance","paused-connection","recovery","onboarding","customization")->FeatureChecks(this,arguments).run(suite)
+                    else->ReleaseChecks(this).run(suite)
+                })
                 finish(Activity.RESULT_OK,report);return
             }
             stopRecorderForFixture(this)
@@ -113,8 +124,12 @@ class UiSmokeInstrumentation:Instrumentation() {
             idle()
             runOnMainSync {
                 val popup=field("menu") as PopupWindow
-                checkThat(texts(popup.contentView).contains("Appearance"),"Overflow omitted appearance")
+                val choices=all(popup.contentView).filter { it.isClickable }.map { it.contentDescription?.toString() }.filterNotNull()
+                checkThat(choices==listOf("Pause recording","Settings","Diagnostics","Help & privacy","Clear history"),"Overflow must retain its five focused actions")
+                checkThat(!texts(popup.contentView).contains("Appearance"),"Appearance belongs in Settings")
                 checkThat(texts(popup.contentView).contains("Clear history"),"Overflow omitted clear")
+                checkThat(popup.contentView.height==(popup.contentView as ScrollView).getChildAt(0).height,
+                    "Five-action overflow must fit its contents without reserved blank space")
                 popup.dismiss()
             }
             runOnMainSync { invoke("entryActions",home.adapter.getItem(2)) }
@@ -130,14 +145,14 @@ class UiSmokeInstrumentation:Instrumentation() {
                 val clip=activity.getSystemService(android.content.ClipboardManager::class.java).primaryClip
                 checkThat(clip?.getItemAt(0)?.text.toString()==samples[2],"Copy did not restore full text")
                 invoke("closePage")
-                invoke("copyBehavior")
+                invoke("showSettings")
             }
-            idle();capture("S26-copy-behavior",dialog())
+            idle();capture("S26-copy-behavior-settings")
             runOnMainSync {
-                val toggle=all(dialog().window!!.decorView).filterIsInstance<Switch>().single()
+                val toggle=all(field("page") as View).filterIsInstance<Switch>().single { it.text.toString()==targetContext.getString(R.string.return_after_copy) }
                 checkThat(!toggle.isChecked,"Preference not read")
                 toggle.performClick();checkThat(AppSettings(targetContext).returnAfterCopy,"Preference not persisted")
-                dialog().dismiss();invoke("appearance")
+                invoke("closePage");invoke("appearance")
             }
             idle();capture("S25-appearance",dialog())
             val monitor=addMonitor(MainActivity::class.java.name,null,false)

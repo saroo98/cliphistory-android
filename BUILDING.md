@@ -34,7 +34,7 @@ The script:
 5. Creates `local.properties`, an owner-specific RSA signing key and local password files under `.signing/`, only when needed.
 6. Uses the official Gradle wrapper to download Gradle 9.3.1 with its pinned SHA-256 checksum.
 7. Runs `:app:testDebugUnitTest`, `:app:lintRelease`, `:app:assembleRelease` with `-PunsignedRelease`, then signs through `apksigner --alignment-preserved true` and checks the signature, alignment, permissions and target/debuggable status.
-8. Only after those commands succeed, copies the signed output to `ClipHistory-1.3.0.apk` and writes its SHA-256 file.
+8. Only after those commands succeed, copies the signed output to `ClipHistory-<version>.apk`, using the version in `app/build.gradle.kts`, and writes its SHA-256 file.
 
 Build output is recorded in `build-windows.log`. The source, clipboard data and key are not uploaded by our scripts. Ordinary build tools connect to their repositories to download dependencies. If downloads are blocked on your network, the script stops rather than switching to an untrusted APK mirror.
 

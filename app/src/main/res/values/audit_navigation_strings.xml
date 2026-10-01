@@ -1,0 +1,5 @@
+<resources>
+    <string name="audit_recovery_heading">Recovery</string>
+    <string name="audit_limit_summary">%1$d saved texts</string>
+    <string name="audit_offline_controls">Connect the recorder to change pause, duplicate handling, or the history limit. You can still read and copy saved text.</string>
+</resources>

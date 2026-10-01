@@ -47,7 +47,7 @@
     <string name="welcome_off">Welcome: off</string>
     <string name="show_welcome">Show welcome</string>
     <string name="welcome_title">Your clipboard, on your device</string>
-    <string name="welcome_body">ClipHistory is free and open source. Saved text stays on your device. If it helps you, optional feedback or a star can help improve the app and help others discover it.</string>
+    <string name="welcome_body">Free, open source, and local. Saved text stays on your device.\n\nStart Shizuku and connect the recorder, then copy text in another app. Tap a saved entry here to copy it back. The setup guide explains the steps.\n\nFeedback or a GitHub star is always optional.</string>
     <string name="welcome_continue">Continue</string>
     <string name="support_project">Support the project</string>
     <string name="support_optional">Feedback, stars, and sharing are entirely optional. No payment or rating is required.</string>
@@ -60,7 +60,7 @@
     <string name="quick_hint">Tap a text to copy.</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
-    <string name="quick_empty">Nothing saved yet</string>
+    <string name="quick_empty">Nothing saved yet. Connect the recorder in ClipHistory, then copy text in another app.</string>
     <string name="quick_offline">Saved history · Offline</string>
     <string name="quick_missing">This entry changed. Choose from the latest saved texts.</string>
     <string name="quick_failed">Saved text could not be loaded. Try again or open the app.</string>

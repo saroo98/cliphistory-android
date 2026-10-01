@@ -1,0 +1,8 @@
+<resources>
+    <string name="details_expanded">Expanded</string>
+    <string name="details_collapsed">Collapsed</string>
+    <string name="audit_test_waiting">Waiting for clipboard event</string>
+    <string name="audit_test_not_run">Not run</string>
+    <string name="audit_test_storage_failed">Storage check failed</string>
+    <string name="audit_test_no_event">No clipboard event received</string>
+</resources>

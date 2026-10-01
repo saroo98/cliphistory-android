@@ -48,7 +48,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             bitmap.recycle()
         }
     }
-    private fun seed(paused:Boolean=false) {
+    private fun seed(paused:Boolean=false,theme:String="light") {
         // These suites intentionally use offline data. Stop only the isolated validation helper.
         stopRecorderForFixture(test)
         checkThat(true,"Validation helper removed before seeding")
@@ -56,7 +56,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         val (a,b)=PrivateHistory.openForDaemon(context)
         listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot -> slot.writeAndSync(SnapshotCodec.encode(Snapshot(1,100,4,paused,entries))) } }
         PrivateHistory.invalidate()
-        AppSettings(context).apply { welcome="never";backgroundSuggestion=false;allowScreenshots=false;hideRecents=true;appearance="light";tileMode="quick";tileEnabled=true;motion=true }
+        AppSettings(context).apply { welcome="never";backgroundSuggestion=false;allowScreenshots=false;hideRecents=true;appearance=theme;tileMode="quick";tileEnabled=true;motion=true }
         activity=test.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)) as MainActivity
         await("Synthetic offline history loaded") { var ready=false;main { ready=(field("home") as HistoryHome).adapter.count==3 };ready }
     }
@@ -268,7 +268,8 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             }
             tap(context.getString(R.string.quick_close))
             await("Close removes actual dialog window") {
-                test.uiAutomation.windows.none { it.root?.packageName?.toString()==context.packageName }
+                node(context.getString(R.string.quick_close))==null && shell("dumpsys activity activities").lineSequence()
+                    .none { it.contains("ResumedActivity") && it.contains("QuickCopyActivity") }
             }
         }
         val existing=arguments.getString("tilePresent")=="true"
@@ -358,6 +359,22 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             await("Tile can reopen one panel") { node("Quick copy")!=null }
             closePanel()
             await("Close dismisses floating panel") { node("Quick copy")==null }
+            main { AppSettings(context).tileMode="history";call("showSettings") }
+            context.startActivity(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+            await("Settings remains open before full-history tile") { var ready=false;main { ready=field("pageKind")=="settings" };ready }
+            expand()
+            await("Published tile reflects the new History mode") { node(context.getString(R.string.tile_subtitle))!=null }
+            clickTile()
+            await("Full-history tile returns existing Settings to History") {
+                var ready=false;main { ready=field("pageKind")=="" && (field("home") as HistoryHome).root.visibility==View.VISIBLE };ready
+            }
+            checkThat(node("Quick copy")==null,"Full-history mode does not open a floating panel")
+            main { AppSettings(context).tileMode="quick" }
+            expand()
+            await("Published tile reflects the restored Quick copy mode") { node(context.getString(R.string.quick_copy))!=null }
+            clickTile()
+            await("Changing back to Quick copy opens the floating panel") { node("Synthetic newest text")!=null && node("Quick copy")!=null }
+            closePanel()
         } finally { main { AppSettings(context).allowScreenshots=false };node(context.getString(R.string.quick_close))?.performAction(AccessibilityNodeInfo.ACTION_CLICK);shell("cmd statusbar collapse");if(!existing)shell("cmd statusbar remove-tile $component") }
     }
     /** Actual fork/official Shizuku attachment without writing the phone clipboard. */
@@ -493,8 +510,142 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         // Restore the test component for subsequent suites, not the owner's phone tile.
         main { context.packageManager.setComponentEnabledSetting(ComponentName(context,ClipboardTileService::class.java),android.content.pm.PackageManager.COMPONENT_ENABLED_STATE_ENABLED,android.content.pm.PackageManager.DONT_KILL_APP);settings.tileEnabled=true }
     }
+    private fun quickErrors() {
+        check(Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk")) { "Storage error fixtures require a disposable emulator" }
+        val theme=arguments.getString("theme","light")!!
+        check(theme in listOf("light","dark")) { "Error capture theme must be light or dark" }
+        seed(theme=theme)
+        val valid=SnapshotCodec.encode(PrivateHistory.readOffline(context))
+        fun replace(payload:ByteArray) {
+            val (a,b)=PrivateHistory.openForDaemon(context)
+            listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot -> slot.writeAndSync(payload) } }
+            PrivateHistory.invalidate()
+        }
+        fun texts(quick:QuickCopyActivity):List<String> {
+            var result=emptyList<String>()
+            main { result=views(quick.window.decorView).filterIsInstance<TextView>().map { it.text.toString() } }
+            return result
+        }
+        fun openError():QuickCopyActivity {
+            replace(byteArrayOf(1,2,3))
+            val quick=test.startActivitySync(Intent(context,QuickCopyActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as QuickCopyActivity
+            await("Real quick panel shows synthetic storage-read error") { texts(quick).contains(context.getString(R.string.quick_failed)) }
+            main {
+                val rows=QuickCopyActivity::class.java.getDeclaredField("rows").apply { isAccessible=true }.get(quick) as LinearLayout
+                checkThat(rows.minimumHeight==0 && rows.childCount==2,"Error panel releases absent entries and exposes two recovery actions")
+            }
+            return quick
+        }
+        var quick:QuickCopyActivity?=null
+        try {
+            main { AppSettings(context).allowScreenshots=true }
+            quick=openError();capture("quick-error-recovery",quick.window)
+            replace(valid)
+            checkThat(node(context.getString(R.string.quick_retry))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,"Actual Try again accessibility control accepts activation")
+            val recovered=quick
+            await("Try again reloads all three exact valid entries") {
+                val values=texts(recovered)
+                listOf("Synthetic newest text","Synthetic second\nwith exact whitespace  ","Synthetic third text").all { values.contains(it) }
+            }
+            capture("quick-error-recovered",quick.window)
+            main { recovered.finish() };test.waitForIdleSync()
+            quick=openError()
+            checkThat(node(context.getString(R.string.open_app))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,"Actual error Open app accessibility control accepts activation")
+            val opened=quick
+            await("Error Open app closes floating panel and restores Main focus") {
+                var ready=false;main { ready=opened.isFinishing && activity.hasWindowFocus() && !activity.isFinishing };ready
+            }
+            // Direct file injection has no daemon event. A fresh launch reads this
+            // separate Home error fixture through the normal startup path.
+            activity=test.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)) as MainActivity
+            await("Main exposes failed-history Try again and Diagnostics controls") {
+                node(context.getString(R.string.try_again))!=null && node(context.getString(R.string.diagnostics))!=null
+            }
+            capture("home-history-error")
+            checkThat(node(context.getString(R.string.diagnostics))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,"Actual failed-history Diagnostics control accepts activation")
+            await("Failed-history Diagnostics opens its real page") {
+                var ready=false;main { ready=field("pageKind")=="diagnostics" };ready
+            }
+            test.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+            await("Actual Back restores failed-history recovery controls") { node(context.getString(R.string.try_again))!=null }
+            replace(valid)
+            checkThat(node(context.getString(R.string.try_again))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,"Actual failed-history Try again control accepts activation")
+            await("Failed-history Try again reloads the three saved entries") {
+                var ready=false;main { ready=(field("home") as HistoryHome).adapter.count==3 };ready
+            }
+        } finally {
+            replace(valid)
+            main { quick?.finish();AppSettings(context).apply { allowScreenshots=false;appearance="light" };ScreenPrivacy.apply(activity,AppSettings(context)) }
+        }
+        checkThat(SnapshotCodec.encode(PrivateHistory.readOffline(context)).contentEquals(valid),"Valid synthetic history is restored after error controls")
+    }
+    private fun accessibility() {
+        seed()
+        val clipboard=context.getSystemService(ClipboardManager::class.java)
+        val marker="Synthetic accessibility action clipboard sentinel"
+        main { clipboard.setPrimaryClip(ClipData.newPlainText("Validation",marker)) }
+        fun descendants(node:AccessibilityNodeInfo):List<AccessibilityNodeInfo> =
+            listOf(node)+(0 until node.childCount).flatMap { index -> node.getChild(index)?.let { descendants(it) }?:emptyList() }
+        var actionNode:AccessibilityNodeInfo?=null
+        await("Actual history accessibility node exposes the full-text action") {
+            actionNode=test.uiAutomation.rootInActiveWindow?.let { root -> descendants(root).firstOrNull { node ->
+                node.actionList.any { it.id==R.id.action_view_text } &&
+                    descendants(node).any { it.text?.toString()=="Synthetic newest text" }
+            } }
+            actionNode!=null
+        }
+        val node=checkNotNull(actionNode)
+        checkThat(node.actionList.single { it.id==R.id.action_view_text }.label.toString()==context.getString(R.string.view_full),"History custom action has the exact visible full-text label")
+        checkThat(node.performAction(R.id.action_view_text),"Actual accessibility node accepts the full-text action")
+        await("History custom accessibility action opens the exact saved text") {
+            var ready=false
+            main { ready=field("pageKind")=="preview" && views(activity.window.decorView).filterIsInstance<TextView>().any { it.text.toString()=="Synthetic newest text" } }
+            ready
+        }
+        main {
+            checkThat(clipboard.primaryClip?.getItemAt(0)?.text?.toString()==marker,"Viewing through the accessibility action leaves clipboard unchanged")
+            call("closePage")
+        }
+        main { call("appearance") }
+        main {
+            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single()
+            val nodes=views(dialog.window!!.decorView)
+            checkThat(nodes.any { it.accessibilityPaneTitle==context.getString(R.string.appearance) },"Appearance sheet exposes its pane title")
+            checkThat(nodes.filterIsInstance<TextView>().any { it.text.toString()==context.getString(R.string.appearance) && it.isAccessibilityHeading },"Appearance title is an accessibility heading")
+            dialog.dismiss();call("help")
+            val headings=views(activity.window.decorView).filterIsInstance<TextView>().filter { it.isAccessibilityHeading }.map { it.text.toString() }
+            listOf(R.string.help_setup,R.string.help_gboard,R.string.help_restart,R.string.help_local,R.string.help_sensitive,R.string.help_limits,R.string.help_screen)
+                .forEach { checkThat(headings.contains(context.getString(it)),"Help heading: ${context.getString(it)}") }
+            call("diagnostics")
+            var control=views(activity.window.decorView).first { it.contentDescription==context.getString(R.string.advanced_details) }
+            checkThat(control.stateDescription==context.getString(R.string.details_collapsed),"Advanced details exposes collapsed state")
+            control.performClick()
+            checkThat(control.stateDescription==context.getString(R.string.details_expanded),"Advanced details exposes expanded state after activation")
+            control.performClick()
+            checkThat(control.stateDescription==context.getString(R.string.details_collapsed),"Advanced details can collapse again")
+            call("closePage")
+            AppSettings(context).returnAfterCopy=false
+            call("copyEntry",3L)
+        }
+        await("Copy feedback appears") { var found=false;main { found=views(activity.window.decorView).filterIsInstance<TextView>().any { it.text.toString()==context.getString(R.string.copied) } };found }
+        val timeout=context.getSystemService(android.view.accessibility.AccessibilityManager::class.java)
+            .getRecommendedTimeoutMillis(2200,android.view.accessibility.AccessibilityManager.FLAG_CONTENT_TEXT)
+        if(timeout>=5000) {
+            SystemClock.sleep(2700)
+            main { checkThat(views(activity.window.decorView).filterIsInstance<TextView>().any { it.text.toString()==context.getString(R.string.copied) },"Feedback respects extended accessibility timeout") }
+        }
+        main { call("notifyUser",R.string.history_read_failed) }
+        SystemClock.sleep(2700)
+        main {
+            val present=views(activity.window.decorView).filterIsInstance<TextView>().any { it.text.toString()==context.getString(R.string.history_read_failed) }
+            if(timeout>=3500)checkThat(present,"Error feedback respects extended accessibility timeout")
+            else if(timeout<=2200)checkThat(!present,"Default error feedback expires after its timeout")
+            activity.finish()
+        }
+        await("Leaving the Activity removes transient feedback") { var removed=false;main { removed=field("snackbar")==null };removed }
+    }
     fun run(suite:String):String {
-        try { when(suite){"settings"->settings();"privacy"->modalPrivacy();"tile"->tile();"tile-performance"->tile(true);"paused-connection"->pausedConnection();"recovery"->recovery();"onboarding"->onboarding();"customization"->customization();else->error("Unknown feature suite") } }
+        try { when(suite){"quick-errors"->quickErrors();"accessibility"->accessibility();"settings"->settings();"privacy"->modalPrivacy();"tile"->tile();"tile-performance"->tile(true);"paused-connection"->pausedConnection();"recovery"->recovery();"onboarding"->onboarding();"customization"->customization();else->error("Unknown feature suite") } }
         finally { if(::activity.isInitialized)main { activity.finish() } }
         return log.append("PASS $count feature assertions ($suite), API ${Build.VERSION.SDK_INT}. Synthetic validation only.\n").toString()
     }

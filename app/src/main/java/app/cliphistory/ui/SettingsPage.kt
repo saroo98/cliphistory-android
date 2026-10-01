@@ -17,6 +17,9 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
         val mutations=ArrayList<View>()
         lateinit var paused:Switch
         lateinit var duplicate:TextView
+        lateinit var limit:TextView
+        lateinit var appearance:TextView
+        lateinit var offlineNotice:TextView
         var updating=false
         val view=pages.page(ui.activity.getString(R.string.settings),back) { content,_ ->
             fun group(id:Int) {
@@ -37,6 +40,8 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
                 ui.actionRow(content,ui.activity.getString(id),enabled=enabled){action(which)}
             }
             group(R.string.recording)
+            offlineNotice=ui.text(ui.activity.getString(R.string.audit_offline_controls),14f,true).apply { setPadding(0,0,0,ui.dp(12)) }
+            content.addView(offlineNotice)
             paused=toggle(R.string.pause_recording,latest.getBoolean("paused")) { control,value ->
                 control.isEnabled=false
                 client.command({it.setPaused(value)}) { result ->
@@ -49,6 +54,11 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
             row(R.string.duplicate_handling,Action.DUPLICATES,client.connected());mutations.add(content.getChildAt(content.childCount-1))
             content.addView(duplicate)
             row(R.string.history_limit,Action.LIMIT,client.connected());mutations.add(content.getChildAt(content.childCount-1))
+            limit=ui.text("",14f,true);content.addView(limit)
+            row(R.string.start_recorder,Action.START)
+            row(R.string.stop_recorder,Action.STOP)
+
+            group(R.string.audit_recovery_heading)
             val options=client.preferences.options()
             toggle(R.string.automatic_recovery,options.automatic,R.string.automatic_recovery_body) { control,value ->
                 control.isEnabled=false
@@ -64,8 +74,6 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
                     control.isEnabled=true;localChanged(if(saved)"" else "PREFERENCES_NOT_SAVED")
                 }
             }
-            row(R.string.start_recorder,Action.START)
-            row(R.string.stop_recorder,Action.STOP)
             row(R.string.background_reliability,Action.BATTERY)
             row(R.string.recovery_notification,Action.NOTIFICATIONS)
             toggle(R.string.background_suggestion,settings.backgroundSuggestion) { _,value -> settings.backgroundSuggestion=value;localChanged("") }
@@ -102,6 +110,7 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
 
             group(R.string.appearance)
             row(R.string.appearance,Action.APPEARANCE)
+            appearance=ui.text("",14f,true);content.addView(appearance)
             toggle(R.string.motion_system,settings.motion) { _,value -> settings.motion=value;localChanged("") }
 
             group(R.string.about)
@@ -119,7 +128,12 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
         val update:(Bundle)->Unit={ new ->
             latest=new;updating=true;paused.isChecked=new.getBoolean("paused");updating=false
             mutations.forEach { it.isEnabled=client.connected();it.isFocusable=client.connected() }
-            duplicate.text=ui.activity.getString(if(new.getInt("duplicateMode")==DuplicateMode.CONSECUTIVE_ONLY.value)R.string.duplicates_consecutive else R.string.duplicates_unique)
+            offlineNotice.visibility=if(client.connected())View.GONE else View.VISIBLE
+            duplicate.text=ui.activity.getString(if(!new.containsKey("duplicateMode"))R.string.not_confirmed
+                else if(new.getInt("duplicateMode")==DuplicateMode.CONSECUTIVE_ONLY.value)R.string.duplicates_consecutive else R.string.duplicates_unique)
+            limit.text=if(new.containsKey("limit"))ui.activity.getString(R.string.audit_limit_summary,new.getInt("limit"))
+                else ui.activity.getString(R.string.not_confirmed)
+            appearance.text=ui.activity.getString(when(settings.appearance) { "light"->R.string.light;"dark"->R.string.dark;else->R.string.system })
         }
         update(status)
         return Page(view,update)
