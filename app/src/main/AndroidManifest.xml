@@ -30,9 +30,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.QuickCopyActivity" android:exported="false"
-            android:theme="@style/QuickCopyTheme" android:launchMode="singleTask"
-            android:taskAffinity="" android:excludeFromRecents="true" android:noHistory="true" />
         <provider
             android:name="rikka.shizuku.ShizukuProvider"
             android:authorities="${applicationId}.shizuku"
@@ -44,9 +41,9 @@
             android:icon="@drawable/ic_clipboard"
             android:exported="true"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
-            <!-- The action tile has no continuously changing state. Bind on demand
-                 instead of competing with other custom tiles whenever QS opens. -->
-            <meta-data android:name="android.service.quicksettings.ACTIVE_TILE" android:value="true" />
+            <!-- Bind while QS is visible rather than waiting for an active
+                 tile's on-demand connection. The dialog follows its window's
+                 lifetime even if Android later unbinds this service. -->
             <intent-filter><action android:name="android.service.quicksettings.action.QS_TILE" /></intent-filter>
         </service>
         <service android:name=".client.RecordingRecoveryService" android:exported="false" android:foregroundServiceType="specialUse">

@@ -25,8 +25,6 @@ class AppSettings(private val context: Context) {
         get() = choice("tile_mode", "quick", listOf("quick", "history"))
         set(value) {
             require(value in listOf("quick", "history"));prefs.edit().putString("tile_mode", value).apply()
-            android.service.quicksettings.TileService.requestListeningState(context,
-                android.content.ComponentName(context,ClipboardTileService::class.java))
         }
     var motion: Boolean
         get() = flag("motion", true)

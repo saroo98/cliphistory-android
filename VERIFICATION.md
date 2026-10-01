@@ -1,3 +1,7 @@
+# Current local build: ClipHistory 1.3.2
+
+The quick-copy Activity transition and native-dialog lifecycle fix are recorded in [the 1.3.2 verification report](docs/TILE_LAUNCH_FIX.md). Its current build, device results and limits are separate from the historical release evidence below.
+
 # ClipHistory 1.3.0 verification
 
 Package `app.cliphistory`, code 4, minimum API 34, compile/target API 37. Results and limits are recorded separately from the 1.2 release.

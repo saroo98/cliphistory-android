@@ -37,10 +37,8 @@ receivers = app.findall("receiver")
 check("only boot receiver is private and not direct-boot aware", len(receivers) == 1 and
       receivers[0].get(ANDROID + "exported") == "false" and receivers[0].get(ANDROID + "directBootAware") != "true")
 activities=app.findall("activity")
-check("one launcher and one private floating Activity", len(activities)==2 and
-      len(app.findall("activity/intent-filter/action"))==1 and
-      activities[1].get(ANDROID+"name")==".ui.QuickCopyActivity" and activities[1].get(ANDROID+"exported")=="false" and
-      activities[1].get(ANDROID+"excludeFromRecents")=="true" and activities[1].get(ANDROID+"taskAffinity")=="")
+check("only the launcher Activity is declared", len(activities)==1 and
+      len(app.findall("activity/intent-filter/action"))==1)
 for element in [app, *app.findall("activity"), *services, *receivers]:
     name = element.get(ANDROID + "name", "")
     if name.startswith("."):
@@ -60,7 +58,7 @@ check("no repeating clipboard polling mechanism", not re.search(r"Timer\(|schedu
 privacy = text("app/src/main/java/app/cliphistory/ui/ScreenPrivacy.kt")
 check("privacy defaults block screenshots with one conditional window policy", "FLAG_SECURE" in privacy and
       "clearFlags" in privacy and 'flag("allow_screenshots", false)' in text("app/src/main/java/app/cliphistory/ui/AppSettings.kt") and
-      all("ScreenPrivacy.apply" in text("app/src/main/java/app/cliphistory/ui/" + name) for name in ["MainActivity.kt", "Ui.kt", "QuickCopyActivity.kt"]))
+      all("ScreenPrivacy.apply" in text("app/src/main/java/app/cliphistory/ui/" + name) for name in ["MainActivity.kt", "Ui.kt", "QuickCopyDialog.kt"]))
 check("tile uses immutable PendingIntent and unlock", "FLAG_IMMUTABLE" in text("app/src/main/java/app/cliphistory/ui/ClipboardTileService.kt") and "unlockAndRun" in source)
 check("normal app uses private no-backup files", "noBackupFilesDir" in text("app/src/main/java/app/cliphistory/client/PrivateHistory.kt"))
 check("shell does not truncate or chmod private files", not re.search(r"ftruncate|Os\.chmod|setLength\(", "\n".join(p.read_text(encoding="utf-8") for p in (MAIN / "java/app/cliphistory/daemon").glob("*.kt"))))
@@ -90,9 +88,10 @@ check("owner stop gates clipboard reads and serial commits", "if(!canRead())retu
       "REASON_USER_REQUESTED" in text("app/src/main/java/app/cliphistory/daemon/OwnerStopGuard.kt"))
 check("recovery retries are bounded and user-stop gated", "longArrayOf(1000,3000,10_000)" in source and
       "mayRecover(options,boot" in source and re.search(r'putBoolean\("explicit_stop",\s*true\)', source) is not None)
-check("tile uses API 34 direct launch of a private visible floating panel",
-      "activityLaunchForClick=launch()" in source and "windowIsFloating" in text("app/src/main/res/values/styles.xml") and
-      "SYSTEM_ALERT_WINDOW" not in permissions and activities[1].get(ANDROID+"exported")=="false")
+check("quick tile uses the platform QS dialog without a task launch or overlay permission",
+      "showDialog(dialog)" in source and "QuickCopyActivity" not in source and
+      "android.service.quicksettings.ACTIVE_TILE" not in text("app/src/main/AndroidManifest.xml") and
+      "SYSTEM_ALERT_WINDOW" not in permissions)
 check("IPC history is paged", "count in 1..40" in daemon and "SearchPreview.snippet" in daemon and "maxLength:Int=180" in text("app/src/main/java/app/cliphistory/core/SearchPreview.kt"))
 check("self-test uses tested probe tracker", "ProbeTracker()" in daemon and "probe.match" in daemon)
 build = text("app/build.gradle.kts")

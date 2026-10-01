@@ -25,10 +25,6 @@ class UiSmokeInstrumentation:Instrumentation() {
         super.runOnMainSync { try { runner.run() } catch(t:Throwable) { failure=t } }
         failure?.let { throw it }
     }
-    override fun callActivityOnCreate(activity:Activity,state:Bundle?) {
-        super.callActivityOnCreate(activity,state)
-        if(activity is app.cliphistory.ui.QuickCopyActivity)FrameEvidence.observe(activity)
-    }
     private fun checkThat(condition:Boolean,message:String) { check(condition){message};assertions++ }
     private fun idle() { waitForIdleSync();SystemClock.sleep(180);waitForIdleSync() }
     private fun until(message:String,condition:()->Boolean) {

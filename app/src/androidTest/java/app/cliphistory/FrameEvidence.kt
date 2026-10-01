@@ -1,82 +1,66 @@
 package app.cliphistory
 
-import android.app.Activity
 import android.os.Handler
-import android.os.HandlerThread
-import android.view.FrameMetrics
+import android.os.Looper
+import android.view.Choreographer
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.view.inspector.WindowInspector
 import android.widget.TextView
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** Instrumentation-only frame observation. No listener or test API ships in the app. */
+/** Test-only observation of the actual QS dialog's loaded pre-draw. */
 object FrameEvidence {
-    private val thread=HandlerThread("validation-frames").apply { start() }
-    private val handler=Handler(thread.looper)
+    private val main=Handler(Looper.getMainLooper())
     private val lock=Any()
     private var started=0L
     private var loaded=0L
-    private val frames=JSONArray()
+    private var root:View?=null
     private val layouts=JSONArray()
-    fun begin()=synchronized(lock) {
-        started=System.nanoTime();loaded=0L
-        while(frames.length()>0)frames.remove(frames.length()-1)
-        while(layouts.length()>0)layouts.remove(layouts.length()-1)
-    }
-    fun observe(activity:Activity) {
-        val decor=activity.window.decorView
-        fun ready(view:View):Boolean {
-            if(view is TextView && view.text.toString()=="Synthetic newest text")return true
-            return view is ViewGroup && (0 until view.childCount).any { ready(view.getChildAt(it)) }
-        }
-        val listener=object:ViewTreeObserver.OnPreDrawListener {
-            override fun onPreDraw():Boolean {
-                val contentReady=ready(decor)
-                synchronized(lock) {
-                    if(layouts.length()<16)layouts.put(JSONObject().apply {
-                        put("ready",contentReady);put("width",decor.width);put("height",decor.height)
-                        if(layouts.length()<2) {
-                            val textLayouts=JSONArray()
-                            fun measure(view:View) {
-                                if(view is TextView)textLayouts.put(JSONObject().apply {
-                                    put("type",view.javaClass.simpleName);put("sp_px",view.textSize)
-                                    put("height",view.height);put("lines",view.lineCount)
-                                })
-                                if(view is ViewGroup)(0 until view.childCount).forEach { measure(view.getChildAt(it)) }
-                            }
-                            measure(decor);put("text_layouts",textLayouts)
-                        }
-                    })
-                }
-                if(contentReady) {
-                    synchronized(lock) { if(loaded==0L)loaded=System.nanoTime() }
-                }
-                return true
-            }
-        }
-        decor.viewTreeObserver.addOnPreDrawListener(listener)
-        activity.window.addOnFrameMetricsAvailableListener({_,metrics,dropped ->
+    private fun contains(view:View,text:String):Boolean =
+        (view is TextView && view.text.toString()==text) ||
+            (view is ViewGroup && (0 until view.childCount).any { contains(view.getChildAt(it),text) })
+    private val predraw=ViewTreeObserver.OnPreDrawListener {
+        root?.let { view ->
+            val ready=contains(view,"Synthetic newest text")
             synchronized(lock) {
-                frames.put(JSONObject().apply {
-                    put("vsync_ns",metrics.getMetric(FrameMetrics.INTENDED_VSYNC_TIMESTAMP))
-                    put("total_ns",metrics.getMetric(FrameMetrics.TOTAL_DURATION))
-                    put("draw_ns",metrics.getMetric(FrameMetrics.DRAW_DURATION))
-                    put("layout_ns",metrics.getMetric(FrameMetrics.LAYOUT_MEASURE_DURATION))
-                    put("animation_ns",metrics.getMetric(FrameMetrics.ANIMATION_DURATION))
-                    put("deadline_ns",metrics.getMetric(FrameMetrics.DEADLINE))
-                    put("first_draw",metrics.getMetric(FrameMetrics.FIRST_DRAW_FRAME)==1L)
-                    put("dropped_reports",dropped)
+                if(ready && loaded==0L)loaded=System.nanoTime()
+                if(layouts.length()<16)layouts.put(JSONObject().apply {
+                    put("width",view.width);put("height",view.height);put("ready",ready)
                 })
             }
-        },handler)
+        }
+        true
     }
-    fun snapshot():JSONObject=synchronized(lock) { JSONObject().apply {
-        put("tap_ns",started);put("loaded_predraw_ns",loaded)
-        put("loading_ms",if(loaded>started && started>0)(loaded-started)/1_000_000.0 else -1.0)
-        put("frames",JSONArray(frames.toString()))
-        put("layouts",JSONArray(layouts.toString()))
-        put("scope","App window frame metrics and first loaded pre-draw; excludes SystemUI's frames and compositor presentation")
-    } }
+    private val watch=object:Choreographer.FrameCallback {
+        override fun doFrame(time:Long) {
+            val window=WindowInspector.getGlobalWindowViews().firstOrNull { it.isAttachedToWindow && contains(it,"Quick copy") }
+            if(window!=null) {
+                root=window;window.viewTreeObserver.addOnPreDrawListener(predraw)
+            } else if(System.nanoTime()-started<2_000_000_000L)Choreographer.getInstance().postFrameCallback(this)
+        }
+    }
+    private fun stop() {
+        Choreographer.getInstance().removeFrameCallback(watch)
+        root?.let { if(it.viewTreeObserver.isAlive)it.viewTreeObserver.removeOnPreDrawListener(predraw) }
+        root=null
+    }
+    fun begin() {
+        synchronized(lock) {
+            started=System.nanoTime();loaded=0L
+            while(layouts.length()>0)layouts.remove(layouts.length()-1)
+        }
+        main.post { stop();Choreographer.getInstance().postFrameCallback(watch) }
+    }
+    fun snapshot():JSONObject {
+        main.post { stop() }
+        return synchronized(lock) { JSONObject().apply {
+            put("tap_ns",started);put("loaded_predraw_ns",loaded)
+            put("loading_ms",if(loaded>started && started>0)(loaded-started)/1_000_000.0 else -1.0)
+            put("layouts",JSONArray(layouts.toString()))
+            put("scope","First observed loaded app pre-draw; excludes SystemUI/accessibility delay and compositor presentation")
+        } }
+    }
 }

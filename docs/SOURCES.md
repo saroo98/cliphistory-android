@@ -42,4 +42,10 @@ The two-descriptor, non-truncating framing design is an implementation choice ba
 - SystemUI remote launch animation source (main can differ from the Pixel beta): https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/packages/SystemUI/src/com/android/systemui/qs/external/CustomTile.java
 - Perfetto frame analysis: https://perfetto.dev/docs/quickstart/trace-analysis
 
-The floating picker is a private visible Activity with the cached tile launch API. It avoids the transient service/dialog binding that physical traces reproduced. Its no-animation flags do not override this Pixel's SystemUI transition. Runtime evidence, not source inspection, determines timing claims.
+The 1.3.0–1.3.1 floating picker used a private Activity with the cached tile launch API. Its no-animation flags did not override the Pixel's SystemUI transition. Version 1.3.2 uses `TileService.showDialog` for quick copy and normal listening-time binding, and skips unchanged tile updates. Full-history mode retains the direct activity launch. Runtime evidence, not source inspection, determines timing claims.
+
+- Native tile dialogs: https://developer.android.com/reference/android/service/quicksettings/TileService#showDialog(android.app.Dialog)
+- Cross-task animation limitations: https://developer.android.com/reference/android/app/Activity#overrideActivityTransition(int,%20int,%20int)
+- Tile launch controller: https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/packages/SystemUI/src/com/android/systemui/qs/tiles/base/actions/QSTileIntentUserInputHandler.kt
+- Tile binding priorities: https://android.googlesource.com/platform/frameworks/base/+/refs/heads/main/packages/SystemUI/src/com/android/systemui/qs/external/TileServiceManager.java
+- Test-only process window inspection: https://developer.android.com/reference/android/view/inspector/WindowInspector#getGlobalWindowViews()

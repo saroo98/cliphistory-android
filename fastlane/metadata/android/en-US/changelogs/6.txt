@@ -1,0 +1,1 @@
+Quick copy now uses Android's native Quick Settings dialog, avoiding the extra tile-to-app animation. The panel stays open across tile-service unbinding and skips unchanged tile updates. Copy, Close, privacy controls and full-history mode remain available.

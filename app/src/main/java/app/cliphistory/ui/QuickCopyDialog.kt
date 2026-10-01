@@ -1,9 +1,10 @@
 package app.cliphistory.ui
 
-import android.app.Activity
+import android.app.Dialog
 import android.app.KeyguardManager
 import android.content.*
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.RippleDrawable
@@ -16,10 +17,16 @@ import android.widget.*
 import app.cliphistory.R
 import app.cliphistory.client.DaemonClient
 
-/** A visible floating Activity, independent of transient tile service bindings. */
-class QuickCopyActivity:Activity() {
-    private val client get()=(application as app.cliphistory.ClipApplication).daemon
-    private val context:Context get()=this
+/** A native QS dialog: no activity/task launch or overlay permission. */
+class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
+    ContextThemeWrapper(base,R.style.QuickCopyTheme).apply {
+        val appearance=AppSettings(base).appearance
+        if(appearance!="system")applyOverrideConfiguration(Configuration().apply {
+            uiMode=if(appearance=="dark")Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
+        })
+    }
+) {
+    private val client get()=(context.applicationContext as app.cliphistory.ClipApplication).daemon
     private lateinit var settings:AppSettings
     private val main=Handler(Looper.getMainLooper())
     private lateinit var rows:LinearLayout
@@ -36,21 +43,20 @@ class QuickCopyActivity:Activity() {
         if(loading)dirty=true else { main.removeCallbacks(reload);main.postDelayed(reload,120) }
     }
     private val preferences=SharedPreferences.OnSharedPreferenceChangeListener { _,_ ->
-        if(!settings.tileEnabled)dismiss() else ScreenPrivacy.apply(this,settings)
+        if(closed)return@OnSharedPreferenceChangeListener
+        if(!settings.tileEnabled)dismiss() else ScreenPrivacy.apply(window,settings)
     }
     private val locked=object:BroadcastReceiver() { override fun onReceive(context:Context,intent:Intent){dismiss()} }
     private var observing=false
     private fun trace(event:String) { if(app.cliphistory.BuildConfig.DEBUG)android.util.Log.d("ClipHistoryTileTrace","${android.os.SystemClock.uptimeMillis()} dialog $event") }
-    private fun unlocked()=!getSystemService(KeyguardManager::class.java).isKeyguardLocked
-    private fun dismiss()=finish()
+    private fun unlocked()=!context.getSystemService(KeyguardManager::class.java).isKeyguardLocked
     private fun openApp() {
-        startActivity(Intent(this,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP));finish()
+        // Launch while SystemUI's dialog token is still granted.
+        openHistory();dismiss()
     }
-    override fun attachBaseContext(base:Context) { super.attachBaseContext(AppSettings.themedContext(base)) }
     override fun onCreate(state:Bundle?) {
-        super.onCreate(state);settings=AppSettings(this)
-        ScreenPrivacy.apply(this,settings)
-        if(!settings.tileEnabled || !unlocked()){finish();return}
+        super.onCreate(state);settings=AppSettings(context)
+        ScreenPrivacy.apply(window,settings)
         rows=LinearLayout(context).apply { orientation=LinearLayout.VERTICAL }
         // Two text lines can be slightly taller than 64dp even at the default
         // font scale. Reserve measured row space before the asynchronous read.
@@ -58,10 +64,9 @@ class QuickCopyActivity:Activity() {
         sample.measure(View.MeasureSpec.makeMeasureSpec(dp(320),View.MeasureSpec.EXACTLY),
             View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED))
         populatedHeight=3*(sample.measuredHeight+dp(8));rows.minimumHeight=populatedHeight
-        notice=label(getString(R.string.quick_loading),14f,true)
+        notice=label(context.getString(R.string.quick_loading),14f,true)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
-        // QS already animates its own collapse. Keep one stable, immediate panel
-        // instead of stacking a dialog animation and a loading-height transition.
+        // Only the system shade collapses. The panel has no entrance animation.
         window?.setWindowAnimations(0)
         window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         window?.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
@@ -86,8 +91,8 @@ class QuickCopyActivity:Activity() {
                 super.onMeasure(w,MeasureSpec.makeMeasureSpec(max,MeasureSpec.AT_MOST))
             }
         }.apply { addView(box);isVerticalScrollBarEnabled=false }
-        setContentView(scroll);setFinishOnTouchOutside(true)
-        window.setLayout(minOf(dp(360),resources.displayMetrics.widthPixels-dp(32)),-2)
+        setContentView(scroll);setCanceledOnTouchOutside(true)
+        window!!.setLayout(minOf(dp(360),context.resources.displayMetrics.widthPixels-dp(32)),-2)
     }
     private fun dp(value:Int)=(value*context.resources.displayMetrics.density).toInt()
     private fun shape(color:Int,radius:Int)=GradientDrawable().apply { setColor(color);cornerRadius=dp(radius).toFloat() }
@@ -101,45 +106,47 @@ class QuickCopyActivity:Activity() {
         setTextColor(context.getColor(R.color.ink));setPadding(dp(12),dp(12),dp(12),dp(12))
         background=RippleDrawable(ColorStateList.valueOf(context.getColor(R.color.selected)),shape(context.getColor(R.color.secondary_surface),14),null)
     }
-    override fun onStart() {
+    override fun onAttachedToWindow() {
         trace("start")
-        super.onStart();closed=false
-        if(!settings.tileEnabled || !unlocked()){dismiss();return}
+        super.onAttachedToWindow();closed=false
+        ScreenPrivacy.apply(window,settings)
         client.addListener(changed);settings.register(preferences)
-        registerReceiver(locked,IntentFilter(Intent.ACTION_SCREEN_OFF),Context.RECEIVER_NOT_EXPORTED)
+        context.applicationContext.registerReceiver(locked,IntentFilter(Intent.ACTION_SCREEN_OFF),Context.RECEIVER_NOT_EXPORTED)
         observing=true;main.post(reload)
     }
-    override fun onStop() {
+    private fun stopObserving() {
         closed=true;token++;main.removeCallbacksAndMessages(null)
         if(observing) {
             client.removeListener(changed);settings.unregister(preferences)
-            try { unregisterReceiver(locked) } catch (_:Exception) { }
+            try { context.applicationContext.unregisterReceiver(locked) } catch (_:Exception) { }
             observing=false
         }
-        super.onStop()
-        if(!isChangingConfigurations)finish()
     }
-    override fun onNewIntent(intent:Intent) { super.onNewIntent(intent);refresh() }
-    override fun onResume() {
-        super.onResume();ScreenPrivacy.apply(this,settings)
-        if(!settings.tileEnabled || !unlocked())finish()
+    override fun onDetachedFromWindow() { stopObserving();super.onDetachedFromWindow() }
+    override fun onStop() { stopObserving();super.onStop() }
+    override fun dismiss() {
+        try { super.dismiss() } catch(error:IllegalArgumentException) {
+            // SystemUI may have removed its QS token/window before the service
+            // cleanup. Dialog still completes onStop in its dismissal finally.
+            if(window?.decorView?.isAttachedToWindow==true)throw error
+        }
     }
     fun refresh() {
-        if(closed || isFinishing || copying)return
-        if(!unlocked()){dismiss();return}
+        if(closed || !isShowing || copying)return
+        if(!settings.tileEnabled || !unlocked()){dismiss();return}
         if(loading){dirty=true;return}
         val request=++token;loading=true;dirty=false
         trace("read requested")
         client.requestLatest { page ->
             trace("read returned rows=${page.rows.size} error=${page.issue.isNotEmpty()}")
-            if(closed || request!=token || isFinishing)return@requestLatest
+            if(closed || request!=token || !isShowing)return@requestLatest
             loading=false
             if(!unlocked()){dismiss();return@requestLatest}
             rows.removeAllViews()
             rows.minimumHeight=if(page.issue.isEmpty() && page.rows.isNotEmpty())populatedHeight else 0
             if(page.issue.isNotEmpty()) {
                 notice.text=context.getString(R.string.quick_failed)
-                action(R.string.quick_retry){refresh()};action(R.string.open_app){dismiss();openApp()}
+                action(R.string.quick_retry){refresh()};action(R.string.open_app){openApp()}
             } else {
                 notice.text=context.getString(nextNotice ?: if(page.rows.isEmpty())R.string.quick_empty else if(page.offline)R.string.quick_offline else R.string.quick_hint)
                 nextNotice=null
@@ -160,13 +167,13 @@ class QuickCopyActivity:Activity() {
         if(copying || closed || !unlocked())return
         copying=true;loading=false;val request=++token
         client.getText(id) { result ->
-            if(closed || request!=token || isFinishing)return@getText
+            if(closed || request!=token || !isShowing)return@getText
             copying=false
             if(!unlocked()){dismiss();return@getText}
             if(result.issue.isNotEmpty()) {
                 notice.text=context.getString(R.string.quick_failed);rows.removeAllViews()
                 rows.minimumHeight=0
-                action(R.string.quick_retry){refresh()};action(R.string.open_app){dismiss();openApp()};return@getText
+                action(R.string.quick_retry){refresh()};action(R.string.open_app){openApp()};return@getText
             }
             val text=result.text
             if(text==null){nextNotice=R.string.quick_missing;refresh();return@getText}

@@ -176,6 +176,9 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         return null
     }
     private fun tile(performance:Boolean=false) {
+        if(!performance)check(Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk")) {
+            "Clipboard-write tile checks require a disposable emulator"
+        }
         seed()
         test.uiAutomation.serviceInfo=test.uiAutomation.serviceInfo.apply {
             flags=flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS or
@@ -189,9 +192,45 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             return if(dump.contains("isShadeOrQsExpanded="))dump.contains("isShadeOrQsExpanded=false")
             else dump.contains("mPanelExpanded=false") && dump.contains("mQsExpanded=false")
         }
-        fun tap(label:String) {
+        fun observedBounds(label:String):android.graphics.Rect {
             val bounds=android.graphics.Rect()
-            node(label)?.getBoundsInScreen(bounds) ?: error("Missing native control: $label")
+            // Inspect our actual attached Views directly. API 37's accessibility
+            // provider can briefly omit a dialog while its window remains drawn.
+            main {
+                android.view.inspector.WindowInspector.getGlobalWindowViews().flatMap(::views)
+                    .firstOrNull { it.isShown && it.isAttachedToWindow && it.contentDescription?.toString()==label }
+                    ?.let { view ->
+                        val position=IntArray(2);view.getLocationOnScreen(position)
+                        bounds.set(position[0],position[1],position[0]+view.width,position[1]+view.height)
+                    }
+            }
+            if(bounds.isEmpty)node(label)?.getBoundsInScreen(bounds)
+            return bounds
+        }
+        fun panelBounds():android.graphics.Rect {
+            val bounds=android.graphics.Rect()
+            main {
+                android.view.inspector.WindowInspector.getGlobalWindowViews().singleOrNull { root ->
+                    root.isAttachedToWindow && views(root).filterIsInstance<TextView>()
+                        .any { it.text.toString()==context.getString(R.string.quick_copy) }
+                }?.let { root ->
+                    val position=IntArray(2);root.getLocationOnScreen(position)
+                    bounds.set(position[0],position[1],position[0]+root.width,position[1]+root.height)
+                }
+            }
+            return bounds
+        }
+        fun nativeEntryReady(text:String):Boolean {
+            var ready=false
+            main {
+                ready=android.view.inspector.WindowInspector.getGlobalWindowViews().flatMap(::views)
+                    .filterIsInstance<TextView>().any { it.isAttachedToWindow && it.isShown &&
+                        it.width>0 && it.height>0 && it.text.toString()==text }
+            }
+            return ready
+        }
+        fun tap(label:String) {
+            val bounds=observedBounds(label)
             check(!bounds.isEmpty){"Native control bounds unavailable"}
             val time=SystemClock.uptimeMillis()
             android.util.Log.d("ClipHistoryTileTrace","$time test tap $label")
@@ -202,7 +241,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
                 if(action==MotionEvent.ACTION_DOWN)SystemClock.sleep(50)
             }
         }
-        fun expand() {
+        fun expand(expectedState:Int=1) {
             shell("cmd statusbar collapse")
             await("Previous SystemUI shade collapse complete") {
                 shadeCollapsed()
@@ -215,7 +254,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             await("System tile state ready for interaction") {
                 val dump=shell("dumpsys activity service com.android.systemui/.SystemUIService")
                 dump.contains("mExpansionFraction=1.0") && dump.lineSequence()
-                    .any { it.contains("spec=custom($component)") && it.contains("state=1,") }
+                    .any { it.contains("spec=custom($component)") && it.contains("state=$expectedState,") }
             }
             test.uiAutomation.waitForIdle(200,5000)
             if(arguments.getString("tileCommand")=="true")return
@@ -261,15 +300,13 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             }
             var previous=android.graphics.Rect();var stable=0
             await("Panel Close bounds settled") {
-                val current=android.graphics.Rect()
-                node(context.getString(R.string.quick_close))?.getBoundsInScreen(current)
+                val current=observedBounds(context.getString(R.string.quick_close))
                 stable=if(!current.isEmpty && current==previous)stable+1 else 0
                 previous=current;stable>=4
             }
             tap(context.getString(R.string.quick_close))
             await("Close removes actual dialog window") {
-                node(context.getString(R.string.quick_close))==null && shell("dumpsys activity activities").lineSequence()
-                    .none { it.contains("ResumedActivity") && it.contains("QuickCopyActivity") }
+                observedBounds(context.getString(R.string.quick_close)).isEmpty && node(context.getString(R.string.quick_close))==null
             }
         }
         val existing=arguments.getString("tilePresent")=="true"
@@ -279,7 +316,6 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             // disposable emulator uses SystemUI's command, not an app debug hook.
             if(!existing)shell("cmd statusbar add-tile $component")
             test.uiAutomation.waitForIdle(200,5000)
-            // Activity launch has no transient QS dialog token to wait out.
             main { activity.startActivity(Intent().setClassName(test.context.packageName,SyntheticClipboardActivity::class.java.name).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
             test.uiAutomation.waitForIdle(200,5000)
             expand()
@@ -287,11 +323,29 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             await("System tile presents newest synthetic entry") { node("Synthetic newest text")!=null }
             checkThat(node("Synthetic third text")!=null,"Floating panel shows three entries")
             checkThat(node("Quick copy")!=null,"System dialog heading present")
+            checkThat(shell("dumpsys activity activities").lineSequence().any {
+                it.contains("ResumedActivity") && it.contains("SyntheticClipboardActivity")
+            },"Quick tile keeps the underlying activity resumed; no task launch animation")
+            // Exercise the exact cleanup callback that used to close the native
+            // window. Real SystemUI unbinding is observed separately on the Pixel.
+            main {
+                val root=android.view.inspector.WindowInspector.getGlobalWindowViews().single { candidate ->
+                    candidate.isAttachedToWindow && views(candidate).filterIsInstance<TextView>()
+                        .any { it.text.toString()==context.getString(R.string.quick_copy) }
+                }
+                var owner=root.context
+                while(owner is ContextWrapper && owner !is ClipboardTileService)owner=owner.baseContext
+                check(owner is ClipboardTileService){"Native dialog's tile service owner unavailable"}
+                owner.onDestroy()
+            }
+            SystemClock.sleep(200)
+            checkThat(!panelBounds().isEmpty && node("Synthetic newest text")!=null,
+                "Tile service cleanup leaves its independently attached dialog open")
             if(performance) {
                 // No clipboard write on a personal phone: its production recorder may be active.
                 val folder=File(context.filesDir,"ui-evidence").apply { mkdirs() }
-                val bounds=android.graphics.Rect()
-                test.uiAutomation.windows.single { it.root?.packageName?.toString()==context.packageName }.getBoundsInScreen(bounds)
+                val bounds=panelBounds()
+                check(!bounds.isEmpty){"Attached native dialog window unavailable"}
                 shell("cmd statusbar collapse");test.uiAutomation.waitForIdle(300,5000)
                 val blocked=test.uiAutomation.takeScreenshot() ?: error("Quick-copy OS screenshot unavailable")
                 main { AppSettings(context).allowScreenshots=true };SystemClock.sleep(200)
@@ -312,53 +366,81 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
                 await("Repeated tile click collapses shade") {
                     shadeCollapsed()
                 }
-                checkThat(test.uiAutomation.windows.count { it.root?.packageName?.toString()==context.packageName }==1,"Re-tap keeps exactly one quick panel")
+                checkThat(!panelBounds().isEmpty,"Re-tap keeps exactly one attached quick panel")
                 closePanel()
                 await("Initial performance panel dismissed") { node("Synthetic newest text")==null }
                 val timings=ArrayList<Long>()
+                var accessibilityTimeouts=0
                 val loading=ArrayList<Double>();val results=org.json.JSONArray()
-                repeat(30) { index ->
+                val trials=arguments.getString("tileTrials")?.toIntOrNull()?.coerceIn(1,30)?:30
+                repeat(trials) { index ->
                     expand()
                     val start=SystemClock.elapsedRealtime()
                     FrameEvidence.begin()
                     clickTile()
                     val deadline=start+2000
                     while(node("Synthetic newest text")==null && SystemClock.elapsedRealtime()<deadline)SystemClock.sleep(10)
-                    check(node("Synthetic newest text")!=null){"Warm quick-copy entry unavailable"}
-                    timings.add(SystemClock.elapsedRealtime()-start)
+                    val accessibilityAvailable=node("Synthetic newest text")!=null
+                    if(accessibilityAvailable)timings.add(SystemClock.elapsedRealtime()-start) else accessibilityTimeouts++
+                    checkThat(nativeEntryReady("Synthetic newest text") && nativeEntryReady("Synthetic third text"),
+                        "Newest entries are visibly attached in the native dialog")
+                    val first=panelBounds()
+                    SystemClock.sleep(120)
+                    val settled=panelBounds()
+                    checkThat(!first.isEmpty && first==settled,"Loaded native dialog bounds stay stable")
                     val evidence=FrameEvidence.snapshot()
                     val layouts=evidence.getJSONArray("layouts")
                     checkThat(layouts.length()>0 && (0 until layouts.length()).all {
                         layouts.getJSONObject(it).getInt("height")==layouts.getJSONObject(0).getInt("height") &&
                             layouts.getJSONObject(it).getInt("width")==layouts.getJSONObject(0).getInt("width")
-                    },"Loading keeps the floating window size stable")
-                    check(evidence.getDouble("loading_ms")>=0){"Actual loaded frame was not observed"}
+                    },"Loading keeps the native dialog window size stable")
+                    check(evidence.getDouble("loading_ms")>=0){"Actual loaded dialog pre-draw was not observed"}
                     loading.add(evidence.getDouble("loading_ms"))
-                    evidence.put("trial",index+1);evidence.put("accessibility_available_ms",timings.last())
+                    evidence.put("trial",index+1)
+                    evidence.put("accessibility_available_ms",if(accessibilityAvailable)timings.last() else org.json.JSONObject.NULL)
+                    if(!accessibilityAvailable)evidence.put("accessibility_observation_timeout_ms",2000)
+                    evidence.put("bounds",first.toShortString())
                     results.put(evidence)
                     File(folder,"tile-warm-frames.json").writeText(results.toString(2))
-                    test.sendStatus(0,Bundle().apply { putString("stream","Trial ${index+1}: app loading=${loading.last()} ms; accessibility availability=${timings.last()} ms; ${evidence.getJSONArray("frames").length()} reported app frames\n") })
+                    test.sendStatus(0,Bundle().apply { putString("stream","Trial ${index+1}: app loaded pre-draw=${loading.last()} ms; accessibility availability=${if(accessibilityAvailable)"${timings.last()} ms" else "not observed within 2000 ms"}\n") })
                     closePanel()
                     await("Performance panel dismissed ${index+1}") { node("Synthetic newest text")==null }
                 }
-                val sorted=timings.sorted();val p95=sorted[28]
-                log.append("Actual SystemUI tile invocation (${if(arguments.getString("tileCommand")=="true")"statusbar command" else "native touch"}) to available entries, 30 warm openings: p50=${sorted[14]} ms, p95=$p95 ms, max=${sorted.last()} ms\n")
-                test.sendStatus(0,Bundle().apply { putString("stream",log.lines().last { it.contains("p50=") }+"\n") })
-                val loaded95=loading.sorted()[28]
-                test.sendStatus(0,Bundle().apply { putString("stream","Actual app latest-three loading p95=$loaded95 ms; SystemUI/accessibility availability p95=$p95 ms\n") })
-                checkThat(loaded95<=500,"Thirty warm latest-three loads meet p95 <= 500 ms")
+                if(accessibilityTimeouts==0) {
+                    val sorted=timings.sorted();val p95=sorted[(kotlin.math.ceil(sorted.size*.95).toInt()-1).coerceAtLeast(0)]
+                    log.append("Actual SystemUI tile invocation (${if(arguments.getString("tileCommand")=="true")"statusbar command" else "native touch"}) to accessibility availability, $trials warm openings: p50=${sorted[(sorted.size-1)/2]} ms, p95=$p95 ms, max=${sorted.last()} ms\n")
+                } else log.append("Accessibility availability observed in ${timings.size}/$trials openings; $accessibilityTimeouts timed out at 2000 ms. Whole-run accessibility percentiles unavailable.\n")
+                test.sendStatus(0,Bundle().apply { putString("stream",log.lines().last { it.isNotBlank() }+"\n") })
+                val loaded95=loading.sorted()[(kotlin.math.ceil(loading.size*.95).toInt()-1).coerceAtLeast(0)]
+                test.sendStatus(0,Bundle().apply { putString("stream","Actual loaded dialog pre-draw p95=$loaded95 ms; accessibility timeouts=$accessibilityTimeouts/$trials\n") })
+                checkThat(loaded95<=500,"Warm latest-three loaded pre-draw meets p95 <= 500 ms")
                 return
             }
-            node("Synthetic newest text")!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+            val copiedText="Synthetic second\nwith exact whitespace  "
+            node(copiedText)!!.performAction(AccessibilityNodeInfo.ACTION_CLICK)
             await("Single tap dismisses quick copy") { node("Quick copy")==null }
             await("Underlying application remains foreground after copying") {
                 shell("dumpsys activity activities").lineSequence().any { it.contains("ResumedActivity") && it.contains("SyntheticClipboardActivity") }
             }
+            val hash=java.security.MessageDigest.getInstance("SHA-256").digest(copiedText.toByteArray(Charsets.UTF_8))
+                .joinToString("") { "%02x".format(it.toInt() and 255) }
+            shell("am start -W -n ${test.context.packageName}/app.cliphistory.SyntheticClipboardActivity -a ${SyntheticClipboardActivity.READ_HASH}")
+            await("Native quick copy preserves exact full text and whitespace") { node("Clipboard SHA-256: $hash")!=null }
             expand()
             clickTile()
             await("Tile can reopen one panel") { node("Quick copy")!=null }
             closePanel()
             await("Close dismisses floating panel") { node("Quick copy")==null }
+            expand();clickTile()
+            await("Panel reopens before outside dismissal") { node("Synthetic newest text")!=null }
+            await("Shade collapsed before outside dismissal") { shadeCollapsed() }
+            shell("input tap 4 ${(activity.windowManager.maximumWindowMetrics.bounds.height()*.9).toInt()}")
+            await("Outside tap dismisses the native quick dialog") { node(context.getString(R.string.quick_close))==null }
+            expand();clickTile()
+            await("Panel reopens before system Back") { node("Synthetic newest text")!=null }
+            await("Shade collapsed before system Back") { shadeCollapsed() }
+            test.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
+            await("System Back dismisses the native quick dialog") { node(context.getString(R.string.quick_close))==null }
             main { AppSettings(context).tileMode="history";call("showSettings") }
             context.startActivity(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
             await("Settings remains open before full-history tile") { var ready=false;main { ready=field("pageKind")=="settings" };ready }
@@ -374,6 +456,31 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             await("Published tile reflects the restored Quick copy mode") { node(context.getString(R.string.quick_copy))!=null }
             clickTile()
             await("Changing back to Quick copy opens the floating panel") { node("Synthetic newest text")!=null && node("Quick copy")!=null }
+            closePanel()
+            val valid=SnapshotCodec.encode(PrivateHistory.readOffline(context))
+            fun replace(payload:ByteArray) {
+                val (a,b)=PrivateHistory.openForDaemon(context)
+                listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot -> slot.writeAndSync(payload) } }
+                PrivateHistory.invalidate()
+            }
+            try {
+                replace(byteArrayOf(1,2,3))
+                expand();clickTile()
+                await("Actual QS dialog exposes storage-read recovery") { node(context.getString(R.string.quick_failed))!=null }
+                await("Shade collapsed before native error recovery") { shadeCollapsed() }
+                checkThat(node(context.getString(R.string.open_app))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,
+                    "Native error Open app accepts activation")
+                await("Native error Open app uses its valid QS token before dismissing") {
+                    node(context.getString(R.string.quick_close))==null && shell("dumpsys activity activities").lineSequence()
+                        .any { it.contains("ResumedActivity") && it.contains("app.cliphistory.ui.MainActivity") }
+                }
+            } finally { replace(valid) }
+            main { AppSettings(context).tileEnabled=false }
+            expand(0);tap(tileTitle);SystemClock.sleep(250)
+            checkThat(node(context.getString(R.string.quick_close))==null,"Disabled native tile cannot open quick copy")
+            main { AppSettings(context).tileEnabled=true }
+            expand();clickTile()
+            await("Re-enabled tile opens quick copy") { node("Synthetic newest text")!=null }
             closePanel()
         } finally { main { AppSettings(context).allowScreenshots=false };node(context.getString(R.string.quick_close))?.performAction(AccessibilityNodeInfo.ACTION_CLICK);shell("cmd statusbar collapse");if(!existing)shell("cmd statusbar remove-tile $component") }
     }
@@ -586,25 +693,31 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot -> slot.writeAndSync(payload) } }
             PrivateHistory.invalidate()
         }
-        fun texts(quick:QuickCopyActivity):List<String> {
+        fun texts(quick:QuickCopyDialog):List<String> {
             var result=emptyList<String>()
-            main { result=views(quick.window.decorView).filterIsInstance<TextView>().map { it.text.toString() } }
+            main { result=views(quick.window!!.decorView).filterIsInstance<TextView>().map { it.text.toString() } }
             return result
         }
-        fun openError():QuickCopyActivity {
+        fun openError():QuickCopyDialog {
             replace(byteArrayOf(1,2,3))
-            val quick=test.startActivitySync(Intent(context,QuickCopyActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as QuickCopyActivity
+            lateinit var quick:QuickCopyDialog
+            main {
+                quick=QuickCopyDialog(activity) {
+                    context.startActivity(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                }
+                quick.show()
+            }
             await("Real quick panel shows synthetic storage-read error") { texts(quick).contains(context.getString(R.string.quick_failed)) }
             main {
-                val rows=QuickCopyActivity::class.java.getDeclaredField("rows").apply { isAccessible=true }.get(quick) as LinearLayout
+                val rows=QuickCopyDialog::class.java.getDeclaredField("rows").apply { isAccessible=true }.get(quick) as LinearLayout
                 checkThat(rows.minimumHeight==0 && rows.childCount==2,"Error panel releases absent entries and exposes two recovery actions")
             }
             return quick
         }
-        var quick:QuickCopyActivity?=null
+        var quick:QuickCopyDialog?=null
         try {
             main { AppSettings(context).allowScreenshots=true }
-            quick=openError();capture("quick-error-recovery",quick.window)
+            quick=openError();capture("quick-error-recovery",quick.window!!)
             replace(valid)
             checkThat(node(context.getString(R.string.quick_retry))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,"Actual Try again accessibility control accepts activation")
             val recovered=quick
@@ -612,13 +725,13 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
                 val values=texts(recovered)
                 listOf("Synthetic newest text","Synthetic second\nwith exact whitespace  ","Synthetic third text").all { values.contains(it) }
             }
-            capture("quick-error-recovered",quick.window)
-            main { recovered.finish() };test.waitForIdleSync()
+            capture("quick-error-recovered",quick.window!!)
+            main { recovered.dismiss() };test.waitForIdleSync()
             quick=openError()
             checkThat(node(context.getString(R.string.open_app))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,"Actual error Open app accessibility control accepts activation")
             val opened=quick
             await("Error Open app closes floating panel and restores Main focus") {
-                var ready=false;main { ready=opened.isFinishing && activity.hasWindowFocus() && !activity.isFinishing };ready
+                var ready=false;main { ready=!opened.isShowing && activity.hasWindowFocus() && !activity.isFinishing };ready
             }
             // Direct file injection has no daemon event. A fresh launch reads this
             // separate Home error fixture through the normal startup path.
@@ -642,7 +755,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             }
         } finally {
             replace(valid)
-            main { quick?.finish();AppSettings(context).apply { allowScreenshots=false;appearance="light" };ScreenPrivacy.apply(activity,AppSettings(context)) }
+            main { quick?.dismiss();AppSettings(context).apply { allowScreenshots=false;appearance="light" };ScreenPrivacy.apply(activity,AppSettings(context)) }
         }
         checkThat(SnapshotCodec.encode(PrivateHistory.readOffline(context)).contentEquals(valid),"Valid synthetic history is restored after error controls")
     }

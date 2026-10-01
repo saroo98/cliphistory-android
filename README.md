@@ -4,6 +4,8 @@ A local clipboard-history companion for Android, with **Shizuku started in non-r
 
 ## Release 1.3.0
 
+Current local build: **1.3.2/code 6** fixes the extra quick-tile Activity animation and keeps the native popup open across tile-service unbinding. See [current verification](docs/TILE_LAUNCH_FIX.md). This local build is not yet represented as a new public release or F-Droid listing.
+
 Public source: https://github.com/saroo98/cliphistory-android. Signed APKs are in the repository's Releases page. Android API 34 or later is required; compile and target are API 37.
 
 Version 1.3.0/code 4 adds exact unique-text history, configurable screen privacy, optional recorder recovery, a temporary floating quick-copy panel, battery guidance and consolidated Settings. Build and actual device evidence, including remaining acceptance checks, is in `VERIFICATION.md`. Historical 1.2 results do not establish 1.3 readiness. The F-Droid recipe is `fdroid/metadata/app.cliphistory.yml`, with store text and images in `fastlane/metadata/android/`.
