@@ -1,0 +1,1 @@
+New ClipHistory logo across the launcher, themed icon, Quick Settings tile, recovery notification, Welcome, and About. Updated F-Droid artwork. Clipboard behavior is unchanged.

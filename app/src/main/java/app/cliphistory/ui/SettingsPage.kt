@@ -143,6 +143,7 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
             welcome=preference(R.string.html_port_welcome_frequency,Action.WELCOME_FREQUENCY)
             row(R.string.show_welcome,Action.WELCOME)
             group(R.string.about)
+            content.addView(ui.brandIdentity().apply { setPadding(ui.dp(12),ui.dp(8),ui.dp(12),ui.dp(8)) })
             content.addView(ui.text(ui.activity.getString(R.string.version_license,BuildConfig.VERSION_NAME),15f,true).apply { setPadding(ui.dp(12),ui.dp(8),ui.dp(12),ui.dp(8)) })
             row(R.string.source_code,Action.SOURCE);row(R.string.licenses,Action.LICENSES);row(R.string.support_project,Action.SUPPORT)
         }

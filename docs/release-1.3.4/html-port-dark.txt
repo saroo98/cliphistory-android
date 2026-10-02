@@ -1,0 +1,243 @@
+PASS Owned synthetic history loads (3 entries)
+PASS Settings contains exactly the eight existing native Switch labels
+PASS Choice preferences are rows in Settings
+PASS Offline recorder mutations remain disabled
+PASS Offline Settings shows only the Connect or Start recorder action
+PASS Settings DUPLICATES displays its persisted summary
+PASS Settings DUPLICATES exposes its summary and button role
+PASS Settings TILE_MODE displays its persisted summary
+PASS Settings TILE_MODE exposes its summary and button role
+PASS Settings MOTION displays its persisted summary
+PASS Settings MOTION exposes its summary and button role
+PASS Settings WELCOME_FREQUENCY displays its persisted summary
+PASS Settings WELCOME_FREQUENCY exposes its summary and button role
+PASS Settings APPEARANCE displays its persisted summary
+PASS Settings APPEARANCE exposes its summary and button role
+PASS History limit summary uses the saved capacity
+PASS Automatic resumption contains two native controls
+PASS Optional setup contains its four separate actions
+PASS Welcome is a separate group before About
+PASS About shows the actual build version
+PASS About exposes source and license actions
+PASS Native Settings action TILE_MODE is available
+PASS TILE_MODE opens the native radio choices
+PASS Enabled control: Done
+PASS TILE_MODE selection and row summary persist
+PASS Native Settings action MOTION is available
+PASS MOTION opens the native radio choices
+PASS Enabled control: Done
+PASS MOTION selection and row summary persist
+PASS Native Settings action WELCOME_FREQUENCY is available
+PASS WELCOME_FREQUENCY opens the native radio choices
+PASS Enabled control: Done
+PASS WELCOME_FREQUENCY selection and row summary persist
+PASS Native Settings action APPEARANCE is available
+PASS Appearance opens three native radio choices
+PASS Selected-theme sheet grip remains distinct from its surface
+PASS Enabled control: Done
+PASS Native Settings action LICENSES is available
+PASS Licenses opens directly from About
+PASS About reaches complete runtime license notices
+PASS Enabled control: Back
+PASS License Back returns to Settings
+PASS Recovery fixture preferences saved
+PASS Reboot choice stays checked and disabled while recovery is off
+PASS Native Switch thumb remains distinct in Off state
+PASS Off Switch track remains distinct from its page
+PASS Native Switch thumb remains distinct in On state
+PASS Enabled control: Back
+PASS New Settings page is laid out before its scroll fixture
+PASS Settings has a scroll position to return to
+PASS Native Settings action GUIDE is available
+PASS Guide opens from Settings
+PASS New Help page is laid out before its local jump
+PASS Help contains six numbered native setup sections in order
+PASS Help step 1 keeps its actions beside its instructions
+PASS Help step 2 keeps its actions beside its instructions
+PASS Help step 3 keeps its actions beside its instructions
+PASS Help step 4 keeps its actions beside its instructions
+PASS Help step 5 keeps its actions beside its instructions
+PASS Help step 6 keeps its actions beside its instructions
+PASS Enabled control: Clipboard questions
+PASS Clipboard questions jumps within the native Help scroll
+PASS FAQ Keep using Gboard starts as a native accessible disclosure
+PASS FAQ After restarting your phone starts as a native accessible disclosure
+PASS FAQ Limits starts as a native accessible disclosure
+PASS FAQ Only on this phone starts as a native accessible disclosure
+PASS FAQ Sensitive text starts as a native accessible disclosure
+PASS FAQ Screen privacy starts as a native accessible disclosure
+PASS FAQ Keep using Gboard accepts expansion
+PASS FAQ Sensitive text accepts expansion
+PASS Expanded Help layout settles before its scroll fixture
+PASS Expanded Help has a stable scroll position
+PASS Enabled control: Open-source licenses
+PASS Licenses opens from the expanded Help
+PASS Enabled control: Back
+PASS Back preserves Help FAQ expansion and scroll
+PASS System Back restores the originating Settings scroll
+PASS Native Settings action GUIDE is available
+PASS Reopening Help preserves expansion and scroll
+PASS Rotation preserves Help disclosure state and scroll
+PASS Diagnostics initially shows only its three important value rows
+PASS Diagnostic Advanced details begins collapsed
+PASS Advanced details exposes the remaining diagnostic facts
+PASS Advanced details collapses to the three important rows
+PASS Diagnostics does not expose saved text
+PASS History search finds text beyond its initial preview
+PASS The matched History row exposes its visible native View action
+PASS The matched History View control is a focusable native action
+PASS History View target measures 48.0 by 48.333332 dp and meets 48dp in both dimensions
+PASS Full text opens and scrolls to the late match
+PASS Full text preserves exact complete selectable text
+PASS Full text highlights every case-insensitive late search match
+PASS The first late match is within the full-text viewport
+PASS Full-text scrolling stays local to its page
+PASS Enabled control: Back
+PASS Full-text Back preserves the History search
+PASS Clearing the late query returns complete history
+PASS Synthetic copy-failure presentation provides Retry and complete text
+PASS Copy-recovery sheet protects its text
+PASS Enabled control: View full text
+PASS Copy recovery exposes exact selectable complete text
+PASS Viewing manual copy recovery leaves the synthetic clipboard unchanged
+PASS Enabled control: Retry
+PASS Recovery Retry writes the complete text and completes its action
+PASS Successful Retry dismisses recovery and keeps this action on screen
+PASS Copy recovery leaves saved history unchanged
+PASS Owned synthetic history loads (0 entries)
+PASS Quick loading uses three static non-interactive skeleton rows
+PASS Quick loading has no panel entrance animation
+PASS Empty Quick copy offers Open app
+PASS Empty Quick copy releases absent-entry space
+PASS Quick empty action retains its measured gap
+PASS Enabled control: Open app
+PASS Empty Open app closes Quick copy and returns Main focus
+PASS Owned synthetic history loads (3 entries)
+PASS Native Switch thumb remains distinct in Off state
+PASS Off Switch track remains distinct from its page
+PASS Native Switch thumb remains distinct in On state
+PASS Dark sheet grip remains distinct from its surface
+PASS Native sheet grip retains its labelled 48dp target
+PASS Enabled control: Done
+PASS Owned synthetic history loads (3 entries)
+PASS Settings contains exactly the eight existing native Switch labels
+PASS Choice preferences are rows in Settings
+PASS Offline recorder mutations remain disabled
+PASS Offline Settings shows only the Connect or Start recorder action
+PASS Settings DUPLICATES displays its persisted summary
+PASS Settings DUPLICATES exposes its summary and button role
+PASS Settings TILE_MODE displays its persisted summary
+PASS Settings TILE_MODE exposes its summary and button role
+PASS Settings MOTION displays its persisted summary
+PASS Settings MOTION exposes its summary and button role
+PASS Settings WELCOME_FREQUENCY displays its persisted summary
+PASS Settings WELCOME_FREQUENCY exposes its summary and button role
+PASS Settings APPEARANCE displays its persisted summary
+PASS Settings APPEARANCE exposes its summary and button role
+PASS History limit summary uses the saved capacity
+PASS Automatic resumption contains two native controls
+PASS Optional setup contains its four separate actions
+PASS Welcome is a separate group before About
+PASS About shows the actual build version
+PASS About exposes source and license actions
+PASS Native Settings action TILE_MODE is available
+PASS TILE_MODE opens the native radio choices
+PASS Enabled control: Done
+PASS TILE_MODE selection and row summary persist
+PASS Native Settings action MOTION is available
+PASS MOTION opens the native radio choices
+PASS Enabled control: Done
+PASS MOTION selection and row summary persist
+PASS Native Settings action WELCOME_FREQUENCY is available
+PASS WELCOME_FREQUENCY opens the native radio choices
+PASS Enabled control: Done
+PASS WELCOME_FREQUENCY selection and row summary persist
+PASS Native Settings action APPEARANCE is available
+PASS Appearance opens three native radio choices
+PASS Selected-theme sheet grip remains distinct from its surface
+PASS Enabled control: Done
+PASS Native Settings action LICENSES is available
+PASS Licenses opens directly from About
+PASS About reaches complete runtime license notices
+PASS Enabled control: Back
+PASS License Back returns to Settings
+PASS Recovery fixture preferences saved
+PASS Reboot choice stays checked and disabled while recovery is off
+PASS Native Switch thumb remains distinct in Off state
+PASS Off Switch track remains distinct from its page
+PASS Native Switch thumb remains distinct in On state
+PASS Enabled control: Back
+PASS New Settings page is laid out before its scroll fixture
+PASS Settings has a scroll position to return to
+PASS Native Settings action GUIDE is available
+PASS Guide opens from Settings
+PASS New Help page is laid out before its local jump
+PASS Help contains six numbered native setup sections in order
+PASS Help step 1 keeps its actions beside its instructions
+PASS Help step 2 keeps its actions beside its instructions
+PASS Help step 3 keeps its actions beside its instructions
+PASS Help step 4 keeps its actions beside its instructions
+PASS Help step 5 keeps its actions beside its instructions
+PASS Help step 6 keeps its actions beside its instructions
+PASS Enabled control: Clipboard questions
+PASS Clipboard questions jumps within the native Help scroll
+PASS FAQ Keep using Gboard starts as a native accessible disclosure
+PASS FAQ After restarting your phone starts as a native accessible disclosure
+PASS FAQ Limits starts as a native accessible disclosure
+PASS FAQ Only on this phone starts as a native accessible disclosure
+PASS FAQ Sensitive text starts as a native accessible disclosure
+PASS FAQ Screen privacy starts as a native accessible disclosure
+PASS FAQ Keep using Gboard accepts expansion
+PASS FAQ Sensitive text accepts expansion
+PASS Expanded Help layout settles before its scroll fixture
+PASS Expanded Help has a stable scroll position
+PASS Enabled control: Open-source licenses
+PASS Licenses opens from the expanded Help
+PASS Enabled control: Back
+PASS Back preserves Help FAQ expansion and scroll
+PASS System Back restores the originating Settings scroll
+PASS Native Settings action GUIDE is available
+PASS Reopening Help preserves expansion and scroll
+PASS Rotation preserves Help disclosure state and scroll
+PASS Diagnostics initially shows only its three important value rows
+PASS Diagnostic Advanced details begins collapsed
+PASS Advanced details exposes the remaining diagnostic facts
+PASS Advanced details collapses to the three important rows
+PASS Diagnostics does not expose saved text
+PASS History search finds text beyond its initial preview
+PASS The matched History row exposes its visible native View action
+PASS The matched History View control is a focusable native action
+PASS History View target measures 48.0 by 48.333332 dp and meets 48dp in both dimensions
+PASS Full text opens and scrolls to the late match
+PASS Full text preserves exact complete selectable text
+PASS Full text highlights every case-insensitive late search match
+PASS The first late match is within the full-text viewport
+PASS Full-text scrolling stays local to its page
+PASS Enabled control: Back
+PASS Full-text Back preserves the History search
+PASS Clearing the late query returns complete history
+PASS Synthetic copy-failure presentation provides Retry and complete text
+PASS Copy-recovery sheet protects its text
+PASS Enabled control: View full text
+PASS Copy recovery exposes exact selectable complete text
+PASS Viewing manual copy recovery leaves the synthetic clipboard unchanged
+PASS Enabled control: Retry
+PASS Recovery Retry writes the complete text and completes its action
+PASS Successful Retry dismisses recovery and keeps this action on screen
+PASS Copy recovery leaves saved history unchanged
+PASS Owned synthetic history loads (0 entries)
+PASS Quick loading uses three static non-interactive skeleton rows
+PASS Quick loading has no panel entrance animation
+PASS Empty Quick copy offers Open app
+PASS Empty Quick copy releases absent-entry space
+PASS Quick empty action retains its measured gap
+PASS Enabled control: Open app
+PASS Empty Open app closes Quick copy and returns Main focus
+PASS Owned synthetic history loads (3 entries)
+PASS Native Switch thumb remains distinct in Off state
+PASS Off Switch track remains distinct from its page
+PASS Native Switch thumb remains distinct in On state
+PASS Dark sheet grip remains distinct from its surface
+PASS Native sheet grip retains its labelled 48dp target
+PASS Enabled control: Done
+PASS 121 HTML port assertions (html-port), API 36. Owned disposable emulator fixtures only.

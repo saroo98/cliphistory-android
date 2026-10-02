@@ -1,8 +1,17 @@
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="branding/cliphistory-dark.svg">
+  <img alt="ClipHistory" src="branding/cliphistory.svg" width="320">
+</picture>
+
 # ClipHistory
 
 A local clipboard-history companion for Android, with **Shizuku started in non-root shell mode**. It is not a keyboard and does not modify Gboard.
 
-## Release 1.3.3
+## Release 1.3.4
+
+**1.3.4/code 8** adds the approved ClipHistory logo to the adaptive launcher and themed icon, Quick Settings tile, recovery notification, Welcome and About. GitHub and F-Droid artwork use the matching supplied exports. Asset selection and provenance are in [branding](branding/README.md). Clipboard behavior and the existing UI design remain unchanged.
+
+## Native UI improvements
 
 **1.3.3/code 7** ports the reviewed HTML UI refinements into the native Android application. It adds clearer Settings summaries, guided setup, visible full-text actions, persistent single-deletion Undo and focused error recovery. See [port and verification](docs/HTML_UI_PORT.md). The preceding tile launch fix is documented in [tile verification](docs/TILE_LAUNCH_FIX.md). F-Droid submission status and exact release evidence are recorded in [publication preparation](docs/F_DROID_PUBLICATION.md). A prepared or submitted app is not an accepted F-Droid listing.
 
@@ -33,7 +42,7 @@ F-Droid publication requires its independent review and build verification. Prov
 
 On Windows, extract the ZIP fully, then double-click **`BUILD_WINDOWS.cmd`**. Read `START_HERE.md` for the short walkthrough and `BUILDING.md` for details.
 
-Once a build has succeeded, install `ClipHistory-1.3.3.apk` using the existing signing identity, start Shizuku, open ClipHistory and approve Shizuku access. Run the optional **Connection test** and add the tile through Android's confirmation. The connection test replaces the current shared clipboard with harmless text. Your usual keyboard stays unchanged.
+Once a build has succeeded, install `ClipHistory-1.3.4.apk` using the existing signing identity, start Shizuku, open ClipHistory and approve Shizuku access. Run the optional **Connection test** and add the tile through Android's confirmation. The connection test replaces the current shared clipboard with harmless text. Your usual keyboard stays unchanged.
 
 After reboot, unlock and start non-root Shizuku again. Enabled recovery prepares after unlock and attempts reconnection when Shizuku becomes available and Android permits it. It does not automatically open the full Activity. Copies made before reconnection cannot be reconstructed. Battery settings are optional and cannot remove Shizuku's restart requirement.
 

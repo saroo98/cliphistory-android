@@ -562,7 +562,7 @@ class MainActivity:Activity() {
     private fun requestTile() {
         if(!settings.tileEnabled){notifyUser(R.string.tile_disabled_notice);return}
         try {
-            getSystemService(StatusBarManager::class.java).requestAddTileService(ComponentName(this,ClipboardTileService::class.java),s(R.string.tile_name),Icon.createWithResource(this,R.drawable.ic_clipboard),mainExecutor) { result ->
+            getSystemService(StatusBarManager::class.java).requestAddTileService(ComponentName(this,ClipboardTileService::class.java),s(R.string.tile_name),Icon.createWithResource(this,R.drawable.ic_cliphistory_system),mainExecutor) { result ->
                 if(visible)notifyUser(if(result==StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED || result==StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED)R.string.tile_available else R.string.tile_manual)
             }
         } catch (_:Exception){message(R.string.add_tile_menu,R.string.tile_manual)}
@@ -720,6 +720,7 @@ class MainActivity:Activity() {
     }
     private fun showWelcome() {
         val dialog=sheet(R.string.welcome_title) { box,d ->
+            box.addView(ui.brandIdentity());box.addView(ui.space(16))
             ui.paragraph(box,s(R.string.welcome_body))
             box.addView(ui.button(s(R.string.port_welcome_setup),primary=true){settings.welcomeSeen=true;d.dismiss();help()})
             box.addView(ui.button(s(R.string.port_welcome_explore)){settings.welcomeSeen=true;d.dismiss();main.post { maybeShowPrompts() }})

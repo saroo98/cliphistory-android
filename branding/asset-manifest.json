@@ -1,0 +1,66 @@
+{
+  "source_archive": "ClipHistory-logo-final.zip",
+  "source_archive_sha256": "c9958e9e130be0c6e3587f51239ef3ad1b3d0c40f72f9843e3723408d7903915",
+  "assets": [
+    {
+      "source": "exports/v001/android/res/drawable/cliphistory_foreground.xml",
+      "destination": "app/src/main/res/drawable/ic_launcher_foreground.xml",
+      "sha256": "32173a3bf42282827c3f3ff5dd3910b83eda9a9b2de2407bba59f6f606354128"
+    },
+    {
+      "source": "exports/v001/android/res/drawable/ic_cliphistory_system.xml",
+      "destination": "app/src/main/res/drawable/ic_cliphistory_system.xml",
+      "sha256": "c2d468363599e42a675b8ef84fbfe710dbc1fb9b0e7169599a12dc70ba0c3581"
+    },
+    {
+      "source": "exports/v001/fdroid/icon.png",
+      "destination": "fastlane/metadata/android/en-US/images/icon.png",
+      "sha256": "71c6c83627c6ec8890da1d4d436d307eadfd08d4762e2f292f2990d77a5fc14e"
+    },
+    {
+      "source": "exports/v001/fdroid/feature-graphic.png",
+      "destination": "fastlane/metadata/android/en-US/images/featureGraphic.png",
+      "sha256": "1e794adc91e73da8a2529ddc54c974324bd5835f8e3410dd8dd72cb2558469c7"
+    },
+    {
+      "source": "delivery/v001/artifacts/color.svg",
+      "destination": "branding/cliphistory.svg",
+      "sha256": "f3d7c8d2b0bb877bdeb26c7ec309f4c867de4bbbb1a0ecb00f4d3cb665a1e485"
+    },
+    {
+      "source": "delivery/v001/artifacts/reverse.svg",
+      "destination": "branding/cliphistory-dark.svg",
+      "sha256": "0b35553bbe60b4b3f1473d9365da98bdfc0b502364b89e2910b24b69d39eb79e"
+    },
+    {
+      "source": "delivery/v001/artifacts/compact.svg",
+      "destination": "branding/symbol.svg",
+      "sha256": "6c4aba1a3b98710055d59327fc20a4a06d02f492e7bb319ab3b7d12b31738449"
+    },
+    {
+      "source": "exports/v001/github/social-preview.png",
+      "destination": "branding/social-preview.png",
+      "sha256": "04705e1756dc966c382433c9bdb326a062d8adc722c6f9697727b5f78ddb32b4"
+    },
+    {
+      "source": "exports/v001/website-preparation/favicon.svg",
+      "destination": "branding/favicon.svg",
+      "sha256": "ee24253ccfa4a1d512552993f43cc2b93d68c208f2b4d337c44bea0bb94cfaf7"
+    },
+    {
+      "source": "exports/v001/website-preparation/favicon.ico",
+      "destination": "branding/favicon.ico",
+      "sha256": "389ee374396afa695630e0ba35d1586556aeeb039c780570a8f9c251499bbc23"
+    },
+    {
+      "source": "resources/Inter-OFL.txt",
+      "destination": "LICENSES/Inter-OFL.txt",
+      "sha256": "262481e844521b326f5ecd053e59b98c8b2da78c8ee1bdbb6e8174305e54935a"
+    },
+    {
+      "source": "LICENSES.md",
+      "destination": "branding/ARTWORK-PROVENANCE.md",
+      "sha256": "91538cff9709a53e0086d34d5f2271efa4ba60416b0af0cdb11492db52b366bb"
+    }
+  ]
+}

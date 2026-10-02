@@ -38,7 +38,7 @@
             android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
         <service android:name=".ui.ClipboardTileService"
             android:label="${tileLabel}"
-            android:icon="@drawable/ic_clipboard"
+            android:icon="@drawable/ic_cliphistory_system"
             android:exported="true"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <!-- Bind while QS is visible rather than waiting for an active

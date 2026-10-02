@@ -1,0 +1,49 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS First launcher opening presents welcome
+PASS Welcome appears before background guidance
+PASS Welcome respects screenshot protection
+PASS Background guidance follows deliberate welcome acknowledgement
+PASS Welcome acknowledgement persists
+PASS Background guidance can be dismissed
+PASS Optional background suggestion acknowledged
+PASS Once mode does not repeat acknowledged welcome
+PASS Each-launch mode presents welcome
+PASS Rotation/recreation does not count as another launcher opening
+PASS Off mode allows launching without optional prompts
+PASS Real optional support action: Leave feedback
+PASS Real optional support action: Star on GitHub
+PASS Real optional support action: Share app
+PASS Guide retains setup instructions: 1
+PASS Guide retains setup instructions: 2
+PASS Guide retains setup instructions: 3
+PASS Guide retains setup instructions: 4
+PASS Guide retains setup instructions: 5
+PASS Guide retains setup instructions: 6
+PASS Guide retains setup instructions: 7
+PASS Offline guide exposes Shizuku and Connect actions
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS First launcher opening presents welcome
+PASS Welcome appears before background guidance
+PASS Welcome respects screenshot protection
+PASS Background guidance follows deliberate welcome acknowledgement
+PASS Welcome acknowledgement persists
+PASS Background guidance can be dismissed
+PASS Optional background suggestion acknowledged
+PASS Once mode does not repeat acknowledged welcome
+PASS Each-launch mode presents welcome
+PASS Rotation/recreation does not count as another launcher opening
+PASS Off mode allows launching without optional prompts
+PASS Real optional support action: Leave feedback
+PASS Real optional support action: Star on GitHub
+PASS Real optional support action: Share app
+PASS Guide retains setup instructions: 1
+PASS Guide retains setup instructions: 2
+PASS Guide retains setup instructions: 3
+PASS Guide retains setup instructions: 4
+PASS Guide retains setup instructions: 5
+PASS Guide retains setup instructions: 6
+PASS Guide retains setup instructions: 7
+PASS Offline guide exposes Shizuku and Connect actions
+PASS 24 feature assertions (onboarding), API 36. Synthetic validation only.

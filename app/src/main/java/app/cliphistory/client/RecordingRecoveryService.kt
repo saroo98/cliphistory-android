@@ -33,7 +33,7 @@ class RecordingRecoveryService : Service() {
     private fun notification():Notification {
         val open=PendingIntent.getActivity(this,7,Intent(this,MainActivity::class.java),PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val stop=PendingIntent.getService(this,8,Intent(this,RecordingRecoveryService::class.java).setAction(STOP),PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        return Notification.Builder(this,CHANNEL).setSmallIcon(R.drawable.ic_clipboard)
+        return Notification.Builder(this,CHANNEL).setSmallIcon(R.drawable.ic_cliphistory_system)
             .setContentTitle(getString(R.string.app_name)).setContentText(getString(if(stopFailed)R.string.recovery_stop_failed else if(client.connected())R.string.recovery_connected else R.string.recovery_waiting))
             .setContentIntent(open).setOngoing(true).setOnlyAlertOnce(true).setShowWhen(false)
             .setVisibility(Notification.VISIBILITY_SECRET)

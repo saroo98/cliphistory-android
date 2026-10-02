@@ -17,4 +17,6 @@ Shizuku manager is a separate prerequisite, not bundled in this source or APK. I
 
 The app's original launcher artwork, native interface and synthetic store captures are covered by the project's MIT licence. No separate font binary or external stock artwork is bundled. Android provides the system typeface at runtime.
 
+The approved ClipHistory logo is original supplied artwork. Its geometric Android resources contain no font. The repository wordmark contains outlined Inter 4.001 lettering, with provenance in `branding/ARTWORK-PROVENANCE.md` and its source SIL Open Font License in `LICENSES/Inter-OFL.txt`. No Inter font binary is distributed or loaded by the app.
+
 Upstreams: https://github.com/RikkaApps/Shizuku-API, https://github.com/JetBrains/kotlin, https://github.com/JetBrains/java-annotations, https://android.googlesource.com/platform/frameworks/support/, https://github.com/junit-team/junit4, https://github.com/gradle/gradle.

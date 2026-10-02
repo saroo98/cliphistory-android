@@ -33,6 +33,14 @@ class Ui(val activity: Activity) {
         setLineSpacing(dp(3).toFloat(),1f)
     }
     fun title(value:CharSequence,size:Float=22f)=text(value,size).apply { typeface=Typeface.create("sans-serif-medium",Typeface.NORMAL) }
+    fun brandIdentity()=LinearLayout(activity).apply {
+        gravity=Gravity.CENTER_VERTICAL
+        addView(ImageView(activity).apply {
+            setImageResource(R.mipmap.ic_launcher)
+            importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        },LinearLayout.LayoutParams(dp(48),dp(48)).apply { marginEnd=dp(12) })
+        addView(title(activity.getString(R.string.app_name),18f),LinearLayout.LayoutParams(0,-2,1f))
+    }
     fun button(value:String,primary:Boolean=false,danger:Boolean=false,action:()->Unit)=Button(activity).apply {
         text=value;isAllCaps=false;textSize=14f;minHeight=dp(48);minimumHeight=dp(48);minWidth=0;minimumWidth=0
         setPadding(dp(16),dp(8),dp(16),dp(8));stateListAnimator=null
