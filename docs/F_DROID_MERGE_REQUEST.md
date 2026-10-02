@@ -1,6 +1,6 @@
 # Submitted F-Droid inclusion request
 
-[MR !50917: New app: ClipHistory](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917), created 2026-10-02. The current submitted description is reproduced below. The metadata-formatting correction is committed as `8465d0cc`; its local checks passed with the current CI tool revision. The overall CI checkbox remains unchecked pending a maintainer rerun. Acceptance and listing are not claimed.
+[MR !50917: New app: ClipHistory](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917), created and updated 2026-10-02. The verified submitted description follows. The current recipe is 1.3.4/code 8 at `55069637`; current CI and report items await a maintainer run. The previous 1.3.3 pipeline passed all nine jobs. Acceptance and listing are not claimed.
 
 ## Checklist
 
@@ -43,49 +43,26 @@
 
 ### Pipeline
 
-* [ ] All pipelines should pass. **The maintainer pipeline passed 8/9 jobs; its metadata-formatting failure is corrected in 8465d0cc. Awaiting a maintainer rerun on that commit.**
-* [x] All warnings and errors in the Reports tab should be fixed or explained.
+* [ ] All pipelines should pass. **A new maintainer run is needed for 1.3.4/code 8. The previous 1.3.3 pipeline passed all nine jobs.**
+* [ ] All warnings and errors in the Reports tab should be fixed or explained. **The latest fork run has no jobs or reports. The prior R8 notice is explained below.**
 * [x] F-Droid CI runners are under GitLab's FOSS program, so there's no need for you to pay for any CI time. If Gitlab starts asking for phone numbers or credit cards don't submit anything, just leave a note in the MR so we know we need to trigger the CI.
 
-## App and inclusion request
+## App and release
 
-ClipHistory is a local, searchable plain-text clipboard history app. The upstream owner requests F-Droid inclusion. Source is MIT; there are no ads, trackers, account, network service, or Internet permission. Fastlane en-US summary, description, changelog 7, 512px icon and six current synthetic native screenshots are in the upstream repository.
+ClipHistory is a local, searchable plain-text clipboard history app for Android 14+. The upstream owner requests inclusion. MIT source, no ads, trackers, account, network service or Internet permission. Recording requires Shizuku in non-root shell mode; it must be started again after reboot.
 
-- Application ID: `app.cliphistory`
-- Latest release: **1.3.3 / versionCode 7**, Android 14+
-- Source: https://github.com/saroo98/cliphistory-android
-- Immutable source: `ff704441df26ad2dd764a023fcb85b5cfeb8fa4b`, tag `v1.3.3`
-- Public release/reference APK: https://github.com/saroo98/cliphistory-android/releases/tag/v1.3.3
-- Author/contact: https://github.com/saroo98/cliphistory-android/issues
+Latest release: **1.3.4 / versionCode 8**, tag `v1.3.4`, source `97c1e996e2619a5cf6f86f7f70614576d795b8c3`.
 
-No related ClipHistory fdroiddata or RFP issues were found in scoped searches on 2026-10-02; no existing exact app-ID metadata was found. The fork is public, `app.cliphistory` is unprotected, and the MR adds only `metadata/app.cliphistory.yml`. The recipe is LF, latest-only, uses the full source hash and tag updates, and has no disabled builds or scanner exemptions. Conditional checklist items: no external source repositories/submodules; no native libraries or useful ABI split (APK is 2,558,015 bytes). No rebase was needed.
+- [Source and issue tracker](https://github.com/saroo98/cliphistory-android)
+- [Release and reference APK](https://github.com/saroo98/cliphistory-android/releases/tag/v1.3.4)
+- [Qualification, hashes and actual logs](https://github.com/saroo98/cliphistory-android/blob/main/docs/F_DROID_PUBLICATION.md)
 
-## Executed build and reproducibility checks
+This release adds the final logo. Clipboard behavior, permissions and dependencies are unchanged. Fastlane en-US text, changelog 8, a 512px icon, a 1024 x 500 feature graphic and seven native screenshots are upstream. The MR adds only the latest `metadata/app.cliphistory.yml`, using a full source hash, canonical LF YAML, tag updates and the original signing key. No disabled builds, scanner exemptions, external source repositories or native libraries; ABI splitting is unnecessary for this 2.5 MB APK. No related request was found in scoped checks on 2026-10-02.
 
-On 2026-10-02, clean Windows and Linux builds produced identical unsigned APKs. F-Droid server **2.4.5** passed `readmeta`, `rewritemeta`, `lint`, `checkupdates`, and the complete `build --test --scan-binary --no-tarball app.cliphistory:7` run from the public upstream source. Source and APK scans passed. The recipe downloaded the public original-key reference, accepted its declared signing certificate, and compared it successfully with the built APK. Apksigcopier **1.1.1** also reproduced the signed reference byte for byte.
+## Verification and CI
 
-- Unsigned Windows/Linux/F-Droid SHA-256: `b6f5678d02615182dc97b49977bb4d9412d3048e0364700fdc992ebe2dfc8154`
-- Signed reference SHA-256: `6bd7239fbf12b9366cc70714275b977025eeffc4a7e49275833c2e7d8c61430d`
-- Original certificate SHA-256: `ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82`
-- AGP 9.1.1, Gradle 9.3.1, Linux JDK 17, SDK android-37.0, Build Tools 36.0.0; no NDK.
-- Clean Windows unit tests: **44 passed**, zero failures/errors/skips.
-- Source-distribution audit: **72/72 checks passed**, including no signing material.
-- Android lint: **0 errors, 14 disclosed warnings**, without suppression: one AGP advisory, one durable preference commit, one plural candidate, four private-API calls and seven unused strings.
+Clean Windows and Linux builds have identical unsigned bytes. The complete local F-Droid recipe passed source/APK scans and comparison with the downloaded original-key APK. Apksigcopier 1.1.1 reproduced the signed APK byte for byte. Fresh checks: 44 unit tests passed; Android lint has zero errors and 14 disclosed warnings; source audit passed 72/72. Native light/dark regression checks and logo screenshots also passed. Toolchain: AGP 9.1.1, Gradle 9.3.1, JDK 17, platform android-37.0, Build Tools 36.0.0. Canonical metadata was checked with CI's fdroidserver `c21c177ff6d813697aaf9c988ca9fbb2b571b468` and ruamel.yaml 0.18.10.
 
-Public qualification and selected actual outputs: https://github.com/saroo98/cliphistory-android/blob/main/docs/F_DROID_PUBLICATION.md and https://github.com/saroo98/cliphistory-android/tree/main/docs/release-1.3.3 . One local Python 3.14.4 process aborted during the first APK scan; an unchanged complete retry passed. The cause of that interpreter crash is not established; no scanner bypass was used.
+The [previous maintainer pipeline](https://gitlab.com/fdroid/fdroiddata/-/pipelines/2907476394) passed all nine jobs for **1.3.3**, after the metadata-formatting correction. A new run is needed for this 1.3.4 update at `550696372b43e4dedb641c2a8cc618125ae1d235`. The automatic [fork MR pipeline](https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/2907542150) has zero jobs under GitLab's identity-verification gate. No phone or financial information was submitted. Could a maintainer rerun CI on the latest commit?
 
-## Current CI status
-
-Maintainer linsui triggered [F-Droid pipeline #2906329865](https://gitlab.com/fdroid/fdroiddata/-/pipelines/2906329865) on 2026-10-02. Eight jobs passed: build, checkupdates, git redirect, fdroid lint, tools check scripts, schema validation, source inspection, and APK inspection. The report confirmed a reproducible APK. The only failed job was `fdroid rewritemeta`, requiring the `Binaries` URL on an indented continuation line.
-
-Correction commit `8465d0ccae6b6bff96c00b1b35c7052b9fab0af1` uses the corrected artifact from [job #16893233572](https://gitlab.com/fdroid/fdroiddata/-/jobs/16893233572), byte for byte. All parsed metadata values, the release tag, source revision, reference APK and signer are unchanged. Local `readmeta`, `rewritemeta` (no further changes), and `lint` passed with CI's fdroidserver revision `c21c177ff6d813697aaf9c988ca9fbb2b571b468` and ruamel.yaml 0.18.10. Corrected YAML SHA-256: `a3dd3f50de324c75d9deaca5e83774a75c31123c09a334da675a810acbc3bf31`.
-
-The prior report has nine informational entries and one minor R8 warning. The existing release configuration deliberately disables minification because Shizuku loads the UserService entry point reflectively (`app/build.gradle.kts`). The published APK is 2.5 MB with no native libraries. No new APK or release is needed for this formatting correction.
-
-Automatic [branch pipeline #2906846719](https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/2906846719) and [MR pipeline #2906847320](https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/2906847320) for the corrected commit again have zero jobs under the account identity-verification gate; `yaml_errors` is null. [A maintainer rerun was requested](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917#note_3945365323). No full CI pass for the corrected commit, inclusion, or listing is claimed. No phone/card information was submitted.
-
-## Runtime and privacy limits
-
-Recording requires the separate Shizuku app, API 13+, explicitly authorized as non-root shell UID 2000 on the primary profile. Saved history is readable offline. Non-root Shizuku must be started again after reboot; internal Android clipboard APIs and OEM behavior remain compatibility limits. Recovery respects explicit Stop, Force stop and Task Manager Stop; optional battery settings do not promise unlimited background operation.
-
-Private history is excluded from Android backup. Screenshots default to blocked with an optional setting; Recents privacy is independent. Sensitive-marked clips, unsupported payloads and text over 64 KiB are skipped. Unmarked copied text may contain secrets. There is no overlay permission, Accessibility service, keyboard replacement, ads or analytics. UI checks include an API 36 emulator and signed Pixel API 37 upgrade/launch/Settings inspection. Zero latency, every-OEM behavior, exhaustive spoken TalkBack and multi-day battery measurements are not claimed.
+The prior report's minor R8 notice remains applicable: release minification is deliberately disabled because Shizuku loads the UserService entry point reflectively. Internal Android clipboard APIs and OEM behavior remain compatibility limits. History is private and excluded from backup; screenshots are blocked by default. Explicit Stop, Force stop and Android Task Manager Stop are respected. No universal capture or zero-latency claim is made.

@@ -9,7 +9,7 @@ A local clipboard-history companion for Android, with **Shizuku started in non-r
 
 ## Release 1.3.4
 
-**1.3.4/code 8** adds the approved ClipHistory logo to the adaptive launcher and themed icon, Quick Settings tile, recovery notification, Welcome and About. GitHub and F-Droid artwork use the matching supplied exports. Asset selection and provenance are in [branding](branding/README.md). Clipboard behavior and the existing UI design remain unchanged.
+**1.3.4/code 8** adds the approved ClipHistory logo to the adaptive launcher and themed icon, Quick Settings tile, recovery notification, Welcome and About. GitHub and F-Droid artwork use the matching supplied exports. Asset selection and provenance are in [branding](branding/README.md); fresh qualification and submission status are in [publication](docs/F_DROID_PUBLICATION.md). Clipboard behavior and the existing UI design remain unchanged.
 
 ## Native UI improvements
 
@@ -86,7 +86,7 @@ Version 1.3 reads valid v1 history and writes v2, preserving pause and limit whi
 - `ui/`: native Android Activity, list adapter and Quick Settings tile.
 - `app/src/main/aidl/`: bounded, owner-checked IPC interface and change observer.
 - `tools/`: host tests, static source audit and local Gradle/Windows build bootstraps.
-- `docs/release-1.3/`: current selected synthetic evidence and qualification limits; `docs/release-1.2/` remains historical.
+- `docs/release-1.3.4/`: current branding and frozen-source qualification evidence; earlier release folders retain historical checks.
 - `fdroid/` and `fastlane/`: build recipe and store metadata.
 
 ## Tests

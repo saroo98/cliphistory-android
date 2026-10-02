@@ -1,6 +1,14 @@
-# Current build: ClipHistory 1.3.3
+# Current build: ClipHistory 1.3.4
 
-The native UI changes and their actual runtime checks are recorded in [the 1.3.3 port report](docs/HTML_UI_PORT.md). Exact publication-source and reproducibility results are recorded separately in [F-Droid preparation](docs/F_DROID_PUBLICATION.md). The preceding quick-copy transition fix remains in [the 1.3.2 report](docs/TILE_LAUNCH_FIX.md). Historical release evidence below does not qualify the current binary.
+The approved logo is integrated throughout Android and the release/store materials. Fresh native checks and visual evidence are in [the branding report](docs/release-1.3.4/BRANDING.md). Frozen-source qualification and current external status are in [F-Droid publication](docs/F_DROID_PUBLICATION.md); exact results are in [checks.json](docs/release-1.3.4/checks.json).
+
+- Clean Windows and Linux builds of `97c1e996e2619a5cf6f86f7f70614576d795b8c3` have identical unsigned bytes. Signature copying reproduced the published original-key APK exactly. The full local F-Droid recipe, source/APK scans and reference comparison passed.
+- 44 JVM tests passed with zero failures/errors/skips; release lint has zero errors and 14 disclosed warnings; distribution source audit passed 72/72.
+- Fresh API 36 emulator checks: Settings 21, Onboarding 24, Native UI 33; native HTML-port regression 121 light + 121 dark assertions. Actual Welcome/About and launcher artwork were visually checked. HTML browser rendering remains unverified because local-file URLs were blocked; JavaScript syntax and asset wiring passed.
+- Signed in-place Pixel 8 Pro upgrade succeeded; installed package reports 1.3.4/code 8. No personal history was inspected and no uninstall was used.
+- The immutable v1.3.4 release is published. MR !50917 now pins it. A new maintainer CI run is requested; the automatic fork run has zero jobs under GitLab's account verification gate. All nine jobs of the previous 1.3.3 maintainer pipeline passed, which does not qualify 1.3.4.
+
+The native UI work remains documented in [HTML_UI_PORT.md](docs/HTML_UI_PORT.md), with the prior tile fix in [TILE_LAUNCH_FIX.md](docs/TILE_LAUNCH_FIX.md). Historical evidence below does not qualify the current binary. No zero-latency, universal capture or every-device claim is made.
 
 # ClipHistory 1.3.0 verification
 

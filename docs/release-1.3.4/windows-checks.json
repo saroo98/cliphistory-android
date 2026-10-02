@@ -1,0 +1,67 @@
+{
+  "source": "97c1e996e2619a5cf6f86f7f70614576d795b8c3",
+  "unit_tests": {
+    "tests": 44,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": [
+    {
+      "id": "ApplySharedPref",
+      "severity": "Warning"
+    },
+    {
+      "id": "PrivateApi",
+      "severity": "Warning"
+    },
+    {
+      "id": "PrivateApi",
+      "severity": "Warning"
+    },
+    {
+      "id": "PrivateApi",
+      "severity": "Warning"
+    },
+    {
+      "id": "PrivateApi",
+      "severity": "Warning"
+    },
+    {
+      "id": "AndroidGradlePluginVersion",
+      "severity": "Warning"
+    },
+    {
+      "id": "PluralsCandidate",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    }
+  ]
+}

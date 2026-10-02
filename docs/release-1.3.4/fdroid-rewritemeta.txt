@@ -1,0 +1,2 @@
+2026-10-02 18:24:49,462 INFO: Using <linux-workspace>/sdk/build-tools/36.0.0/apksigner
+2026-10-02 18:24:49,522 INFO: Rewriting 'app.cliphistory'

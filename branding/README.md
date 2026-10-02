@@ -10,7 +10,7 @@ Approved artwork from `ClipHistory-logo-final.zip`, integrated for release 1.3.4
 | F-Droid catalog | `fastlane/metadata/android/en-US/images/icon.png` | Supplied 512 × 512 PNG. |
 | F-Droid feature graphic | `fastlane/metadata/android/en-US/images/featureGraphic.png` | Supplied 1024 × 500 PNG. |
 | GitHub README | `cliphistory.svg`, `cliphistory-dark.svg` | Transparent outlined wordmarks; light/dark selected with a picture element. |
-| GitHub repository social preview | `social-preview.png` | Supplied 1280 × 640 PNG, uploaded in repository Settings. |
+| GitHub repository social preview | `social-preview.png` | Supplied 1280 x 640 PNG, prepared for repository Settings. Upload remains pending browser permission; see the publication report. |
 | Local HTML reference | Embedded favicon, wordmark and catalog icon | Self-contained; no external asset requests. |
 | Future website favicon | `favicon.svg`, `favicon.ico` | Supplied SVG and 16/32/48px ICO. No public website exists for this project. |
 

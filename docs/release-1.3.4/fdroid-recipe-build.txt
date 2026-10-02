@@ -1,0 +1,21 @@
+2026-10-02 18:25:01,613 INFO: Using <linux-workspace>/sdk/build-tools/36.0.0/apksigner
+2026-10-02 18:25:01,672 INFO: Creating log directory
+2026-10-02 18:25:01,872 INFO: Building app.cliphistory:8
+2026-10-02 18:25:01,874 INFO: Getting source for revision 97c1e996e2619a5cf6f86f7f70614576d795b8c3
+2026-10-02 18:25:04,182 INFO: commit: 97c1e996e2619a5cf6f86f7f70614576d795b8c3 (SHA1: 97c1e996e2619a5cf6f86f7f70614576d795b8c3)
+2026-10-02 18:25:04,484 INFO: Creating local.properties file at build/app.cliphistory/local.properties
+2026-10-02 18:25:04,485 INFO: Creating local.properties file at build/app.cliphistory/app/local.properties
+2026-10-02 18:25:04,486 INFO: Scanning source for common problems...
+2026-10-02 18:25:04,487 INFO: Removing gradle-wrapper.jar at gradle/wrapper/gradle-wrapper.jar
+2026-10-02 18:25:04,503 INFO: Building Gradle project...
+2026-10-02 18:25:34,195 INFO: Successfully built app.cliphistory:8 from 97c1e996e2619a5cf6f86f7f70614576d795b8c3
+2026-10-02 18:25:34,195 INFO: Scanning APK with dexdump for known non-free classes.
+2026-10-02 18:25:34,607 INFO: Scanning APK for extra signing blocks.
+2026-10-02 18:25:34,622 INFO: Created directory for storing developer supplied reference binaries: 'tmp/binaries'
+2026-10-02 18:25:34,622 INFO: ...retrieving https://github.com/saroo98/cliphistory-android/releases/download/v1.3.4/ClipHistory-1.3.4.apk
+2026-10-02 18:25:35,603 INFO: ...successfully verified
+2026-10-02 18:25:35,603 INFO: compared built binary to supplied reference binary successfully
+2026-10-02 18:25:35,606 INFO: supplied reference binary has allowed signer ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82
+2026-10-02 18:25:35,606 INFO: success: app.cliphistory
+2026-10-02 18:25:35,607 INFO: Finished
+2026-10-02 18:25:35,607 INFO: 1 build succeeded

@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-02",
+  "version": "1.3.4",
+  "version_code": 8,
+  "application_id": "app.cliphistory",
+  "release_source": "97c1e996e2619a5cf6f86f7f70614576d795b8c3",
+  "unsigned_sha256": "296106acf29d31eb10dc0989e1e457973946e9d3fb4f0501c7e023c2dbee2978",
+  "signed_sha256": "b58e21f01105a74e03ae76c5cac9dd9d55dab7175e310258516873af25e3f8c5",
+  "certificate_sha256": "ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82",
+  "release_url": "https://github.com/saroo98/cliphistory-android/releases/tag/v1.3.4",
+  "apk_bytes": 2558071,
+  "unit_tests": {
+    "tests": 44,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint_errors": 0,
+  "lint_warnings": 14,
+  "source_audit_checks": 72,
+  "windows_linux_unsigned_match": true,
+  "signed_reproduction_passed": true,
+  "apksigcopier": "1.1.1",
+  "fdroidserver": "2.4.5",
+  "fdroidserver_commit": "c21c177ff6d813697aaf9c988ca9fbb2b571b468",
+  "ruamel_yaml": "0.18.10",
+  "fdroid_local_recipe_passed": true,
+  "submission_recipe_sha256": "5cfd6bbbe65555721ee2013fa15d4880c3d79e84841983fb49ed13b3b74decf6",
+  "gitlab_submission_url": "https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917",
+  "gitlab_ci_passed": false,
+  "f_droid_accepted": false,
+  "previous_1_3_3_pipeline": {
+    "url": "https://gitlab.com/fdroid/fdroiddata/-/pipelines/2907476394",
+    "status": "success",
+    "passed_jobs": 9
+  },
+  "pixel_update_installed": true,
+  "pixel_version_code": 8,
+  "pixel_history_not_read": true,
+  "github_readme_logo_verified": true,
+  "github_social_preview_uploaded": false,
+  "github_social_preview_blocker": "Chrome extension file upload requires owner approval for file-URL access",
+  "html_syntax_passed": true,
+  "html_visual_check": "Blocked by browser local-file URL policy",
+  "emulator_checks": {
+    "native_ui": 33,
+    "settings": 21,
+    "onboarding": 24,
+    "html_port_light": 121,
+    "html_port_dark": 121,
+    "welcome_about_light_dark_os_screenshots": true,
+    "launcher_icon_visually_checked": true
+  },
+  "qualification_setup_notes": [
+    "Scratch setup initially used an incorrect categories.yml location; copied the existing config directory before checks.",
+    "Windows recipe writes initially used CRLF; normalized to LF and verified byte-identical CI serializer output.",
+    "The full F-Droid build passed. Its trailing digest command used unsigned/ while --test writes tmp/; the actual tmp artifact and downloaded reference digests were then verified."
+  ],
+  "gitlab_submission_commit": "550696372b43e4dedb641c2a8cc618125ae1d235",
+  "gitlab_remote_recipe_equals_local": true,
+  "gitlab_pipeline": {
+    "id": 2907542150,
+    "url": "https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/2907542150",
+    "status": "failed",
+    "jobs": 0,
+    "yaml_errors": null,
+    "blocker": "Verify your identity to run this pipeline"
+  },
+  "gitlab_description_verified": true,
+  "gitlab_rerun_request_url": "https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917#note_3946650775"
+}
