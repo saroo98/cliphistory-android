@@ -22,9 +22,77 @@
   "gitlab_submission_url": "https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917",
   "f_droid_accepted": false,
   "gitlab_submission_state": "opened",
-  "gitlab_submission_commit": "2d2d3df0429cd85ca37064a2e96f0de32d92a7cf",
-  "submission_recipe_sha256": "b251e032da670f0a0c255bc3a56ea081154359dce1e73c867c60707f69208bd2",
-  "gitlab_pipeline_url": "https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/2906013918",
+  "gitlab_submission_commit": "8465d0ccae6b6bff96c00b1b35c7052b9fab0af1",
+  "submission_recipe_sha256": "a3dd3f50de324c75d9deaca5e83774a75c31123c09a334da675a810acbc3bf31",
+  "gitlab_pipeline_url": "https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/2906847320",
   "gitlab_pipeline_jobs": 0,
-  "gitlab_ci_blocker": "GitLab identity verification required before jobs can run; maintainer pipeline requested in the inclusion MR"
+  "gitlab_ci_blocker": "Corrected metadata locally passes current CI readmeta, rewritemeta and lint; automatic fork CI remains identity-gated; maintainer rerun requested",
+  "prior_maintainer_ci": {
+    "pipeline_url": "https://gitlab.com/fdroid/fdroiddata/-/pipelines/2906329865",
+    "submission_commit": "2d2d3df0429cd85ca37064a2e96f0de32d92a7cf",
+    "jobs": [
+      {
+        "id": 16893233576,
+        "name": "check apk",
+        "status": "success"
+      },
+      {
+        "id": 16893233575,
+        "name": "check source code",
+        "status": "success"
+      },
+      {
+        "id": 16893233574,
+        "name": "schema validation",
+        "status": "success"
+      },
+      {
+        "id": 16893233573,
+        "name": "tools check scripts",
+        "status": "success"
+      },
+      {
+        "id": 16893233572,
+        "name": "fdroid rewritemeta",
+        "status": "failed"
+      },
+      {
+        "id": 16893233571,
+        "name": "fdroid lint",
+        "status": "success"
+      },
+      {
+        "id": 16893233570,
+        "name": "git redirect",
+        "status": "success"
+      },
+      {
+        "id": 16893233569,
+        "name": "checkupdates",
+        "status": "success"
+      },
+      {
+        "id": 16893233568,
+        "name": "fdroid build",
+        "status": "success"
+      }
+    ],
+    "passed_jobs": 8,
+    "failed_jobs": 1,
+    "reproducible_apk_reported": true
+  },
+  "metadata_format_fix": {
+    "date": "2026-10-02",
+    "fdroidserver_commit": "c21c177ff6d813697aaf9c988ca9fbb2b571b468",
+    "ruamel_yaml": "0.18.10",
+    "readmeta_passed": true,
+    "rewritemeta_no_changes": true,
+    "lint_passed": true,
+    "metadata_semantics_unchanged": true,
+    "matches_ci_corrected_artifact": true,
+    "submitted_bytes_verified": true,
+    "serializer_only_cause_confirmed": true,
+    "maintainer_reply": "https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917#note_3945365323",
+    "remote_rerun_completed": false
+  }
 }

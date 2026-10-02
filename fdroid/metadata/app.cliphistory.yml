@@ -11,7 +11,8 @@ AutoName: ClipHistory
 
 RepoType: git
 Repo: https://github.com/saroo98/cliphistory-android.git
-Binaries: https://github.com/saroo98/cliphistory-android/releases/download/v%v/ClipHistory-%v.apk
+Binaries: 
+  https://github.com/saroo98/cliphistory-android/releases/download/v%v/ClipHistory-%v.apk
 
 Builds:
   - versionName: 1.2.0

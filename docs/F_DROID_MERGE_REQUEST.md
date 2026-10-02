@@ -1,6 +1,6 @@
 # Submitted F-Droid inclusion request
 
-[MR !50917: New app: ClipHistory](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917), created 2026-10-02. The submitted description is reproduced below. The additional MR pipeline [#2906013918](https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/2906013918) has the same pre-job identity gate as the branch pipeline cited in the description. Acceptance and a remote CI pass are not claimed.
+[MR !50917: New app: ClipHistory](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917), created 2026-10-02. The current submitted description is reproduced below. The metadata-formatting correction is committed as `8465d0cc`; its local checks passed with the current CI tool revision. The overall CI checkbox remains unchecked pending a maintainer rerun. Acceptance and listing are not claimed.
 
 ## Checklist
 
@@ -43,7 +43,7 @@
 
 ### Pipeline
 
-* [ ] All pipelines should pass. **Blocked by GitLab identity verification before any CI jobs run; please trigger CI on F-Droid infrastructure.**
+* [ ] All pipelines should pass. **The maintainer pipeline passed 8/9 jobs; its metadata-formatting failure is corrected in 8465d0cc. Awaiting a maintainer rerun on that commit.**
 * [x] All warnings and errors in the Reports tab should be fixed or explained.
 * [x] F-Droid CI runners are under GitLab's FOSS program, so there's no need for you to pay for any CI time. If Gitlab starts asking for phone numbers or credit cards don't submit anything, just leave a note in the MR so we know we need to trigger the CI.
 
@@ -74,9 +74,15 @@ On 2026-10-02, clean Windows and Linux builds produced identical unsigned APKs. 
 
 Public qualification and selected actual outputs: https://github.com/saroo98/cliphistory-android/blob/main/docs/F_DROID_PUBLICATION.md and https://github.com/saroo98/cliphistory-android/tree/main/docs/release-1.3.3 . One local Python 3.14.4 process aborted during the first APK scan; an unchanged complete retry passed. The cause of that interpreter crash is not established; no scanner bypass was used.
 
-## CI identity restriction
+## Current CI status
 
-GitLab pipeline https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/2906007622 for submission commit `2d2d3df0429cd85ca37064a2e96f0de32d92a7cf` has **zero jobs**. GitLab shows “Verify your identity to run this pipeline”; the `yaml invalid` badge explicitly says identity verification is required, and the error says the user is not verified. This is an account gate, not an observed recipe/YAML job failure. No CI pass is claimed. Following this template, no phone/card verification was submitted. **Please trigger the F-Droid CI pipeline as a maintainer.**
+Maintainer linsui triggered [F-Droid pipeline #2906329865](https://gitlab.com/fdroid/fdroiddata/-/pipelines/2906329865) on 2026-10-02. Eight jobs passed: build, checkupdates, git redirect, fdroid lint, tools check scripts, schema validation, source inspection, and APK inspection. The report confirmed a reproducible APK. The only failed job was `fdroid rewritemeta`, requiring the `Binaries` URL on an indented continuation line.
+
+Correction commit `8465d0ccae6b6bff96c00b1b35c7052b9fab0af1` uses the corrected artifact from [job #16893233572](https://gitlab.com/fdroid/fdroiddata/-/jobs/16893233572), byte for byte. All parsed metadata values, the release tag, source revision, reference APK and signer are unchanged. Local `readmeta`, `rewritemeta` (no further changes), and `lint` passed with CI's fdroidserver revision `c21c177ff6d813697aaf9c988ca9fbb2b571b468` and ruamel.yaml 0.18.10. Corrected YAML SHA-256: `a3dd3f50de324c75d9deaca5e83774a75c31123c09a334da675a810acbc3bf31`.
+
+The prior report has nine informational entries and one minor R8 warning. The existing release configuration deliberately disables minification because Shizuku loads the UserService entry point reflectively (`app/build.gradle.kts`). The published APK is 2.5 MB with no native libraries. No new APK or release is needed for this formatting correction.
+
+Automatic [branch pipeline #2906846719](https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/2906846719) and [MR pipeline #2906847320](https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/2906847320) for the corrected commit again have zero jobs under the account identity-verification gate; `yaml_errors` is null. [A maintainer rerun was requested](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917#note_3945365323). No full CI pass for the corrected commit, inclusion, or listing is claimed. No phone/card information was submitted.
 
 ## Runtime and privacy limits
 

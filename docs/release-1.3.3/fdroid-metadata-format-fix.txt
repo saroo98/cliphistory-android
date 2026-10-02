@@ -1,0 +1,16 @@
+F-Droid tool source: c21c177ff6d813697aaf9c988ca9fbb2b571b468
+YAML serializer: 0.18.10
+PASS: unchanged parsed metadata values, LF, no BOM in both recipes
+PASS: historical recipe matches the current CLI formatter without changing any build entries
+2026-10-02 14:37:20,973 INFO: Using <linux-workspace>/sdk/build-tools/36.0.0/apksigner
+readmeta exit code: 0
+2026-10-02 14:37:21,305 INFO: Using <linux-workspace>/sdk/build-tools/36.0.0/apksigner
+2026-10-02 14:37:21,371 INFO: Rewriting 'app.cliphistory'
+rewritemeta exit code: 0
+2026-10-02 14:37:21,698 INFO: Using <linux-workspace>/sdk/build-tools/36.0.0/apksigner
+lint exit code: 0
+PASS: corrected submission passes readmeta, rewritemeta (no changes), and lint
+Submission SHA-256: a3dd3f50de324c75d9deaca5e83774a75c31123c09a334da675a810acbc3bf31
+The submitted recipe was byte-compared with the canonical artifact of F-Droid job 16893233572.
+Controlled serializer comparison: same fdroidserver source with ruamel.yaml 0.17.21 reproduces the initial recipe SHA-256 b251e032da670f0a0c255bc3a56ea081154359dce1e73c867c60707f69208bd2.
+The CI formatter correction is metadata only; APK build checks from the prior maintainer run remain separate from this local validation.
