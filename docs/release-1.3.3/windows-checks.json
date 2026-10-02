@@ -1,0 +1,68 @@
+{
+  "source": "ff704441df26ad2dd764a023fcb85b5cfeb8fa4b",
+  "unit_tests": {
+    "tests": 44,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": [
+    {
+      "id": "ApplySharedPref",
+      "severity": "Warning"
+    },
+    {
+      "id": "PrivateApi",
+      "severity": "Warning"
+    },
+    {
+      "id": "PrivateApi",
+      "severity": "Warning"
+    },
+    {
+      "id": "PrivateApi",
+      "severity": "Warning"
+    },
+    {
+      "id": "PrivateApi",
+      "severity": "Warning"
+    },
+    {
+      "id": "AndroidGradlePluginVersion",
+      "severity": "Warning"
+    },
+    {
+      "id": "PluralsCandidate",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    },
+    {
+      "id": "UnusedResources",
+      "severity": "Warning"
+    }
+  ],
+  "unsigned_apk_sha256": "b6f5678d02615182dc97b49977bb4d9412d3048e0364700fdc992ebe2dfc8154"
+}

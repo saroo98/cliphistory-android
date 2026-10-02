@@ -1,0 +1,2 @@
+2026-10-02 09:44:23,716 INFO: Using <linux-workspace>/sdk/build-tools/36.0.0/apksigner
+2026-10-02 09:44:23,808 INFO: Processing app.cliphistory

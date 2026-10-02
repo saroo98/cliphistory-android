@@ -2,6 +2,8 @@
 
 The upstream owner requests inclusion. Follow the [Quick Start Guide](https://f-droid.org/en/docs/Submitting_to_F-Droid_Quick_Start_Guide/), [Inclusion Policy](https://f-droid.org/en/docs/Inclusion_Policy/) and [contribution instructions](https://gitlab.com/fdroid/fdroiddata/-/blob/master/CONTRIBUTING.md).
 
+Current submission: [MR !50917](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917). The local F-Droid build and reference verification passed; GitLab CI needs a maintainer trigger because of an identity-verification gate. See [current publication status](F_DROID_PUBLICATION.md).
+
 ## Current app
 
 - `app.cliphistory`, **1.3.3/code 7**, Android 14+, native Android Views.

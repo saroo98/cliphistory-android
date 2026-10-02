@@ -1,0 +1,74 @@
+PASS  source requests exactly the five reviewed permissions
+PASS  source disables Android backup
+PASS  source disables cleartext traffic
+PASS  Shizuku provider protected by system signature permission
+PASS  tile and private special-use recovery are the only Android services
+PASS  only boot receiver is private and not direct-boot aware
+PASS  only the launcher Activity is declared
+PASS  manifest class exists: .ClipApplication
+PASS  manifest class exists: .ui.MainActivity
+PASS  manifest class exists: .ui.ClipboardTileService
+PASS  manifest class exists: .client.RecordingRecoveryService
+PASS  manifest class exists: .client.RecorderBootReceiver
+PASS  all source XML parses
+PASS  no unfinished production implementation markers
+PASS  no runtime network client imports
+PASS  no external process execution
+PASS  no Accessibility or keyboard components
+PASS  no repeating clipboard polling mechanism
+PASS  privacy defaults block screenshots with one conditional window policy
+PASS  tile uses immutable PendingIntent and unlock
+PASS  normal app uses private no-backup files
+PASS  shell does not truncate or chmod private files
+PASS  system callback UID and identity are checked
+PASS  sensitive flag handled before text extraction
+PASS  clipboard source is not coerced through content providers
+PASS  all AIDL entrypoints implemented
+PASS  owner-UID guard on attach
+PASS  owner-UID guard on status
+PASS  owner-UID guard on page
+PASS  owner-UID guard on text
+PASS  owner-UID guard on deleteEntry
+PASS  owner-UID guard on clearHistory
+PASS  owner-UID guard on setLimit
+PASS  owner-UID guard on setPaused
+PASS  owner-UID guard on registerObserver
+PASS  owner-UID guard on unregisterObserver
+PASS  owner-UID guard on armTest
+PASS  owner-UID guard on verifyStorage
+PASS  owner-UID guard on entry
+PASS  owner-UID guard on setDuplicateMode
+PASS  owner-UID guard on undoDelete
+PASS  owner-UID guard on dismissUndo
+PASS  Shizuku destroy transaction matches documented constant
+PASS  helper watches Shizuku server rather than UI lifetime
+PASS  replacement/unlinked private data is handled
+PASS  daemon uses bounded queue
+PASS  owner stop gates clipboard reads and serial commits
+PASS  recovery retries are bounded and user-stop gated
+PASS  quick tile uses the platform QS dialog without a task launch or overlay permission
+PASS  IPC history is paged
+PASS  self-test uses tested probe tracker
+PASS  compile and target API 37
+PASS  release is not marked debuggable
+PASS  build pins Shizuku dependencies
+PASS  Windows script does not silently accept SDK licences
+PASS  Windows build gates actual APK signature and permissions
+PASS  delivery file: README.md
+PASS  delivery file: START_HERE.md
+PASS  delivery file: BUILDING.md
+PASS  delivery file: DEVICE_TESTS.md
+PASS  delivery file: SECURITY.md
+PASS  delivery file: VERIFICATION.md
+PASS  delivery file: LICENSE
+PASS  delivery file: THIRD_PARTY_NOTICES.md
+PASS  delivery file: docs/SOURCES.md
+PASS  delivery file: BUILD_WINDOWS.cmd
+PASS  delivery file: gradlew
+PASS  delivery file: gradlew.bat
+PASS  no signing material distributed
+PASS  APK includes full runtime notices
+PASS  official Gradle wrapper is checksum pinned
+PASS  F-Droid build metadata is supplied
+RESULT 72/72 static source checks passed
+Android build, merged-manifest, APK and physical-device tests are NOT implied by these checks.

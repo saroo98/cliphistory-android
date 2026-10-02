@@ -28,9 +28,16 @@ Builds:
     gradle:
       - yes
 
+  - versionName: 1.3.3
+    versionCode: 7
+    commit: ff704441df26ad2dd764a023fcb85b5cfeb8fa4b
+    subdir: app
+    gradle:
+      - yes
+
 AllowedAPKSigningKeys: ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 1.3.0
-CurrentVersionCode: 4
+CurrentVersion: 1.3.3
+CurrentVersionCode: 7
