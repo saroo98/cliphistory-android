@@ -73,23 +73,74 @@ class Ui(val activity: Activity) {
         parent.addView(row)
         return row
     }
+    data class PreferenceRow(val view:View,val summary:TextView)
+    fun preferenceRow(parent:LinearLayout,value:String,summary:String,enabled:Boolean=true,action:()->Unit):PreferenceRow {
+        val detail=text(summary,14f,true)
+        val row=object:LinearLayout(activity) {
+            override fun setEnabled(enabled:Boolean) {
+                super.setEnabled(enabled)
+                fun update(view:View) {
+                    view.isEnabled=enabled
+                    if(view is ViewGroup)for(i in 0 until view.childCount)update(view.getChildAt(i))
+                }
+                for(i in 0 until childCount)update(getChildAt(i))
+            }
+        }.apply {
+            gravity=Gravity.CENTER_VERTICAL;minimumHeight=dp(76);setPadding(dp(12),dp(12),dp(12),dp(12))
+            background=ripple(android.graphics.Color.TRANSPARENT,12)
+            isClickable=true;isFocusable=enabled
+            importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_YES
+            setOnClickListener { if(isEnabled)action() }
+        }
+        val body=column().apply {
+            addView(text(value).apply {
+                setTextColor(ColorStateList(arrayOf(intArrayOf(-android.R.attr.state_enabled),intArrayOf()),intArrayOf(muted,ink)))
+            })
+            addView(space(4));addView(detail)
+        }
+        row.addView(body,LinearLayout.LayoutParams(0,-2,1f))
+        row.addView(ImageView(activity).apply {
+            setImageResource(R.drawable.ic_chevron);imageTintList=ColorStateList.valueOf(muted)
+        },LinearLayout.LayoutParams(dp(22),dp(22)).apply { marginStart=dp(12) })
+        fun hideChildren(view:View) {
+            view.importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO
+            if(view is ViewGroup)for(i in 0 until view.childCount)hideChildren(view.getChildAt(i))
+        }
+        for(i in 0 until row.childCount)hideChildren(row.getChildAt(i))
+        row.contentDescription="$value. $summary"
+        row.accessibilityDelegate=object:View.AccessibilityDelegate() {
+            override fun onInitializeAccessibilityNodeInfo(host:View,info:android.view.accessibility.AccessibilityNodeInfo) {
+                super.onInitializeAccessibilityNodeInfo(host,info);info.className="android.widget.Button"
+                info.contentDescription="$value. ${detail.text}"
+            }
+        }
+        row.isEnabled=enabled;parent.addView(row)
+        return PreferenceRow(row,detail)
+    }
+    fun styleSwitch(control:Switch) {
+        val states=arrayOf(intArrayOf(-android.R.attr.state_enabled),intArrayOf(android.R.attr.state_checked),intArrayOf())
+        control.thumbDrawable=shape(color(R.color.surface),12).apply { setSize(dp(24),dp(24)) }
+        control.trackDrawable=shape(muted,12).apply { setSize(dp(36),dp(20)) }
+        control.thumbTintList=ColorStateList(states,intArrayOf(color(R.color.surface),color(R.color.on_accent),color(R.color.surface)))
+        control.trackTintList=ColorStateList(states,intArrayOf(color(R.color.divider),accent,muted))
+    }
     fun sheet(title:String,content:(LinearLayout,Dialog)->Unit):Dialog {
         val dialog=Dialog(activity)
         ScreenPrivacy.apply(dialog.window,AppSettings(activity))
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         val box=column().apply { setPadding(dp(20),dp(12),dp(20),dp(20));background=shape(color(R.color.surface),24);accessibilityPaneTitle=title }
         val handle=SheetHandle(activity).apply { minimumHeight=dp(48);contentDescription=activity.getString(R.string.dismiss_panel);isClickable=true;isFocusable=true }
-        handle.addView(View(activity).apply { background=shape(color(R.color.divider),2) },FrameLayout.LayoutParams(dp(32),dp(4),Gravity.CENTER))
+        handle.addView(View(activity).apply { background=shape(muted,2) },FrameLayout.LayoutParams(dp(32),dp(4),Gravity.CENTER))
         handle.setOnClickListener { dialog.dismiss() }
         var downY=0f
         handle.setOnTouchListener { _,event ->
             val decor=dialog.window?.decorView
             when(event.actionMasked) {
-                MotionEvent.ACTION_DOWN->{downY=event.rawY;true}
+                MotionEvent.ACTION_DOWN->{decor?.animate()?.cancel();downY=event.rawY;true}
                 MotionEvent.ACTION_MOVE->{decor?.translationY=(event.rawY-downY).coerceAtLeast(0f);true}
                 MotionEvent.ACTION_UP->{
                     if(event.rawY-downY>dp(72))dialog.dismiss()
-                    else if(event.rawY-downY<android.view.ViewConfiguration.get(activity).scaledTouchSlop)handle.performClick()
+                    else if(kotlin.math.abs(event.rawY-downY)<android.view.ViewConfiguration.get(activity).scaledTouchSlop)handle.performClick()
                     else if(ScreenPrivacy.motionEnabled(AppSettings(activity)))decor?.animate()?.translationY(0f)?.setDuration(120)?.start()
                     else decor?.translationY=0f
                     true

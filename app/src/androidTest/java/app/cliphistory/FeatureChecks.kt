@@ -72,14 +72,17 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             toggle("Allow screenshots").performClick()
             checkThat(activity.window.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE==0,"Screenshots enabled live")
             call("showWelcome")
-            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().last()
+            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
             checkThat(dialog.window!!.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE==0,"Welcome follows enabled screenshots")
             dialog.dismiss()
             toggle("Allow screenshots").performClick()
             checkThat(activity.window.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE!=0,"Screenshots disabled live")
             toggle("Hide history in Recents").performClick()
             checkThat(!AppSettings(context).hideRecents,"Recents privacy independently persisted")
-            toggle("Motion: follow system").performClick()
+            views(field("page") as View).single { it.tag=="MOTION" }.performClick()
+            val motionDialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
+            views(motionDialog.window!!.decorView).filterIsInstance<RadioButton>().single { it.text.toString()==context.getString(R.string.html_port_motion_reduced) }.performClick()
+            views(motionDialog.window!!.decorView).filterIsInstance<Button>().single { it.text.toString()==context.getString(R.string.done) }.performClick()
             checkThat(!ScreenPrivacy.motionEnabled(AppSettings(context)),"Motion off overrides system motion")
             checkThat(!toggle("Pause recording").isEnabled,"Recorder mutation disabled offline")
         }
@@ -101,7 +104,9 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             activity=test.waitForMonitorWithTimeout(portrait,10_000) as? MainActivity ?: error("Portrait rotation did not recreate")
             test.removeMonitor(portrait)
         }
-        checkThat(BackgroundSettings(activity).status().contains("App background restriction"),"Battery states described separately")
+        val backgroundStatus=BackgroundSettings(activity).status()
+        checkThat(backgroundStatus.contains(context.getString(R.string.port_battery_on)) || backgroundStatus.contains(context.getString(R.string.port_battery_off)),"Battery optimization state is described")
+        checkThat(backgroundStatus.contains(context.getString(R.string.port_background_allowed)) || backgroundStatus.contains(context.getString(R.string.port_background_restricted)),"App background permission is described separately")
         val completed=CountDownLatch(2)
         main {
             client.requestPage("",0) { checkThat(it.rows.size==3,"Activity page not cancelled by independent tile read");completed.countDown() }
@@ -136,7 +141,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         )) {
             main { AppSettings(context).allowScreenshots=false;open() }
             test.waitForIdleSync()
-            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single()
+            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
             val bounds=android.graphics.Rect()
             main {
                 val decor=dialog.window!!.decorView;val location=IntArray(2);decor.getLocationOnScreen(location)
@@ -484,7 +489,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             closePanel()
         } finally { main { AppSettings(context).allowScreenshots=false };node(context.getString(R.string.quick_close))?.performAction(AccessibilityNodeInfo.ACTION_CLICK);shell("cmd statusbar collapse");if(!existing)shell("cmd statusbar remove-tile $component") }
     }
-    /** Actual fork/official Shizuku attachment without writing the phone clipboard. */
+    /** Actual fork/official Shizuku attachment without writing the emulator clipboard. */
     private fun pausedConnection() {
         seed(paused=true)
         val prefs=client.preferences
@@ -533,7 +538,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             val saved=PrivateHistory.readOffline(context)
             fun failure():Dialog {
                 var dialog:Dialog?=null
-                main { dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().lastOrNull { it.isShowing } }
+                main { dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().singleOrNull { it.isShowing } }
                 return dialog?:error("Actual operation-failure sheet absent")
             }
             fun rejectedCommand() {
@@ -610,7 +615,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             activity=test.startActivitySync(Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
                 .setClass(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)) as MainActivity
         }
-        fun shown():List<Dialog> { var value=emptyList<Dialog>();main { value=(field("dialogs") as Set<*>).filterIsInstance<Dialog>() };return value }
+        fun shown():List<Dialog> { var value=emptyList<Dialog>();main { value=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().filter { it.isShowing } };return value }
         fun press(label:String) { main { views(shown().single().window!!.decorView).filterIsInstance<TextView>().single { it.text.toString()==label }.performClick() } }
         settings.welcome="once";settings.welcomeSeen=false;settings.backgroundSuggestion=true;settings.backgroundSeen=false
         check(client.preferences.completeSetup())
@@ -622,7 +627,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             checkThat(views(dialog.window!!.decorView).filterIsInstance<TextView>().any { it.text.toString()==context.getString(R.string.welcome_title) },"Welcome appears before background guidance")
             checkThat(dialog.window!!.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE!=0,"Welcome respects screenshot protection")
         }
-        press("Continue")
+        press(context.getString(R.string.port_welcome_explore))
         await("Background guidance follows deliberate welcome acknowledgement") {
             shown().singleOrNull()?.let { d -> var found=false;main { found=views(d.window!!.decorView).filterIsInstance<TextView>().any { it.text.toString()=="Background reliability" } };found }==true
         }
@@ -633,7 +638,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         launcher();test.uiAutomation.waitForIdle(200,5000)
         checkThat(shown().isEmpty(),"Once mode does not repeat acknowledged welcome")
         settings.welcome="each";launcher()
-        await("Each-launch mode presents welcome") { shown().size==1 };press("Continue")
+        await("Each-launch mode presents welcome") { shown().size==1 };press(context.getString(R.string.port_welcome_explore))
         val monitor=test.addMonitor(MainActivity::class.java.name,null,false)
         main { activity.recreate() }
         activity=test.waitForMonitorWithTimeout(monitor,10_000) as? MainActivity ?: error("Onboarding recreation failed")
@@ -649,17 +654,24 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             shown().single().dismiss();call("help")
             val labelsGuide=views(activity.window.decorView).filterIsInstance<TextView>().map { it.text.toString() }
             listOf(R.string.setup_install,R.string.setup_debugging,R.string.setup_pair,R.string.setup_start,R.string.setup_authorise,R.string.setup_background,R.string.setup_reboot)
-                .forEach { checkThat(labelsGuide.contains(context.getString(it)),"Guide includes step ${labelsGuide.count { text -> text==context.getString(it) }}: ${context.getString(it).first()}") }
-            checkThat(labelsGuide.contains("Open Shizuku") && labelsGuide.contains("Connection test"),"Guide exposes Shizuku and connection-test actions")
+                .forEach { id ->
+                    val paragraph=context.getString(id).replaceFirst(Regex("^\\d+\\.\\s*"),"")
+                    checkThat(labelsGuide.contains(paragraph),"Guide retains setup instructions: ${context.getString(id).substringBefore('.')}")
+                }
+            checkThat(labelsGuide.contains(context.getString(R.string.open_shizuku)) && labelsGuide.contains(context.getString(R.string.connect)),"Offline guide exposes Shizuku and Connect actions")
         }
     }
     private fun customization() {
         seed();main { call("showSettings") }
         main {
             val controls=views(activity.window.decorView).filterIsInstance<Switch>()
-            listOf(R.string.tile_enabled,R.string.return_after_copy,R.string.motion_system).forEach { id ->
+            listOf(R.string.tile_enabled,R.string.return_after_copy).forEach { id ->
                 controls.single { it.text.toString()==context.getString(id) }.apply { if(isChecked)performClick() }
             }
+            views(field("page") as View).single { it.tag=="MOTION" }.performClick()
+            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
+            views(dialog.window!!.decorView).filterIsInstance<RadioButton>().single { it.text.toString()==context.getString(R.string.html_port_motion_reduced) }.performClick()
+            views(dialog.window!!.decorView).filterIsInstance<Button>().single { it.text.toString()==context.getString(R.string.done) }.performClick()
         }
         val completed=CountDownLatch(1)
         main { client.updateRecovery(automatic=false,afterBoot=false) { checkThat(it,"All-off recovery choices saved");completed.countDown() } }
@@ -711,6 +723,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             main {
                 val rows=QuickCopyDialog::class.java.getDeclaredField("rows").apply { isAccessible=true }.get(quick) as LinearLayout
                 checkThat(rows.minimumHeight==0 && rows.childCount==2,"Error panel releases absent entries and exposes two recovery actions")
+                checkThat((0 until rows.childCount).all { (rows.getChildAt(it).layoutParams as LinearLayout.LayoutParams).topMargin>=(activity.resources.displayMetrics.density*8).toInt() },"Quick error recovery actions retain their visible gaps")
             }
             return quick
         }
@@ -744,7 +757,13 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             await("Failed-history Diagnostics opens its real page") {
                 var ready=false;main { ready=field("pageKind")=="diagnostics" };ready
             }
-            checkThat(node(context.getString(R.string.not_confirmed))!=null,"Failed-read Diagnostics identifies the unavailable duplicate policy")
+            checkThat(node(context.getString(R.string.advanced_details))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,"Failed-read Diagnostics Advanced details accepts activation")
+            main {
+                val policy=views(field("page") as View).filterIsInstance<LinearLayout>().single { row ->
+                    row.childCount==2 && (row.getChildAt(0) as? TextView)?.text.toString()==context.getString(R.string.duplicate_handling)
+                }
+                checkThat(policy.isShown && (policy.getChildAt(1) as TextView).text.toString()==context.getString(R.string.not_confirmed),"Failed-read Diagnostics identifies the unavailable duplicate policy")
+            }
             capture("home-history-error-diagnostics")
             test.sendKeyDownUpSync(KeyEvent.KEYCODE_BACK)
             await("Actual Back restores failed-history recovery controls") { node(context.getString(R.string.try_again))!=null }
@@ -770,7 +789,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         await("Actual history accessibility node exposes the full-text action") {
             actionNode=test.uiAutomation.rootInActiveWindow?.let { root -> descendants(root).firstOrNull { node ->
                 node.actionList.any { it.id==R.id.action_view_text } &&
-                    descendants(node).any { it.text?.toString()=="Synthetic newest text" }
+                    node.contentDescription?.toString()?.startsWith(context.getString(R.string.port_copy_entry,"Synthetic newest text",""))==true
             } }
             actionNode!=null
         }
@@ -788,7 +807,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         }
         main { call("appearance") }
         main {
-            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single()
+            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
             val nodes=views(dialog.window!!.decorView)
             checkThat(nodes.any { it.accessibilityPaneTitle==context.getString(R.string.appearance) },"Appearance sheet exposes its pane title")
             checkThat(nodes.filterIsInstance<TextView>().any { it.text.toString()==context.getString(R.string.appearance) && it.isAccessibilityHeading },"Appearance title is an accessibility heading")

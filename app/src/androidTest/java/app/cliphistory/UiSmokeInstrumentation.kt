@@ -42,7 +42,7 @@ class UiSmokeInstrumentation:Instrumentation() {
         method.isAccessible=true;method.invoke(activity,*args)
     }
     private fun dialog():Dialog {
-        fun current()=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().last()
+        fun current()=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
         if(Looper.myLooper()==Looper.getMainLooper())return current()
         lateinit var result:Dialog
         runOnMainSync { result=current() }
@@ -75,6 +75,7 @@ class UiSmokeInstrumentation:Instrumentation() {
                 report.putString("stream",when(suite) {
                     "audit-navigation"->AuditNavigationChecks(this).run()
                     "audit-diagnostics"->AuditDiagnosticChecks(this).run()
+                    "html-port","html-port-live"->HtmlPortChecks(this,arguments).run(suite)
                     in listOf("command-errors","quick-errors","accessibility","settings","privacy","tile","tile-performance","paused-connection","recovery","onboarding","customization")->FeatureChecks(this,arguments).run(suite)
                     else->ReleaseChecks(this).run(suite)
                 })
@@ -148,7 +149,7 @@ class UiSmokeInstrumentation:Instrumentation() {
                 val toggle=all(field("page") as View).filterIsInstance<Switch>().single { it.text.toString()==targetContext.getString(R.string.return_after_copy) }
                 checkThat(!toggle.isChecked,"Preference not read")
                 toggle.performClick();checkThat(AppSettings(targetContext).returnAfterCopy,"Preference not persisted")
-                invoke("closePage");invoke("appearance")
+                all(field("page") as View).single { it.tag=="APPEARANCE" }.performClick()
             }
             idle();capture("S25-appearance",dialog())
             val monitor=addMonitor(MainActivity::class.java.name,null,false)
@@ -158,6 +159,8 @@ class UiSmokeInstrumentation:Instrumentation() {
             until("Appearance change discarded loaded history") { (field("home") as HistoryHome).adapter.count==73 }
             checkThat(AppSettings(targetContext).appearance=="dark","Dark preference not persisted")
             checkThat(activity.getColor(R.color.canvas)==Color.parseColor("#151B17"),"Dark palette not applied")
+            until("Appearance choices restored after recreation") { (field("dialogs") as Set<*>).filterIsInstance<Dialog>().singleOrNull { it.isShowing }!=null }
+            runOnMainSync { click(dialog().window!!.decorView,"Done");invoke("closePage") }
             capture("S02-dark-offline")
             runOnMainSync { invoke("help") };capture("S21-help")
             runOnMainSync { click(field("page") as View,targetContext.getString(R.string.licenses)) }

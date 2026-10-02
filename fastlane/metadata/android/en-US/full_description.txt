@@ -1,12 +1,13 @@
 Keep a calm, searchable history of copied plain text on your device.
 
-• Tap to copy, or open full text with the eye button.
+• Tap to copy, or choose View to read and select the exact full text.
 • Search the entire saved text, including long entries.
 • Pause recording, choose a limit from 20 to 500 entries, and clear or delete saved text.
+• Undo the most recent single deletion while the recorder remains connected. Clear all cannot be undone.
 • Keep one entry per exact text, or skip only consecutive repeats.
 • Use light, dark or system appearance and optional motion.
 • Use a temporary floating three-entry quick-copy panel or open full history from the tile.
-• Choose automatic recovery, reboot resumption, explicit Stop, screen privacy and welcome options in Settings.
+• Choose automatic recovery, reboot resumption, explicit Stop, screen privacy and welcome options in clearly grouped Settings.
 • Read saved history offline when the recorder is stopped.
 
 Requires Android 14 or newer, the primary device profile, and Shizuku API 13 or newer running in non-root shell mode. Shizuku is a separate app. Guided setup explains installation, wireless-debugging pairing, starting the service and granting access. Shizuku must be started again after reboot.

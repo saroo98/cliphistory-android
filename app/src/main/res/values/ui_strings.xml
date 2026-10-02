@@ -145,7 +145,7 @@
     <string name="dark">Dark</string>
     <string name="system_hint">System matches your phone’s theme.</string>
     <string name="return_after_copy">Return after copying</string>
-    <string name="return_body">Close ClipHistory after copying a saved entry.</string>
+    <string name="return_body">Return to the previous app after copying from history. The quick panel always closes after a copy.</string>
     <string name="stay_body">Turn off to stay in your history.</string>
     <string name="copy_failed_title">Couldn’t copy text</string>
     <string name="copy_failed_body">Android did not allow this copy. Your saved text is unchanged.</string>

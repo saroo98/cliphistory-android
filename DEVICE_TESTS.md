@@ -64,13 +64,13 @@ Record the APK hash, app version, Android build/security patch, Shizuku version 
 
 ## Automated isolated regression suites
 
-Build the validation variant described in `BUILDING.md` for a physical phone. Grant that separate application Shizuku access first.
+Build the validation variant described in `BUILDING.md` for an owned disposable emulator. Grant that separate application Shizuku access first. The `live`, `html-port`, `html-port-live`, history-seeding and corruption suites refuse physical devices. A separate package does not isolate Android's shared clipboard: synthetic writes can still reach a personal phone's production recorder. Never use these suites on personal history.
 
 ```sh
 adb shell am instrument -w -e suite live app.cliphistory.validation.test/app.cliphistory.UiSmokeInstrumentation
 ```
 
-The live suite uses the test APK's separate clipboard producer, verifies real capture and restores the original clipboard as an opaque object. It clears only the validation app's synthetic history. The normal `app.cliphistory` package is not its target. The instrumented runner refuses synthetic seeding on a physical production package.
+The live suite uses the test APK's clipboard producer, verifies real capture and restores the original clipboard as an opaque object on the disposable emulator. It clears only the validation app's synthetic history. The normal `app.cliphistory` package is not its target. For a personal phone, use a signed upgrade/launch check and read-only inspection; do not infer that restoring the clipboard reverses a synthetic capture by another recorder.
 
 On a disposable emulator with Shizuku stopped, build the normal debug app and run `-e suite regression`, `-e suite layout` or `-e suite capacity` against `app.cliphistory.test/app.cliphistory.UiSmokeInstrumentation`. Omit `suite` for the UI checks and synthetic screenshots. Layout requires an open software keyboard. Capacity uses 500 entries of 64 KiB, then restores small synthetic history.
 
@@ -95,3 +95,11 @@ The `tile` suite also changes the existing tile between Open full history and Qu
 The `command-errors` suite requires an owned disposable emulator, the isolated validation package and an authorized Shizuku server running as shell UID 2000. Run it with `-e suite command-errors -e theme light` or `dark`. It connects a paused real recorder, invokes Main's command entry with a real invalid-capacity RPC, and activates the operation-failure sheet's View diagnostics and Done accessibility controls. The harness bypasses the normal capacity field's input validation; it does not fabricate a daemon response or simulate storage exhaustion, IPC death, or a normal user input. It verifies unchanged snapshot/generation/count/capacity and stops only the validation recorder in `finally`. It performs no clipboard writes. Its captured PNGs are Activity decor drawings, not full-system screenshots.
 
 The diagnostic audit additionally checks initial, updated and reported unavailable duplicate policy against the existing Not confirmed text. The `quick-errors` suite verifies the same value in the actual failed-read Diagnostics page. The clipboard-write-exception message now names the existing entry retry and Close paths; these suites do not induce an Android ClipboardManager write exception.
+
+## HTML UI port checks
+
+On the disposable validation emulator run `-e suite html-port` for Settings controls and summaries, native choice dialogs, Help disclosures and restoration, diagnostic disclosure, late-text search, quick-copy loading/empty/error states and selectable copy recovery. Copy-denial recovery is a synthetic presentation check, not an induced Android clipboard-permission failure.
+
+With shell-mode Shizuku authorized on that emulator, run `-e suite html-port-live -e theme light` and `dark`. It uses the real paused helper and verifies deletion, pending Undo across navigation and rotation, full-capacity refusal without eviction, original ID/time/text restoration, stale-token rejection and Dismiss. It writes only disposable synthetic history. Its issue-only status check exercises the UI metadata-loss boundary, then independently verifies the actual helper token is unchanged; it is not a fabricated IPC failure claim.
+
+Activity/window decor captures in `files/ui-evidence/` are actual native drawings. Full-system screenshots, motion measurements, hardware behavior and spoken TalkBack results require separate evidence. See `docs/HTML_UI_PORT.md` for this build's executed checks and limits.

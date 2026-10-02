@@ -1,0 +1,32 @@
+<resources>
+    <string name="port_view">View</string>
+    <string name="port_view_entry">View full text: %1$s · %2$s</string>
+    <string name="port_copy_entry">Copy: %1$s · %2$s</string>
+    <string name="port_empty_setup">Set up recording to save the text you copy. Your history stays on this phone.</string>
+    <string name="port_empty_paused">Resume recording to save your next copy.</string>
+    <string name="port_empty_offline">Start Shizuku and connect ClipHistory to save new copies.</string>
+    <string name="port_undo">Undo</string>
+    <string name="port_dismiss_notice">Dismiss notice</string>
+    <string name="port_restored">Saved text restored</string>
+    <string name="port_already_saved">This exact text is already in your history.</string>
+    <string name="port_undo_full_title">Make room to restore this text</string>
+    <string name="port_undo_full_body">Your history is at its limit. Increase the history limit in Settings, then try Undo again. No newer text has been removed.</string>
+    <string name="port_undo_unavailable">Undo is no longer available.</string>
+    <string name="port_copy_retry_body">Android did not accept this copy. Retry, or open the complete text and select it manually. Your saved history is unchanged.</string>
+    <string name="port_retry">Retry</string>
+    <string name="port_full_text">Full text</string>
+    <string name="port_battery_on">Battery optimization is on</string>
+    <string name="port_battery_off">Battery optimization is off</string>
+    <string name="port_background_allowed">Background use is allowed</string>
+    <string name="port_background_restricted">Background use is restricted</string>
+    <string name="port_battery_status">%1$s\n%2$s\nYour phone may also have manufacturer-specific battery settings.</string>
+    <string name="port_battery_options">Other battery options</string>
+    <string name="port_welcome_setup">Set up recording</string>
+    <string name="port_welcome_explore">Explore the app</string>
+    <string name="port_delete_failed">Deletion wasn’t confirmed</string>
+    <string name="port_delete_failed_body">Check your current history before trying again. Any available Undo is shown in the app. View Diagnostics for the reported issue.</string>
+    <string name="port_clear_failed">Clearing history wasn’t confirmed</string>
+    <string name="port_clear_failed_body">Check your current history before repeating this action. View Diagnostics for the reported issue.</string>
+    <string name="port_limit_failed">History limit wasn’t confirmed</string>
+    <string name="port_limit_failed_body">Check the current limit and saved texts before trying again. View Diagnostics for the reported issue.</string>
+</resources>

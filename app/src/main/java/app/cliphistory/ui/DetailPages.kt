@@ -2,8 +2,10 @@ package app.cliphistory.ui
 
 import android.os.Build
 import android.os.Bundle
+import android.content.res.ColorStateList
 import android.view.Gravity
 import android.view.View
+import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.*
 import app.cliphistory.BuildConfig
 import app.cliphistory.R
@@ -20,29 +22,90 @@ class DetailPages(private val ui:Ui) {
         root.addView(ScrollView(ui.activity).apply { isFillViewport=true;addView(content);isVerticalScrollBarEnabled=false },LinearLayout.LayoutParams(-1,0,1f))
         body(content,root);return root
     }
-    fun help(back:()->Unit,website:(String)->Unit,manager:()->Unit,connect:()->Unit,licenses:()->Unit):View=page(s(R.string.help_privacy),back) { content,_ ->
-        content.addView(ui.title(s(R.string.help_setup),18f).apply { isAccessibilityHeading=true });content.addView(ui.space(8))
-        listOf(R.string.setup_install,R.string.setup_debugging,R.string.setup_pair,R.string.setup_start,R.string.setup_authorise,R.string.setup_background,R.string.setup_reboot).forEach {
-            ui.paragraph(content,s(it))
+    private fun disclosure(parent:LinearLayout,value:String,body:View,initial:Boolean=false,heading:Boolean=false,changed:(Boolean)->Unit={}):View {
+        val row=LinearLayout(ui.activity).apply {
+            gravity=Gravity.CENTER_VERTICAL;minimumHeight=ui.dp(56);setPadding(0,ui.dp(12),0,ui.dp(12))
+            background=ui.ripple(android.graphics.Color.TRANSPARENT,12);isClickable=true;isFocusable=true
+            contentDescription=value;importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_YES;isAccessibilityHeading=heading
         }
-        ui.actionRow(content,s(R.string.download_shizuku)){website("https://shizuku.rikka.app/download/")}
-        ui.actionRow(content,s(R.string.official_setup_guide)){website("https://shizuku.rikka.app/guide/setup/")}
-        ui.actionRow(content,s(R.string.open_shizuku),action=manager)
-        ui.actionRow(content,s(R.string.connect),action=connect)
-        ui.actionRow(content,s(R.string.background_reliability)){ (ui.activity as MainActivity).showBackgroundGuide() }
-        ui.actionRow(content,s(R.string.connection_test)){ (ui.activity as MainActivity).runConnectionGuideTest() }
-        content.addView(ui.space(20))
-        listOf(
-            R.string.help_gboard to R.string.help_gboard_body,
-            R.string.help_restart to R.string.help_restart_body,
-            R.string.help_local to R.string.help_local_body,
-            R.string.help_sensitive to R.string.help_sensitive_body,
-            R.string.help_limits to R.string.help_limits_body,
-            R.string.help_screen to R.string.help_screen_body
-        ).forEach { (title,body) ->
-            content.addView(ui.title(s(title),18f).apply { isAccessibilityHeading=true });content.addView(ui.space(8));ui.paragraph(content,s(body));content.addView(ui.space(8))
+        row.addView(ui.title(value,16f).apply { isAccessibilityHeading=heading;importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO },LinearLayout.LayoutParams(0,-2,1f))
+        val chevron=ImageView(ui.activity).apply {
+            setImageResource(R.drawable.ic_chevron);imageTintList=ColorStateList.valueOf(ui.muted)
+            importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO
         }
-        content.addView(ui.text(ui.activity.getString(R.string.version_license,BuildConfig.VERSION_NAME),13f,true))
+        row.addView(chevron,LinearLayout.LayoutParams(ui.dp(20),ui.dp(20)).apply { marginStart=ui.dp(12) })
+        fun expand(value:Boolean) {
+            body.visibility=if(value)View.VISIBLE else View.GONE;chevron.rotation=if(value)90f else 0f
+            row.stateDescription=s(if(value)R.string.details_expanded else R.string.details_collapsed);changed(value)
+        }
+        body.visibility=if(initial)View.VISIBLE else View.GONE;chevron.rotation=if(initial)90f else 0f
+        row.stateDescription=s(if(initial)R.string.details_expanded else R.string.details_collapsed)
+        row.setOnClickListener { expand(body.visibility!=View.VISIBLE) }
+        row.accessibilityDelegate=object:View.AccessibilityDelegate() {
+            override fun onInitializeAccessibilityNodeInfo(host:View,info:AccessibilityNodeInfo) {
+                super.onInitializeAccessibilityNodeInfo(host,info);info.className=Button::class.java.name
+                info.addAction(if(body.visibility==View.VISIBLE)AccessibilityNodeInfo.AccessibilityAction.ACTION_COLLAPSE else AccessibilityNodeInfo.AccessibilityAction.ACTION_EXPAND)
+            }
+            override fun performAccessibilityAction(host:View,action:Int,args:Bundle?):Boolean {
+                when(action) {
+                    AccessibilityNodeInfo.ACTION_EXPAND->{expand(true);return true}
+                    AccessibilityNodeInfo.ACTION_COLLAPSE->{expand(false);return true}
+                }
+                return super.performAccessibilityAction(host,action,args)
+            }
+        }
+        parent.addView(row);parent.addView(body);parent.addView(ui.divider());return row
+    }
+    fun help(back:()->Unit,website:(String)->Unit,manager:()->Unit,connect:()->Unit,connected:Boolean,openTopics:MutableSet<Int>,licenses:()->Unit):View=page(s(R.string.help_privacy),back) { content,_ ->
+        lateinit var questions:TextView
+        ui.actionRow(content,s(R.string.html_port_clipboard_questions)) {
+            (content.parent as? ScrollView)?.scrollTo(0,questions.top);questions.requestFocus()
+        }
+        content.addView(ui.title(s(R.string.help_setup),18f).apply { isAccessibilityHeading=true })
+        fun step(number:Int,heading:Int,paragraphs:List<Int>,actions:(LinearLayout)->Unit) {
+            content.addView(ui.space(24))
+            content.addView(ui.title(ui.activity.getString(R.string.html_port_setup_step,number,s(heading)),17f).apply { isAccessibilityHeading=true });content.addView(ui.space(12))
+            paragraphs.forEach { ui.paragraph(content,s(it).replaceFirst(Regex("^\\d+\\.\\s*"),"")) }
+            val buttons=LinearLayout(ui.activity).apply {
+                orientation=if(ui.activity.resources.configuration.fontScale>1.3f)LinearLayout.VERTICAL else LinearLayout.HORIZONTAL
+            }
+            actions(buttons);content.addView(buttons);content.addView(ui.space(20));content.addView(ui.divider())
+        }
+        fun action(parent:LinearLayout,label:Int,primary:Boolean=false,click:()->Unit) {
+            val vertical=parent.orientation==LinearLayout.VERTICAL
+            parent.addView(ui.button(s(label),primary=primary,action=click),LinearLayout.LayoutParams(if(vertical)-1 else 0,-2,if(vertical)0f else 1f))
+        }
+        step(1,R.string.html_port_setup_install,listOf(R.string.setup_install)) { action(it,R.string.download_shizuku,true){website("https://shizuku.rikka.app/download/")} }
+        step(2,R.string.html_port_setup_pair,listOf(R.string.setup_debugging,R.string.setup_pair)) {
+            action(it,R.string.official_setup_guide){website("https://shizuku.rikka.app/guide/setup/")};action(it,R.string.open_shizuku,click=manager)
+        }
+        step(3,R.string.html_port_setup_start,listOf(R.string.setup_start)) { action(it,R.string.open_shizuku,click=manager) }
+        step(4,R.string.html_port_setup_connect,listOf(R.string.setup_authorise)) {
+            if(connected) {
+                ui.paragraph(content,s(R.string.html_port_connected_test_advice))
+                action(it,R.string.connection_test){ (ui.activity as MainActivity).runConnectionGuideTest() }
+            } else action(it,R.string.connect,click=connect)
+        }
+        step(5,R.string.html_port_setup_background,listOf(R.string.setup_background)) {
+            action(it,R.string.background_reliability){ (ui.activity as MainActivity).showBackgroundGuide() }
+        }
+        step(6,R.string.html_port_setup_reboot,listOf(R.string.setup_reboot)) {
+            action(it,R.string.open_shizuku,click=manager)
+            if(connected)ui.paragraph(content,s(R.string.html_port_connected_reboot_advice)) else action(it,R.string.connect,click=connect)
+        }
+        content.addView(ui.space(28))
+        questions=ui.title(s(R.string.html_port_using_clipboard),18f).apply { isAccessibilityHeading=true;isFocusable=true;isFocusableInTouchMode=true }
+        content.addView(questions);content.addView(ui.space(12))
+        fun topics(entries:List<Pair<Int,Int>>) {
+            entries.forEach { (title,body) ->
+                val text=ui.column();ui.paragraph(text,s(body))
+                disclosure(content,s(title),text,title in openTopics,heading=true) { expanded -> if(expanded)openTopics.add(title) else openTopics.remove(title) }
+            }
+        }
+        topics(listOf(R.string.help_gboard to R.string.help_gboard_body,R.string.help_restart to R.string.help_restart_body,R.string.help_limits to R.string.help_limits_body))
+        content.addView(ui.space(28));content.addView(ui.title(s(R.string.html_port_privacy_saved_text),18f).apply { isAccessibilityHeading=true });content.addView(ui.space(12))
+        topics(listOf(R.string.help_local to R.string.help_local_body,R.string.help_sensitive to R.string.help_sensitive_body,R.string.help_screen to R.string.help_screen_body))
+        content.addView(ui.space(24));content.addView(ui.text(ui.activity.getString(R.string.version_license,BuildConfig.VERSION_NAME),13f,true))
         ui.actionRow(content,s(R.string.source_code)){website("https://github.com/saroo98/cliphistory-android")}
         ui.actionRow(content,s(R.string.licenses),action=licenses)
     }
@@ -100,23 +163,60 @@ class DetailPages(private val ui:Ui) {
         block.addView(ui.text(key,13f,true));block.addView(text);parent.addView(block);parent.addView(ui.divider());return text
     }
     data class DiagnosticPage(val view:View,val update:(Bundle,Boolean)->Unit)
-    fun diagnostics(b:Bundle,offline:Boolean,back:()->Unit,copy:()->Unit):DiagnosticPage {
+    enum class DiagnosticAction { RETRY, CONNECT, RESUME, TEST }
+    private data class Health(val title:Int,val body:Int,val action:DiagnosticAction,val label:Int,val enabled:Boolean=true)
+    private fun health(b:Bundle,offline:Boolean):Health {
+        val issue=b.getString("issue").orEmpty()
+        val readFailed=b.getBoolean("historyReadFailed") || issue=="BOTH_SNAPSHOTS_UNREADABLE" || issue.startsWith("HISTORY_READ_FAILED") || issue=="HISTORY_ACCESS_DENIED"
+        if(readFailed)return Health(R.string.history_failed,R.string.html_port_read_retry_advice,DiagnosticAction.RETRY,R.string.try_again)
+        if(offline)return Health(R.string.html_port_recorder_disconnected,R.string.html_port_connect_advice,DiagnosticAction.CONNECT,R.string.connect)
+        if(issue.isNotEmpty() || b.containsKey("storageVerified") && !b.getBoolean("storageVerified") || b.containsKey("listening") && !b.getBoolean("listening"))
+            return Health(R.string.attention_title,R.string.attention_body,DiagnosticAction.TEST,R.string.run_connection_test,b.getString("selfTest")!="WAITING")
+        if(b.getBoolean("paused"))return Health(R.string.paused,R.string.html_port_resume_advice,DiagnosticAction.RESUME,R.string.resume)
+        return when(b.getString("selfTest","NOT_RUN")) {
+            "PASS"->Health(R.string.test_passed,R.string.html_port_test_passed_body,DiagnosticAction.TEST,R.string.run_connection_test)
+            "WAITING"->Health(R.string.test_waiting,R.string.html_port_test_waiting_body,DiagnosticAction.TEST,R.string.run_connection_test,false)
+            "NOT_RUN"->Health(R.string.html_port_recorder_test_not_run,R.string.html_port_test_advice,DiagnosticAction.TEST,R.string.run_connection_test)
+            "STORAGE_FAILED"->Health(R.string.test_failed,R.string.test_storage_failed,DiagnosticAction.TEST,R.string.run_connection_test)
+            else->Health(R.string.test_failed,R.string.html_port_test_retry_advice,DiagnosticAction.TEST,R.string.run_connection_test)
+        }
+    }
+    fun diagnostics(b:Bundle,offline:Boolean,back:()->Unit,copy:()->Unit,healthAction:((DiagnosticAction)->Unit)?=null):DiagnosticPage {
         val values=LinkedHashMap<String,TextView>()
+        val essential=setOf(s(R.string.connection_test),s(R.string.storage_check),s(R.string.issue))
+        var currentHealth=health(b,offline)
+        lateinit var healthTitle:TextView
+        lateinit var healthBody:TextView
+        var healthButton:Button?=null
         val view=page(s(R.string.diagnostics),back) { content,root ->
-        diagnosticRows(b,offline).forEach { (key,value) -> values[key]=keyValue(content,key,displayedValue(key,value)) }
-        val extra=ui.column().apply { visibility=View.GONE }
-        advanced(b,offline).forEach { (key,value) -> values[key]=keyValue(extra,key,value) }
-        lateinit var disclosure:View
-        disclosure=ui.actionRow(content,s(R.string.advanced_details)) {
-            val expanded=extra.visibility!=View.VISIBLE
-            extra.visibility=if(expanded)View.VISIBLE else View.GONE
-            disclosure.stateDescription=s(if(expanded)R.string.details_expanded else R.string.details_collapsed)
-        }.apply { stateDescription=s(R.string.details_collapsed) }
-        content.addView(extra);content.addView(ui.space(16));ui.paragraph(content,s(R.string.report_privacy));ui.paragraph(content,s(R.string.test_boundary))
-        root.addView(ui.button(s(R.string.copy_report),primary=true,action=copy))
-        root.addView(ui.text(s(R.string.copies_clipboard),13f,true).apply { gravity=Gravity.CENTER;setPadding(0,ui.dp(8),0,ui.dp(8)) })
+            val summary=ui.column().apply { background=ui.shape(ui.color(R.color.secondary_surface),16);setPadding(ui.dp(16),ui.dp(12),ui.dp(16),ui.dp(8)) }
+            healthTitle=ui.title(s(currentHealth.title),16f).apply { isAccessibilityHeading=true;accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE }
+            healthBody=ui.text(s(currentHealth.body),14f,true)
+            summary.addView(healthTitle);summary.addView(ui.space(4));summary.addView(healthBody)
+            if(healthAction!=null) {
+                healthButton=ui.button(s(currentHealth.label)) { healthAction(currentHealth.action) }.apply { isEnabled=currentHealth.enabled }
+                summary.addView(healthButton)
+            } else summary.addView(ui.space(8))
+            content.addView(summary);content.addView(ui.space(12))
+            val rows=diagnosticRows(b,offline)
+            rows.filter { it.first in essential }.forEach { (key,value) -> values[key]=keyValue(content,key,displayedValue(key,value)) }
+            val extra=ui.column()
+            (rows.filterNot { it.first in essential }+advanced(b,offline)).forEach { (key,value) -> values[key]=keyValue(extra,key,displayedValue(key,value)) }
+            disclosure(content,s(R.string.advanced_details),extra)
+            content.addView(ui.space(24));ui.paragraph(content,s(R.string.report_privacy));ui.paragraph(content,s(R.string.test_boundary))
+            root.addView(ui.button(s(R.string.copy_report),primary=true,action=copy))
+            root.addView(ui.text(s(R.string.copies_clipboard),13f,true).apply { gravity=Gravity.CENTER;setPadding(0,ui.dp(8),0,ui.dp(8)) })
         }
         return DiagnosticPage(view) { current,disconnected ->
+            currentHealth=health(current,disconnected)
+            val title=s(currentHealth.title);val body=s(currentHealth.body)
+            if(healthTitle.text.toString()!=title)healthTitle.text=title
+            if(healthBody.text.toString()!=body)healthBody.text=body
+            healthButton?.let { control ->
+                val label=s(currentHealth.label)
+                if(control.text.toString()!=label)control.text=label
+                control.isEnabled=currentHealth.enabled
+            }
             (diagnosticRows(current,disconnected)+advanced(current,disconnected)).forEach { (key,value) ->
                 val displayed=displayedValue(key,value)
                 values[key]?.let { if(it.text.toString()!=displayed)it.text=displayed }

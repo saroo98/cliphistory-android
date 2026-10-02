@@ -176,6 +176,7 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
             putInt("count",snapshot?.entries?.size?:0);putInt("limit",snapshot?.limit?:DEFAULT_LIMIT)
             putInt("duplicateMode",snapshot?.duplicateMode?.value?:DuplicateMode.UNIQUE_TEXT.value)
             putLong("generation",snapshot?.generation?:0);putLong("saved",saved);putLong("lastSaved",lastSaved)
+            putLong("undoToken",repository?.undoToken?:0);putLong("undoEntryId",repository?.undoEntryId?:-1)
             putLong("sensitiveSkipped",sensitive);putLong("oversizedSkipped",oversized);putLong("unsupportedSkipped",unsupported)
             putLong("queueDrops",queueDrops.get());putString("issue",problem);putString("selfTest",testState)
             putString("signature",bridge?.signature?:"Not connected")
@@ -215,6 +216,22 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
     }
     override fun deleteEntry(id:Long):Bundle { requireOwner();return serial {
         if(!repo().delete(id)) failure("ENTRY_MISSING") else { notifyChanged();statusInternal() }
+    } }
+    override fun undoDelete(token:Long):Bundle { requireOwner();return serial {
+        try {
+            val result=repo().undoDelete(token);notifyChanged()
+            statusInternal().apply { putBoolean("undoAlreadyPresent",result==HistoryRepository.UndoResult.ALREADY_PRESENT) }
+        } catch(error:StoreException) {
+            if(error.reason!="UNDO_HISTORY_FULL" && error.reason!="UNDO_NOT_AVAILABLE")throw error
+            statusInternal().apply { putBoolean("ok",false);putString("issue",error.reason) }
+        }
+    } }
+    override fun dismissUndo(token:Long):Bundle { requireOwner();return serial {
+        try { repo().dismissUndo(token);notifyChanged();statusInternal() }
+        catch(error:StoreException) {
+            if(error.reason!="UNDO_NOT_AVAILABLE")throw error
+            statusInternal().apply { putBoolean("ok",false);putString("issue",error.reason) }
+        }
     } }
     override fun clearHistory():Bundle { requireOwner();return serial { repo().clear();notifyChanged();statusInternal() } }
     override fun setLimit(limit:Int):Bundle { requireOwner();return serial { repo().setLimit(limit);notifyChanged();statusInternal() } }

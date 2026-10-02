@@ -18,5 +18,7 @@ interface IClipboardDaemon {
     Bundle verifyStorage() = 11;
     Bundle entry(long id) = 12;
     Bundle setDuplicateMode(int mode) = 13;
+    Bundle undoDelete(long token) = 14;
+    Bundle dismissUndo(long token) = 15;
     void destroy() = 16777114;
 }

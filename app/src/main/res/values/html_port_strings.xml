@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="html_port_pause_body">Pause saves your current history and stops new capture until you resume.</string>
+    <string name="html_port_automatic_resumption">Automatic resumption</string>
+    <string name="html_port_optional_setup">Optional setup</string>
+    <string name="html_port_boot_disabled">Turn on Automatic recovery to use this option. Your reboot preference is remembered.</string>
+    <string name="html_port_battery_summary">Optional · app battery settings</string>
+    <string name="html_port_notification_summary">Manage Android notification settings</string>
+    <string name="html_port_suggestion_body">Show optional battery guidance after setup. You can always open it from Settings.</string>
+    <string name="html_port_tile_add_summary">Add it to your phone’s Quick Settings</string>
+    <string name="html_port_tile_disabled_summary">Enable the tile above first</string>
+    <string name="html_port_tile_opens">Tile opens</string>
+    <string name="html_port_recents_body">Hide saved text in the recent-apps preview independently of screenshots.</string>
+    <string name="html_port_motion_preference">Motion</string>
+    <string name="html_port_motion_reduced">Reduced motion</string>
+    <string name="html_port_welcome_frequency">Welcome frequency</string>
+    <string name="html_port_welcome_heading">Welcome</string>
+    <string name="html_port_clipboard_questions">Clipboard questions</string>
+    <string name="html_port_using_clipboard">Using your clipboard</string>
+    <string name="html_port_privacy_saved_text">Privacy and saved text</string>
+    <string name="html_port_setup_step">%1$d. %2$s</string>
+    <string name="html_port_setup_install">Install Shizuku</string>
+    <string name="html_port_setup_pair">Pair your phone</string>
+    <string name="html_port_setup_start">Start Shizuku</string>
+    <string name="html_port_setup_connect">Connect and check</string>
+    <string name="html_port_setup_background">Keep recording available</string>
+    <string name="html_port_setup_reboot">After every reboot</string>
+    <string name="html_port_connected_test_advice">Recorder already connected. Run a connection test to check it.</string>
+    <string name="html_port_connected_reboot_advice">No reconnect needed while the recorder is connected.</string>
+    <string name="html_port_recorder_disconnected">Recorder not connected</string>
+    <string name="html_port_connect_advice">Start Shizuku, then connect the recorder.</string>
+    <string name="html_port_resume_advice">Resume to save new copies.</string>
+    <string name="html_port_test_advice">Run a connection test to check capture and local storage.</string>
+    <string name="html_port_test_retry_advice">Check Shizuku and retry the connection test.</string>
+    <string name="html_port_test_waiting_body">The test is waiting for a clipboard event.</string>
+    <string name="html_port_test_passed_body">A clipboard event and local storage were confirmed by the last test.</string>
+    <string name="html_port_recorder_test_not_run">Recorder connected · test not run</string>
+    <string name="html_port_read_retry_advice">Your existing files have not been erased. Try reading history again.</string>
+</resources>

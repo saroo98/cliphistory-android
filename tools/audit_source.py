@@ -69,7 +69,7 @@ check("clipboard source is not coerced through content providers", "coerceToText
 daemon = text("app/src/main/java/app/cliphistory/daemon/ClipboardUserService.kt")
 aidl = text("app/src/main/aidl/app/cliphistory/ipc/IClipboardDaemon.aidl")
 methods = re.findall(r"\b(?:Bundle|String|void)\s+(\w+)\([^;]*?\)\s*=\s*\d+\s*;", aidl)
-check("all AIDL entrypoints implemented", all(re.search(r"override fun " + name + r"\(", daemon) for name in methods) and len(methods) == 15)
+check("all AIDL entrypoints implemented", all(re.search(r"override fun " + name + r"\(", daemon) for name in methods) and len(methods) == 17)
 for name in methods:
     if name == "destroy":
         continue

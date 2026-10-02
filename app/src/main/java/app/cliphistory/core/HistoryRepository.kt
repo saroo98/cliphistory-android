@@ -1,9 +1,15 @@
 package app.cliphistory.core
 
 import java.io.IOException
+import java.security.SecureRandom
 
 /** Single-writer repository. Call only from the daemon's serial worker. */
 class HistoryRepository(private val a: Slot, private val b: Slot) {
+    private data class PendingDelete(val entry: Entry, val token: Long)
+    enum class UndoResult { RESTORED, ALREADY_PRESENT }
+    private var pendingDelete: PendingDelete? = null
+    val undoToken: Long get() = pendingDelete?.token ?: 0
+    val undoEntryId: Long get() = pendingDelete?.entry?.id ?: -1
     private val slots = arrayOf(a, b)
     private var active = -1
     var recoveredFromDamagedSlot = false; private set
@@ -69,14 +75,36 @@ class HistoryRepository(private val a: Slot, private val b: Slot) {
         commit(state.copy(duplicateMode = mode).uniqueProjection(), mirror = true)
     }
     fun delete(id: Long): Boolean {
-        if (state.entries.none { it.id == id }) return false
-        commit(state.copy(entries = state.entries.filterNot { it.id == id }), mirror = true)
+        val entry = state.entries.firstOrNull { it.id == id } ?: return false
+        val pending = PendingDelete(entry, newUndoToken())
+        commit(state.copy(entries = state.entries.filterNot { it.id == id }), mirror = true) {
+            pendingDelete = pending
+        }
         return true
     }
-    fun clear() { commit(state.copy(entries = emptyList()), mirror = true) }
+    fun undoDelete(token: Long): UndoResult {
+        val pending = requirePendingDelete(token)
+        if (state.duplicateMode == DuplicateMode.UNIQUE_TEXT && state.entries.any { it.text == pending.entry.text }) {
+            pendingDelete = null
+            return UndoResult.ALREADY_PRESENT
+        }
+        if (state.entries.size >= state.limit) throw StoreException("UNDO_HISTORY_FULL")
+        val restored = (state.entries + pending.entry).sortedByDescending { it.id }
+        commit(state.copy(entries = restored), mirror = true) { pendingDelete = null }
+        return UndoResult.RESTORED
+    }
+    fun dismissUndo(token: Long) { requirePendingDelete(token); pendingDelete = null }
+    private fun requirePendingDelete(token: Long): PendingDelete = pendingDelete?.takeIf { it.token == token }
+        ?: throw StoreException("UNDO_NOT_AVAILABLE")
+    private fun newUndoToken(): Long {
+        var token: Long
+        do { token = undoTokens.nextLong() and Long.MAX_VALUE } while (token == 0L || token == undoToken)
+        return token
+    }
+    fun clear() { commit(state.copy(entries = emptyList()), mirror = true) { pendingDelete = null } }
     fun search(query: String): List<Entry> = if (query.isEmpty()) state.entries else state.entries.filter { it.text.contains(query, ignoreCase = true) }
 
-    private fun commit(candidate: Snapshot, mirror: Boolean = false) {
+    private fun commit(candidate: Snapshot, mirror: Boolean = false, onDurable: () -> Unit = {}) {
         if (state.generation == Long.MAX_VALUE) throw StoreException("GENERATION_EXHAUSTED")
         val next = candidate.copy(generation = state.generation + 1)
         val encoded = SnapshotCodec.encode(next)
@@ -84,6 +112,8 @@ class HistoryRepository(private val a: Slot, private val b: Slot) {
         slots[target].writeAndSync(encoded)
         // Do not expose a change until its first durable snapshot has been acknowledged.
         active = target; state = next
+        // Undo is RAM-only, but must follow the durable mutation even when its mirror fails.
+        onDurable()
         if (mirror) {
             try { slots[1-target].writeAndSync(encoded) }
             catch (_: IOException) { throw StoreException("CHANGE_SAVED_BUT_BACKUP_CLEANUP_FAILED") }
@@ -93,4 +123,5 @@ class HistoryRepository(private val a: Slot, private val b: Slot) {
         val valid = slots.mapNotNull { slot -> try { SnapshotCodec.decode(slot.read()) } catch (_: IOException) { null } }
         return valid.any { it == state }
     }
+    private companion object { val undoTokens = SecureRandom() }
 }

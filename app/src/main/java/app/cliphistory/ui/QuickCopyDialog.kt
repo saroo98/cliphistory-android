@@ -36,11 +36,12 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
     private var loading=false
     private var dirty=false
     private var copying=false
+    private var copyFailure=false
     private var populatedHeight=0
     private var nextNotice:Int?=null
     private val reload=Runnable { refresh() }
     private val changed:()->Unit={
-        if(loading)dirty=true else { main.removeCallbacks(reload);main.postDelayed(reload,120) }
+        if(loading || copyFailure)dirty=true else { main.removeCallbacks(reload);main.postDelayed(reload,120) }
     }
     private val preferences=SharedPreferences.OnSharedPreferenceChangeListener { _,_ ->
         if(closed)return@OnSharedPreferenceChangeListener
@@ -65,9 +66,14 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
             View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED))
         populatedHeight=3*(sample.measuredHeight+dp(8));rows.minimumHeight=populatedHeight
         notice=label(context.getString(R.string.quick_loading),14f,true)
+        val panelWidth=minOf(dp(360),context.resources.displayMetrics.widthPixels-dp(32))-dp(40)
+        notice.minimumHeight=listOf(R.string.quick_loading,R.string.quick_hint,R.string.quick_offline).maxOf { id ->
+            label(context.getString(id),14f,true).apply {
+                measure(View.MeasureSpec.makeMeasureSpec(panelWidth,View.MeasureSpec.EXACTLY),View.MeasureSpec.makeMeasureSpec(0,View.MeasureSpec.UNSPECIFIED))
+            }.measuredHeight
+        }
+        showSkeleton(sample.measuredHeight)
         window?.setBackgroundDrawableResource(android.R.color.transparent)
-        // Only the system shade collapses. The panel has no entrance animation.
-        window?.setWindowAnimations(0)
         window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN or WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
         window?.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
         val box=LinearLayout(context).apply {
@@ -92,7 +98,11 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
             }
         }.apply { addView(box);isVerticalScrollBarEnabled=false }
         setContentView(scroll);setCanceledOnTouchOutside(true)
-        window!!.setLayout(minOf(dp(360),context.resources.displayMetrics.widthPixels-dp(32)),-2)
+        window!!.apply {
+            setLayout(minOf(dp(360),context.resources.displayMetrics.widthPixels-dp(32)),-2)
+            // Decor installation can restore the theme's animation; override it afterward.
+            setWindowAnimations(0)
+        }
     }
     private fun dp(value:Int)=(value*context.resources.displayMetrics.density).toInt()
     private fun shape(color:Int,radius:Int)=GradientDrawable().apply { setColor(color);cornerRadius=dp(radius).toFloat() }
@@ -105,6 +115,21 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
         maxLines=2;ellipsize=TextUtils.TruncateAt.END;minimumHeight=dp(64);stateListAnimator=null
         setTextColor(context.getColor(R.color.ink));setPadding(dp(12),dp(12),dp(12),dp(12))
         background=RippleDrawable(ColorStateList.valueOf(context.getColor(R.color.selected)),shape(context.getColor(R.color.secondary_surface),14),null)
+    }
+    private fun showSkeleton(rowHeight:Int=populatedHeight/3-dp(8)) {
+        rows.removeAllViews();rows.minimumHeight=populatedHeight
+        repeat(3) {
+            rows.addView(FrameLayout(context).apply {
+                tag="quick-skeleton"
+                background=shape(context.getColor(R.color.secondary_surface),14)
+                importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                addView(View(context).apply { background=shape(context.getColor(R.color.divider),3) },
+                    FrameLayout.LayoutParams(dp(180),dp(10),Gravity.CENTER_VERTICAL).apply { marginStart=dp(16) })
+            },LinearLayout.LayoutParams(-1,rowHeight).apply { topMargin=dp(8) })
+        }
+    }
+    private fun retryRead() {
+        copyFailure=false;notice.text=context.getString(R.string.quick_loading);showSkeleton();refresh()
     }
     override fun onAttachedToWindow() {
         trace("start")
@@ -132,7 +157,7 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
         }
     }
     fun refresh() {
-        if(closed || !isShowing || copying)return
+        if(closed || !isShowing || copying || copyFailure)return
         if(!settings.tileEnabled || !unlocked()){dismiss();return}
         if(loading){dirty=true;return}
         val request=++token;loading=true;dirty=false
@@ -146,10 +171,11 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
             rows.minimumHeight=if(page.issue.isEmpty() && page.rows.isNotEmpty())populatedHeight else 0
             if(page.issue.isNotEmpty()) {
                 notice.text=context.getString(R.string.quick_failed)
-                action(R.string.quick_retry){refresh()};action(R.string.open_app){openApp()}
+                action(R.string.quick_retry){retryRead()};action(R.string.open_app){openApp()}
             } else {
                 notice.text=context.getString(nextNotice ?: if(page.rows.isEmpty())R.string.quick_empty else if(page.offline)R.string.quick_offline else R.string.quick_hint)
                 nextNotice=null
+                if(page.rows.isEmpty())action(R.string.open_app){openApp()}
                 page.rows.forEach { row ->
                     val button=entryButton(row.preview).apply {
                         setOnClickListener { copy(row.id) }
@@ -162,7 +188,7 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
     }
     private fun action(id:Int,click:()->Unit) { rows.addView(entryButton(context.getString(id)).apply {
         maxLines=3;minimumHeight=dp(48);setOnClickListener { click() }
-    },LinearLayout.LayoutParams(-1,-2)) }
+    },LinearLayout.LayoutParams(-1,-2).apply { topMargin=dp(8) }) }
     private fun copy(id:Long) {
         if(copying || closed || !unlocked())return
         copying=true;loading=false;val request=++token
@@ -173,14 +199,30 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
             if(result.issue.isNotEmpty()) {
                 notice.text=context.getString(R.string.quick_failed);rows.removeAllViews()
                 rows.minimumHeight=0
-                action(R.string.quick_retry){refresh()};action(R.string.open_app){openApp()};return@getText
+                action(R.string.quick_retry){retryRead()};action(R.string.open_app){openApp()};return@getText
             }
             val text=result.text
             if(text==null){nextNotice=R.string.quick_missing;refresh();return@getText}
-            try {
-                context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText(context.getString(R.string.app_name),text))
-                dismiss()
-            } catch (_:Exception) { notice.text=context.getString(R.string.quick_copy_failed) }
+            writeCopy(text)
         }
+    }
+    private fun writeCopy(text:String) {
+        if(closed || !isShowing || !unlocked())return
+        try {
+            context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText(context.getString(R.string.app_name),text));dismiss()
+        } catch (_:Exception) { showCopyFailure(text) }
+    }
+    private fun showCopyFailure(text:String) {
+        copyFailure=true;main.removeCallbacks(reload)
+        notice.text=context.getString(R.string.copy_failed_title)
+        rows.removeAllViews();rows.minimumHeight=0
+        action(R.string.port_retry){writeCopy(text)}
+        action(R.string.view_full) {
+            rows.removeAllViews()
+            rows.addView(label(text,16f).apply { setTextIsSelectable(true);isSaveEnabled=false })
+            action(R.string.port_retry){writeCopy(text)}
+            action(R.string.back){showCopyFailure(text)}
+        }
+        action(R.string.cancel){copyFailure=false;refresh()}
     }
 }

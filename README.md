@@ -2,9 +2,9 @@
 
 A local clipboard-history companion for Android, with **Shizuku started in non-root shell mode**. It is not a keyboard and does not modify Gboard.
 
-## Release 1.3.0
+## Release 1.3.3
 
-Current local build: **1.3.2/code 6** fixes the extra quick-tile Activity animation and keeps the native popup open across tile-service unbinding. See [current verification](docs/TILE_LAUNCH_FIX.md). This local build is not yet represented as a new public release or F-Droid listing.
+**1.3.3/code 7** ports the reviewed HTML UI refinements into the native Android application. It adds clearer Settings summaries, guided setup, visible full-text actions, persistent single-deletion Undo and focused error recovery. See [port and verification](docs/HTML_UI_PORT.md). The preceding tile launch fix is documented in [tile verification](docs/TILE_LAUNCH_FIX.md). F-Droid submission status and exact release evidence are recorded in [publication preparation](docs/F_DROID_PUBLICATION.md). A prepared or submitted app is not an accepted F-Droid listing.
 
 Public source: https://github.com/saroo98/cliphistory-android. Signed APKs are in the repository's Releases page. Android API 34 or later is required; compile and target are API 37.
 
@@ -22,8 +22,9 @@ F-Droid publication requires its independent review and build verification. Prov
 - Redesigned light/dark history: search, tap-to-copy-and-return, explicit full-text button, long-press action sheet, full-text preview, clear history, limit setting and pause/resume.
 - System / Light / Dark appearance and an optional copy-and-stay mode. Preferences persist across launches.
 - Exact plain-text content, including whitespace, newlines and Unicode. Default duplicate handling keeps one entry per exact text: `A → B → A → B` produces `B, A`. The previous consecutive-only mode remains selectable.
-- Settings grouped into Recording, Quick access, Privacy, Appearance and About. Screenshots and screen recording are blocked by default but can be enabled; Recents hiding is independently enabled by default. Motion follows the system or can be disabled.
-- Optional welcome (Once, Each launcher opening, Off), real feedback/share/GitHub support destinations, battery guidance and a seven-step Shizuku/reboot guide. Support is never required.
+- Settings grouped into Recording, Recovery, Quick access, Privacy, Appearance, Welcome and About. Choice rows show their current values; the eight Boolean preferences remain native switches. Screenshots and screen recording are blocked by default but can be enabled; Recents hiding is independently enabled by default. Motion follows the system or can be disabled.
+- Optional welcome (First time only, Every app opening, Never), real feedback/share/GitHub support destinations, optional battery guidance and a six-step Shizuku/reboot guide. Help preserves open topics and reading position. Support is never required.
+- Single-entry deletion offers one-level Undo until dismissed, replaced by another deletion, cleared history or helper termination. Undo restores the original entry without evicting another entry; a full history asks for a larger limit. The pending entry exists only in helper memory, not a recovery file. Clear history has no Undo.
 - Private, no-backup storage with checksummed, alternating snapshots and explicit corruption/error handling.
 - Sensitive-flag filtering, bounded text/IPC/queue sizes, privacy-safe diagnostics and an explicit device connection/storage test.
 - A lease on the Shizuku **server** Binder, independent of the normal app's process. Stopping that server makes the helper stop, rather than leaving an orphan recorder intentionally running.
@@ -32,7 +33,7 @@ F-Droid publication requires its independent review and build verification. Prov
 
 On Windows, extract the ZIP fully, then double-click **`BUILD_WINDOWS.cmd`**. Read `START_HERE.md` for the short walkthrough and `BUILDING.md` for details.
 
-Once a build has succeeded, install `ClipHistory-1.3.0.apk` using the existing signing identity, start Shizuku, open ClipHistory and approve Shizuku access. Run the optional **Connection test** and add the tile through Android's confirmation. The connection test replaces the current shared clipboard with harmless text. Your usual keyboard stays unchanged.
+Once a build has succeeded, install `ClipHistory-1.3.3.apk` using the existing signing identity, start Shizuku, open ClipHistory and approve Shizuku access. Run the optional **Connection test** and add the tile through Android's confirmation. The connection test replaces the current shared clipboard with harmless text. Your usual keyboard stays unchanged.
 
 After reboot, unlock and start non-root Shizuku again. Enabled recovery prepares after unlock and attempts reconnection when Shizuku becomes available and Android permits it. It does not automatically open the full Activity. Copies made before reconnection cannot be reconstructed. Battery settings are optional and cannot remove Shizuku's restart requirement.
 

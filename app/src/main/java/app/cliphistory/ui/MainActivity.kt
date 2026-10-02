@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.drawable.Icon
 import android.os.*
 import android.text.*
+import android.text.style.BackgroundColorSpan
 import android.view.*
 import android.view.accessibility.AccessibilityManager
 import android.view.inputmethod.InputMethodManager
@@ -52,9 +53,15 @@ class MainActivity:Activity() {
     private var helpFromSettings=false
     private var helpSettingsScroll=0
     private var helpScroll=0
+    private val helpTopics=mutableSetOf<Int>()
+    private var helpConnected=false
+    private var licensesFromSettings=false
+    private var settingsFocus=""
+    private var reopenAppearance=false
     private var restoredLicenseScroll=0
     private var operationIssue=""
-    private var snackbar:TextView?=null
+    private var snackbar:View?=null
+    private var undoToken=0L
     private val dialogs=mutableSetOf<Dialog>()
     private var menu:PopupWindow?=null
     private var recorderContent:LinearLayout?=null
@@ -80,10 +87,14 @@ class MainActivity:Activity() {
         helpFromSettings=state?.getBoolean("help_from_settings",false)?:false
         helpSettingsScroll=state?.getInt("help_settings_scroll",0)?:0
         helpScroll=state?.getInt("help_scroll",0)?:0
+        state?.getIntArray("help_topics")?.let { helpTopics.addAll(it.toList()) }
+        licensesFromSettings=state?.getBoolean("licenses_from_settings",false)?:false
+        settingsFocus=state?.getString("settings_focus").orEmpty()
+        reopenAppearance=state?.getBoolean("reopen_appearance",false)?:false
         restoredLicenseScroll=state?.getInt("licenses_scroll",0)?:0
         root=FrameLayout(this).apply { setBackgroundColor(ui.color(R.color.canvas)) }
         home=HistoryHome(ui,::showMenu,{ client.connect(true) },{ client.openShizuku() },::help,::recorder,
-            { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview)
+            { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview,::copyEntry,::entryActions)
         root.addView(home.root,FrameLayout.LayoutParams(-1,-1));setContentView(root)
         window.insetsController?.setSystemBarsAppearance(if(light)WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS else 0,
             WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS)
@@ -129,7 +140,12 @@ class MainActivity:Activity() {
     override fun onStart() {
         super.onStart();visible=true;applyPrivacy();client.addListener(changed);client.connect(false);refresh()
     }
-    override fun onPostResume() { super.onPostResume();main.post { maybeShowPrompts() } }
+    override fun onPostResume() {
+        super.onPostResume();main.post {
+            if(reopenAppearance && pageKind=="settings") { reopenAppearance=false;appearance() }
+            else maybeShowPrompts()
+        }
+    }
     override fun onNewIntent(intent:Intent) {
         super.onNewIntent(intent);setIntent(intent)
         if(intent.action==ACTION_OPEN_HISTORY) {
@@ -145,7 +161,7 @@ class MainActivity:Activity() {
     }
     override fun onStop() {
         visible=false;request++;navigation++;client.cancelPageReads();client.removeListener(changed);main.removeCallbacksAndMessages(null)
-        snackbar?.let { root.removeView(it) };snackbar=null
+        removeNotice()
         dialogs.toList().forEach { it.dismiss() };menu?.dismiss();super.onStop()
     }
     override fun onSaveInstanceState(out:Bundle) {
@@ -156,6 +172,10 @@ class MainActivity:Activity() {
         out.putBoolean("help_from_settings",helpFromSettings)
         out.putInt("help_settings_scroll",helpSettingsScroll)
         out.putInt("help_scroll",if(pageKind=="help")findScroll(page)?.scrollY?:0 else helpScroll)
+        out.putIntArray("help_topics",helpTopics.toIntArray())
+        out.putBoolean("licenses_from_settings",licensesFromSettings)
+        out.putString("settings_focus",settingsFocus)
+        out.putBoolean("reopen_appearance",reopenAppearance)
         if(pageKind=="licenses")out.putInt("licenses_scroll",findScroll(page)?.scrollY?:0)
         val anchor=restoredAnchor?:home.anchor()
         out.putLong("anchor_id",anchor.id);out.putInt("anchor_position",anchor.position);out.putInt("anchor_top",anchor.top)
@@ -175,9 +195,11 @@ class MainActivity:Activity() {
             loadedQuery=query
             latest=Bundle(result.status).apply {
                 if(result.issue.isNotEmpty())putString("issue",result.issue)
+                putBoolean("historyReadFailed",result.issue.isNotEmpty())
                 putString("operationIssue",operationIssue);putString("recoveryMessage",client.recoveryMessage);putLong("checkedAt",System.currentTimeMillis())
             }
             offline=result.offline;generation=result.generation
+            syncUndo(latest)
             home.show(result,rows,recorderState(client.connectionStage(),latest.getBoolean("paused"),latest.getBoolean("active"),latest.getString("selfTest")=="PASS",latest.getString("issue").orEmpty().isNotEmpty()),query)
             if(reset){restoredAnchor=null;restoredCount=40;home.list.setSelection(0)}
             else restoredAnchor?.let { anchor -> home.list.post { home.restore(anchor) };restoredAnchor=null }
@@ -185,6 +207,7 @@ class MainActivity:Activity() {
             recorderContent?.let { fillRecorder(it,recorderDialog!!) }
             if(pageKind=="diagnostics")diagnosticPage?.update?.invoke(latest,offline)
             if(pageKind=="settings")settingsPage?.update?.invoke(latest)
+            if(pageKind=="help" && helpConnected!=client.connected())showHelp()
             when(pageKind) {
                 "restore-preview"->{pageKind="";preview(previewId)}
                 "restore-diagnostics"->{pageKind="";diagnostics()}
@@ -206,9 +229,14 @@ class MainActivity:Activity() {
         read(offset,emptyList(),null)
     }
     private fun track(dialog:Dialog):Dialog {
+        val origin=currentFocus
         dialogs.add(dialog);dialog.setOnDismissListener {
             dialogs.remove(dialog)
             if(recorderDialog===dialog){recorderDialog=null;recorderContent=null}
+            if(visible) {
+                if(origin?.isAttachedToWindow==true && origin.isShown)origin.requestFocus()
+                else if(pageKind=="settings")page?.findViewWithTag<View>(settingsFocus)?.requestFocus()
+            }
         };return dialog
     }
     private fun sheet(title:Int,body:(LinearLayout,Dialog)->Unit)=track(ui.sheet(s(title),body))
@@ -229,20 +257,87 @@ class MainActivity:Activity() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         track(dialog).show();dialog.window?.setLayout(minOf(ui.dp(400),windowManager.currentWindowMetrics.bounds.width()-ui.dp(40)),-2)
     }
+    private fun removeNotice() {
+        snackbar?.let { root.removeView(it) };snackbar=null
+        listOfNotNull(home.root,page).forEach { view ->
+            (view.layoutParams as? FrameLayout.LayoutParams)?.let { it.bottomMargin=0;view.layoutParams=it }
+        }
+    }
+    private fun addNotice(notice:View) {
+        removeNotice();snackbar=notice
+        root.addView(notice,FrameLayout.LayoutParams(-1,-2,Gravity.BOTTOM).apply { setMargins(ui.dp(20),0,ui.dp(20),ui.dp(8)) })
+        notice.post {
+            if(snackbar===notice)listOfNotNull(home.root,page).forEach { view ->
+                (view.layoutParams as? FrameLayout.LayoutParams)?.let { it.bottomMargin=notice.height+ui.dp(16);view.layoutParams=it }
+            }
+        }
+    }
+    private fun syncUndo(status:Bundle) {
+        // A failed status read is not evidence that the daemon consumed Undo.
+        if(client.connected() && !status.containsKey("undoToken"))return
+        val next=if(client.connected())status.getLong("undoToken",0) else 0
+        if(next!=undoToken) { removeNotice();undoToken=next }
+        if(undoToken!=0L && snackbar==null)showUndoNotice()
+    }
+    private fun showUndoNotice(message:Int=R.string.deleted) {
+        if(undoToken==0L)return
+        val expected=undoToken
+        val notice=ui.column().apply {
+            id=R.id.delete_undo_notice;tag=expected
+            setPadding(ui.dp(16),ui.dp(12),ui.dp(16),ui.dp(8))
+            background=ui.shape(ui.color(R.color.secondary_surface),14)
+            accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE
+            addView(ui.text(s(message),14f))
+            if(message!=R.string.deleted)addView(ui.text(s(R.string.deleted),13f,true))
+        }
+        val actions=LinearLayout(this).apply {
+            if(resources.configuration.fontScale>1.3f)orientation=LinearLayout.VERTICAL
+        }
+        actions.addView(ui.button(s(R.string.port_undo)) {
+            command({it.undoDelete(expected)}) { response ->
+                notifyUser(if(response.getBoolean("undoAlreadyPresent"))R.string.port_already_saved else R.string.port_restored)
+            }
+        })
+        actions.addView(ui.button(s(R.string.port_dismiss_notice)) { command({it.dismissUndo(expected)}) })
+        notice.addView(actions);addNotice(notice)
+    }
     private fun notifyUser(id:Int) {
-        snackbar?.let { root.removeView(it) }
+        if(undoToken!=0L) { showUndoNotice(id);return }
         val notice=ui.text(s(id),14f).apply {
             setTextColor(ui.color(R.color.on_accent));background=ui.shape(ui.accent,14);setPadding(ui.dp(20),ui.dp(14),ui.dp(20),ui.dp(14))
             accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE
         }
-        snackbar=notice;root.addView(notice,FrameLayout.LayoutParams(-1,-2,Gravity.BOTTOM).apply { setMargins(ui.dp(20),0,ui.dp(20),ui.dp(8)) })
+        addNotice(notice)
         val timeout=getSystemService(AccessibilityManager::class.java)
             ?.getRecommendedTimeoutMillis(2200,AccessibilityManager.FLAG_CONTENT_TEXT)?.coerceAtLeast(2200)?.toLong()?:2200L
-        main.postDelayed({root.removeView(notice);if(snackbar===notice)snackbar=null},timeout)
+        main.postDelayed({if(snackbar===notice)removeNotice()},timeout)
     }
     private fun putClipboard(label:String,text:String):Boolean=try {
         getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText(label,text));true
-    } catch (_:Exception) {message(R.string.copy_failed_title,R.string.copy_failed_body);false}
+    } catch (_:Exception) {false}
+    private fun copyText(label:String,text:String,onCopied:()->Unit) {
+        if(putClipboard(label,text))onCopied() else showCopyFailure(label,text,onCopied)
+    }
+    private fun showCopyFailure(label:String,text:String,onCopied:()->Unit) {
+        sheet(R.string.copy_failed_title) { box,dialog ->
+            ui.paragraph(box,s(R.string.port_copy_retry_body))
+            box.addView(ui.button(s(R.string.port_retry),primary=true) {
+                if(putClipboard(label,text)){dialog.dismiss();onCopied()}
+            })
+            box.addView(ui.button(s(R.string.view_full)) {
+                dialog.dismiss()
+                sheet(R.string.port_full_text) { full,d ->
+                    full.addView(ui.text(text,17f).apply { setTextIsSelectable(true);isSaveEnabled=false })
+                    full.addView(ui.space(16))
+                    full.addView(ui.button(s(R.string.port_retry),primary=true) {
+                        if(putClipboard(label,text)){d.dismiss();onCopied()}
+                    })
+                    full.addView(ui.button(s(R.string.cancel)){d.dismiss()})
+                }
+            })
+            box.addView(ui.button(s(R.string.cancel)){dialog.dismiss()})
+        }
+    }
     private fun copyEntry(id:Long) {
         val token=++navigation
         client.getText(id) { result ->
@@ -251,7 +346,7 @@ class MainActivity:Activity() {
             operationIssue=""
             val text=result.text
             if(text==null){notifyUser(R.string.entry_gone);closePage();refresh();return@getText}
-            if(putClipboard(s(R.string.app_name),text)) {
+            copyText(s(R.string.app_name),text) {
                 if(settings.returnAfterCopy)finish() else {
                     notifyUser(R.string.copied)
                     val index=rows.indexOfFirst { it.id==id }+home.list.headerViewsCount-home.list.firstVisiblePosition
@@ -263,6 +358,9 @@ class MainActivity:Activity() {
         }
     }
     private fun command(action:(IClipboardDaemon)->Bundle,after:((Bundle)->Unit)?=null) {
+        commandFor(R.string.operation_failed,R.string.operation_body,action,after)
+    }
+    private fun commandFor(failureTitle:Int,failureBody:Int,action:(IClipboardDaemon)->Bundle,after:((Bundle)->Unit)?=null) {
         if(!client.connected()){message(R.string.not_connected,R.string.connect_mutation);return}
         val token=navigation
         client.command(action) { response ->
@@ -270,17 +368,23 @@ class MainActivity:Activity() {
             if(!response.getBoolean("ok")) {
                 operationIssue=response.getString("issue","OPERATION_FAILED")
                 if(operationIssue=="ENTRY_MISSING") { if(token==navigation)notifyUser(R.string.entry_gone) }
-                else if(token==navigation)sheet(R.string.operation_failed) { box,dialog ->
-                ui.paragraph(box,s(R.string.operation_body))
+                else if(operationIssue=="UNDO_NOT_AVAILABLE") { if(token==navigation)notifyUser(R.string.port_undo_unavailable) }
+                else if(operationIssue=="UNDO_HISTORY_FULL" && token==navigation)sheet(R.string.port_undo_full_title) { box,dialog ->
+                    ui.paragraph(box,s(R.string.port_undo_full_body))
+                    box.addView(ui.button(s(R.string.history_limit),primary=true){dialog.dismiss();showSettings();limitDialog()})
+                    box.addView(ui.button(s(R.string.done)){dialog.dismiss()})
+                }
+                else if(token==navigation)sheet(failureTitle) { box,dialog ->
+                ui.paragraph(box,s(failureBody))
                 box.addView(ui.button(s(R.string.view_diagnostics)){dialog.dismiss();diagnostics()})
                 box.addView(ui.button(s(R.string.done)){dialog.dismiss()})
                 }
             }
-            else {operationIssue="";latest=response;if(token==navigation)after?.invoke(response)}
+            else {operationIssue="";latest=response;syncUndo(response);if(token==navigation)after?.invoke(response)}
             refresh()
         }
     }
-    private fun delete(id:Long) { command({it.deleteEntry(id)}) { closePage();notifyUser(R.string.deleted) } }
+    private fun delete(id:Long) { commandFor(R.string.port_delete_failed,R.string.port_delete_failed_body,{it.deleteEntry(id)}) { closePage();notifyUser(R.string.deleted) } }
     private fun entryActions(row:DaemonClient.Row) {
         hideKeyboard()
         sheet(R.string.saved_text) { box,dialog ->
@@ -294,21 +398,27 @@ class MainActivity:Activity() {
     }
     private fun showPage(kind:String,view:View) {
         navigation++
+        if(pageKind=="help")helpScroll=findScroll(page)?.scrollY?:helpScroll
         if(kind!="diagnostics")diagnosticPage=null
         hideKeyboard();page?.let { root.removeView(it) }
         if(page==null)onBackInvokedDispatcher.registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT,back)
         pageKind=kind;page=view;home.root.visibility=View.GONE;root.addView(view,FrameLayout.LayoutParams(-1,-1))
+        snackbar?.let { notice ->
+            (view.layoutParams as FrameLayout.LayoutParams).apply { bottomMargin=notice.height+ui.dp(16);view.layoutParams=this }
+            notice.bringToFront()
+        }
     }
     private fun closePage() {
         navigation++
+        if(pageKind=="help")helpScroll=findScroll(page)?.scrollY?:helpScroll
         if(page==null){pageKind="";previewId=-1;return}
         page?.let { root.removeView(it) };page=null;pageKind="";previewId=-1;diagnosticPage=null
-        helpFromSettings=false;helpSettingsScroll=0;helpScroll=0
+        helpFromSettings=false;helpSettingsScroll=0
         onBackInvokedDispatcher.unregisterOnBackInvokedCallback(back);home.root.visibility=View.VISIBLE
     }
     private fun backPage() {
         when(pageKind) {
-            "licenses"->showHelp()
+            "licenses"->if(licensesFromSettings) { licensesFromSettings=false;restoredSettingsScroll=helpSettingsScroll;showSettings() } else showHelp()
             "help"->if(helpFromSettings) {
                 restoredSettingsScroll=helpSettingsScroll;helpFromSettings=false;showSettings()
             } else closePage()
@@ -326,25 +436,45 @@ class MainActivity:Activity() {
             previewId=id
             showPage("preview",pages.page(s(R.string.saved_text),::closePage) { content,footer ->
                 rows.firstOrNull { it.id==id }?.let { content.addView(ui.text(DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT).format(Date(it.time)),13f,true));content.addView(ui.space(20)) }
-                content.addView(ui.text(text,17f).apply { setTextIsSelectable(true);isSaveEnabled=false })
+                val query=home.search.text.toString()
+                val highlighted=SpannableString(text)
+                var match=if(query.isEmpty())-1 else text.indexOf(query,ignoreCase=true)
+                val firstMatch=match
+                while(match>=0) {
+                    highlighted.setSpan(BackgroundColorSpan(ui.color(R.color.selected)),match,match+query.length,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    match=text.indexOf(query,match+query.length,ignoreCase=true)
+                }
+                val full=ui.text(highlighted,17f).apply { tag="preview-text";setTextIsSelectable(true);isSaveEnabled=false }
+                content.addView(full)
+                full.post {
+                    val scroll=findScroll(page)
+                    scroll?.tag="preview-scroll"
+                    if(firstMatch>=0)full.layout?.let { layout ->
+                        scroll?.scrollTo(0,(full.top+layout.getLineTop(layout.getLineForOffset(firstMatch))-ui.dp(20)).coerceAtLeast(0))
+                    }
+                }
                 footer.addView(ui.button(s(if(settings.returnAfterCopy)R.string.copy_return else R.string.copy),primary=true){copyEntry(id)})
                 footer.addView(ui.button(s(R.string.delete),danger=true){delete(id)}.apply { isEnabled=client.connected() })
                 if(!client.connected())footer.addView(ui.text(s(R.string.connect_mutation),13f,true))
             })
         }
     }
-    private fun help() { helpFromSettings=false;helpSettingsScroll=0;helpScroll=0;showHelp() }
+    private fun help() { helpFromSettings=false;helpSettingsScroll=0;showHelp() }
     private fun settingsHelp() {
-        helpFromSettings=true;helpSettingsScroll=findScroll(page)?.scrollY?:0;helpScroll=0;showHelp()
+        helpFromSettings=true;helpSettingsScroll=findScroll(page)?.scrollY?:0;showHelp()
     }
     private fun showHelp() {
-        val view=pages.help(::backPage,::openWebsite,{client.openShizuku()},{client.connect(true)}) {
+        if(pageKind=="help")helpScroll=findScroll(page)?.scrollY?:helpScroll
+        helpConnected=client.connected()
+        val view=pages.help(::backPage,::openWebsite,{client.openShizuku()},{client.connect(true)},helpConnected,helpTopics) {
             helpScroll=findScroll(page)?.scrollY?:0;showLicenses()
         }
         val scroll=helpScroll
         showPage("help",view);view.post { findScroll(view)?.scrollTo(0,scroll) }
     }
     private fun showLicenses() {
+        if(pageKind=="help")licensesFromSettings=false
+        if(pageKind=="settings") { licensesFromSettings=true;helpSettingsScroll=findScroll(page)?.scrollY?:0 }
         val view=pages.licenses(::backPage)
         val scroll=restoredLicenseScroll;restoredLicenseScroll=0
         showPage("licenses",view);view.post { findScroll(view)?.scrollTo(0,scroll) }
@@ -354,9 +484,16 @@ class MainActivity:Activity() {
         catch (_:ActivityNotFoundException){notifyUser(R.string.browser_missing)}
     }
     private fun diagnostics() {
-        val details=pages.diagnostics(latest,offline,::closePage) {
-            if(putClipboard(s(R.string.diagnostics),pages.report(latest,offline)))notifyUser(R.string.copied)
-        }
+        val details=pages.diagnostics(latest,offline,::closePage,copy={
+            copyText(s(R.string.diagnostics),pages.report(latest,offline)){notifyUser(R.string.copied)}
+        },healthAction={ action ->
+            when(action) {
+                DetailPages.DiagnosticAction.RETRY->refresh()
+                DetailPages.DiagnosticAction.CONNECT->client.connect(true)
+                DetailPages.DiagnosticAction.RESUME->command({it.setPaused(false)})
+                DetailPages.DiagnosticAction.TEST->connectionTest()
+            }
+        })
         diagnosticPage=details;showPage("diagnostics",details.view)
     }
     private fun showMenu(anchor:View) {
@@ -371,7 +508,7 @@ class MainActivity:Activity() {
         option(R.string.diagnostics,action=::diagnostics)
         option(R.string.help_privacy,action=::help)
         box.addView(ui.divider())
-        option(R.string.clear_history,client.connected(),true){confirm(R.string.clear_title,R.string.clear_body,R.string.clear_history,true){command({it.clearHistory()}){notifyUser(R.string.cleared)}}}
+        option(R.string.clear_history,client.connected(),true){confirm(R.string.clear_title,R.string.clear_body,R.string.clear_history,true){commandFor(R.string.port_clear_failed,R.string.port_clear_failed_body,{it.clearHistory()}){notifyUser(R.string.cleared)}}}
         if(!client.connected())box.addView(ui.text(s(R.string.connect_mutation),13f,true).apply { setPadding(ui.dp(12),ui.dp(8),ui.dp(12),ui.dp(8)) })
         popup.contentView=ScrollView(this).apply { addView(box);isVerticalScrollBarEnabled=false }
         val maxHeight=minOf(ui.dp(580),popup.getMaxAvailableHeight(anchor))
@@ -385,7 +522,7 @@ class MainActivity:Activity() {
             ui.paragraph(box,s(R.string.limit_body));box.addView(ui.text(s(R.string.saved_texts),13f,true))
             val field=EditText(this).apply {
                 inputType=InputType.TYPE_CLASS_NUMBER;setText(java.text.NumberFormat.getIntegerInstance().apply { isGroupingUsed=false }.format(latest.getInt("limit",DEFAULT_LIMIT)));selectAll()
-                textSize=18f;setTextColor(ui.ink);background=ui.shape(ui.color(R.color.surface),12,ui.color(R.color.divider))
+                textSize=18f;setTextColor(ui.ink);background=ui.shape(ui.color(R.color.surface),12,ui.muted)
                 setPadding(ui.dp(16),ui.dp(12),ui.dp(16),ui.dp(12));contentDescription=s(R.string.saved_texts)
                 filters=arrayOf(InputFilter.LengthFilter(4))
             }
@@ -395,8 +532,8 @@ class MainActivity:Activity() {
             actions.addView(ui.button(s(R.string.cancel)){dialog.dismiss()})
             actions.addView(ui.button(s(R.string.save),primary=true){
                 val value=field.text.toString().toIntOrNull()
-                if(value==null || value !in MIN_LIMIT..MAX_LIMIT){field.error=s(R.string.limit_invalid);return@button}
-                dialog.dismiss();command({it.setLimit(value)})
+                if(value==null || value !in MIN_LIMIT..MAX_LIMIT){field.error=s(R.string.limit_invalid);field.requestFocus();return@button}
+                dialog.dismiss();commandFor(R.string.port_limit_failed,R.string.port_limit_failed_body,{it.setLimit(value)})
             });box.addView(actions)
         }
     }
@@ -409,15 +546,15 @@ class MainActivity:Activity() {
             }
             radios.setOnCheckedChangeListener { group,id ->
                 val mode=group.findViewById<RadioButton>(id).tag as String
-                if(mode!=settings.appearance){settings.appearance=mode;dialog.dismiss();recreate()}
+                if(mode!=settings.appearance){settings.appearance=mode;reopenAppearance=true;dialog.dismiss();recreate()}
             }
             box.addView(radios);box.addView(ui.space(12));ui.paragraph(box,s(R.string.system_hint))
+            box.addView(ui.button(s(R.string.done)){dialog.dismiss()})
         }
     }
     private fun addTile() {
         sheet(R.string.open_faster) { box,dialog ->
-            box.addView(ImageView(this).apply { setImageResource(R.drawable.ic_clipboard);imageTintList=android.content.res.ColorStateList.valueOf(ui.accent) },LinearLayout.LayoutParams(ui.dp(40),ui.dp(40)))
-            box.addView(ui.space(16));ui.paragraph(box,s(R.string.tile_body))
+            ui.paragraph(box,s(R.string.tile_body))
             box.addView(ui.button(s(R.string.add_tile),primary=true) { dialog.dismiss();requestTile() })
             box.addView(ui.button(s(R.string.not_now)){dialog.dismiss()});ui.paragraph(box,s(R.string.tile_manual))
         }
@@ -435,7 +572,7 @@ class MainActivity:Activity() {
         confirm(R.string.test_title,R.string.test_body,R.string.run_test){
             val nonce="ClipHistory self-test ${UUID.randomUUID()}"
             command({it.armTest(nonce)}) {
-                if(putClipboard(s(R.string.connection_test),nonce)) {
+                copyText(s(R.string.connection_test),nonce) {
                     recorder();main.postDelayed({if(visible)refresh()},10_500)
                 }
             }
@@ -455,6 +592,7 @@ class MainActivity:Activity() {
     }
     private fun showSettings() {
         val created=SettingsPage(ui,pages,settings,client).create(latest,::closePage,{ action ->
+            settingsFocus=action.name
             when(action) {
                 SettingsPage.Action.LIMIT->limitDialog()
                 SettingsPage.Action.DUPLICATES->duplicateDialog()
@@ -468,12 +606,17 @@ class MainActivity:Activity() {
                     }
                 }
                 SettingsPage.Action.TILE_ADD->addTile()
+                SettingsPage.Action.TILE_MODE->tileMode()
                 SettingsPage.Action.APPEARANCE->appearance()
+                SettingsPage.Action.MOTION->motionChoice()
+                SettingsPage.Action.WELCOME_FREQUENCY->welcomeFrequency()
                 SettingsPage.Action.BATTERY->backgroundHelp()
                 SettingsPage.Action.WELCOME->showWelcome()
                 SettingsPage.Action.SUPPORT->support()
                 SettingsPage.Action.GUIDE->settingsHelp()
                 SettingsPage.Action.NOTIFICATIONS->requestRecoveryNotifications()
+                SettingsPage.Action.SOURCE->openWebsite("https://github.com/saroo98/cliphistory-android")
+                SettingsPage.Action.LICENSES->showLicenses()
             }
         },{ issue ->
             if(issue.isNotEmpty()){operationIssue=issue;notifyUser(R.string.preference_failed)}
@@ -481,19 +624,62 @@ class MainActivity:Activity() {
         })
         settingsPage=created;showPage("settings",created.view)
         val scroll=restoredSettingsScroll;restoredSettingsScroll=0
-        created.view.post { findScroll(created.view)?.scrollTo(0,scroll) }
+        created.view.post {
+            created.view.findViewWithTag<View>(settingsFocus)?.requestFocus()
+            findScroll(created.view)?.scrollTo(0,scroll)
+        }
     }
     private fun duplicateDialog() {
         if(!client.connected()){message(R.string.not_connected,R.string.connect_mutation);return}
         sheet(R.string.duplicate_handling) { box,dialog ->
             ui.paragraph(box,s(R.string.duplicates_body))
+            val radios=RadioGroup(this)
             listOf(DuplicateMode.UNIQUE_TEXT to R.string.duplicates_unique,DuplicateMode.CONSECUTIVE_ONLY to R.string.duplicates_consecutive).forEach { (mode,label) ->
-                box.addView(ui.button(s(label),primary=latest.getInt("duplicateMode")==mode.value) {
-                    dialog.dismiss();command({it.setDuplicateMode(mode.value)})
+                radios.addView(RadioButton(this).apply {
+                    id=View.generateViewId();text=s(label);textSize=16f;setTextColor(ui.ink);minimumHeight=ui.dp(52)
+                    tag=mode.value;isChecked=latest.getInt("duplicateMode")==mode.value
                 })
             }
+            var saving=false
+            radios.setOnCheckedChangeListener { group,id ->
+                if(saving)return@setOnCheckedChangeListener
+                val selected=group.findViewById<RadioButton>(id).tag as Int
+                saving=true
+                (0 until radios.childCount).forEach { radios.getChildAt(it).isEnabled=false }
+                client.command({it.setDuplicateMode(selected)}) { response ->
+                    if(!visible || !dialog.isShowing)return@command
+                    if(response.containsKey("duplicateMode"))latest=response
+                    if(!response.getBoolean("ok")) {
+                        operationIssue=response.getString("issue","OPERATION_FAILED")
+                        (0 until radios.childCount).map { radios.getChildAt(it) as RadioButton }.forEach { it.isChecked=it.tag==latest.getInt("duplicateMode") }
+                        notifyUser(R.string.preference_failed)
+                    } else { latest=response;operationIssue="" }
+                    (0 until radios.childCount).forEach { radios.getChildAt(it).isEnabled=true }
+                    saving=false;refresh()
+                }
+            }
+            box.addView(radios);box.addView(ui.button(s(R.string.done)){dialog.dismiss()})
         }
     }
+    private fun choiceSheet(title:Int,labels:List<Int>,selected:Int,changed:(Int)->Unit) {
+        sheet(title) { box,dialog ->
+            val radios=RadioGroup(this)
+            labels.forEachIndexed { index,label ->
+                radios.addView(RadioButton(this).apply {
+                    id=View.generateViewId();tag=index;text=s(label);textSize=16f;setTextColor(ui.ink);minimumHeight=ui.dp(52);isChecked=index==selected
+                })
+            }
+            radios.setOnCheckedChangeListener { group,id ->
+                changed(group.findViewById<RadioButton>(id).tag as Int)
+                dialog.window?.setWindowAnimations(if(ScreenPrivacy.motionEnabled(settings))R.style.SheetMotion else 0)
+                settingsPage?.update?.invoke(latest)
+            }
+            box.addView(radios);box.addView(ui.button(s(R.string.done)){dialog.dismiss()})
+        }
+    }
+    private fun tileMode()=choiceSheet(R.string.html_port_tile_opens,listOf(R.string.quick_copy,R.string.open_full_history),if(settings.tileMode=="quick")0 else 1) { settings.tileMode=if(it==0)"quick" else "history" }
+    private fun motionChoice()=choiceSheet(R.string.html_port_motion_preference,listOf(R.string.motion_system,R.string.html_port_motion_reduced),if(settings.motion)0 else 1) { settings.motion=it==0 }
+    private fun welcomeFrequency()=choiceSheet(R.string.html_port_welcome_frequency,listOf(R.string.welcome_once,R.string.welcome_each,R.string.welcome_off),listOf("once","each","never").indexOf(settings.welcome)) { settings.welcome=listOf("once","each","never")[it] }
     private fun requestRecoveryNotifications() {
         if(checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)!=android.content.pm.PackageManager.PERMISSION_GRANTED)
             requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),72)
@@ -507,10 +693,13 @@ class MainActivity:Activity() {
             val battery=BackgroundSettings(this)
             ui.paragraph(box,s(R.string.background_optional));ui.paragraph(box,battery.status())
             if(client.recoveryMessage.isNotEmpty())ui.paragraph(box,client.recoveryMessage)
-            ui.actionRow(box,s(R.string.open_app_battery)) { d.dismiss();if(!battery.open(packageName))notifyUser(R.string.battery_manual) }
-            ui.actionRow(box,s(R.string.open_shizuku_battery)) { d.dismiss();if(!battery.open("moe.shizuku.privileged.api"))notifyUser(R.string.battery_manual) }
-            ui.actionRow(box,s(R.string.battery_optimization_list)) { d.dismiss();if(!battery.openOptimizationList())notifyUser(R.string.battery_manual) }
-            ui.actionRow(box,s(R.string.recovery_notification)) { d.dismiss();requestRecoveryNotifications() }
+            box.addView(ui.button(s(R.string.open_app_battery),primary=true) { d.dismiss();if(!battery.open(packageName))notifyUser(R.string.battery_manual) })
+            val other=ui.column().apply { visibility=View.GONE }
+            box.addView(ui.button(s(R.string.port_battery_options)) { other.visibility=if(other.visibility==View.GONE)View.VISIBLE else View.GONE })
+            ui.actionRow(other,s(R.string.open_shizuku_battery)) { d.dismiss();if(!battery.open("moe.shizuku.privileged.api"))notifyUser(R.string.battery_manual) }
+            ui.actionRow(other,s(R.string.battery_optimization_list)) { d.dismiss();if(!battery.openOptimizationList())notifyUser(R.string.battery_manual) }
+            ui.actionRow(other,s(R.string.recovery_notification)) { d.dismiss();requestRecoveryNotifications() }
+            box.addView(other)
             box.addView(ui.button(s(R.string.not_now)){d.dismiss()})
         }
         if(suggestion)dialog.setOnDismissListener {
@@ -532,8 +721,8 @@ class MainActivity:Activity() {
     private fun showWelcome() {
         val dialog=sheet(R.string.welcome_title) { box,d ->
             ui.paragraph(box,s(R.string.welcome_body))
-            box.addView(ui.button(s(R.string.welcome_continue),primary=true){settings.welcomeSeen=true;d.dismiss();main.post { maybeShowPrompts() }})
-            box.addView(ui.button(s(R.string.support_project)){settings.welcomeSeen=true;d.dismiss();support()})
+            box.addView(ui.button(s(R.string.port_welcome_setup),primary=true){settings.welcomeSeen=true;d.dismiss();help()})
+            box.addView(ui.button(s(R.string.port_welcome_explore)){settings.welcomeSeen=true;d.dismiss();main.post { maybeShowPrompts() }})
         }
         dialog.setOnDismissListener {
             dialogs.remove(dialog)
@@ -567,7 +756,7 @@ class MainActivity:Activity() {
         if(test=="STORAGE_FAILED")ui.paragraph(box,s(R.string.test_storage_failed))
         if(test=="NO_CALLBACK_RECEIVED")ui.paragraph(box,s(R.string.test_failed_body))
         box.addView(ui.space(16));ui.paragraph(box,s(R.string.test_boundary))
-        box.addView(ui.button(s(R.string.run_connection_test)){dialog.dismiss();connectionTest()}.apply { isEnabled=client.connected() && test!="WAITING" })
+        box.addView(ui.button(s(R.string.run_connection_test),primary=true){dialog.dismiss();connectionTest()}.apply { isEnabled=client.connected() && test!="WAITING" })
         box.addView(ui.button(s(R.string.view_diagnostics)){dialog.dismiss();diagnostics()})
         box.addView(ui.button(s(R.string.done)){dialog.dismiss()})
     }

@@ -24,12 +24,14 @@ class HistoryHome(
     load:()->Unit,
     diagnostics:()->Unit,
     dismissKeyboard:()->Unit,
-    preview:(Long)->Unit
+    preview:(Long)->Unit,
+    copy:(Long)->Unit,
+    options:(DaemonClient.Row)->Unit
 ) {
     val root=ui.column()
     val search=EditText(ui.activity)
     val list=ListView(ui.activity)
-    val adapter=HistoryAdapter(ui) { preview(it.id) }
+    val adapter=HistoryAdapter(ui,{preview(it.id)},copy,options)
     val clear=ui.icon(R.drawable.ic_close,s(R.string.clear_search)) { search.setText("") }
     val results=ui.icon(R.drawable.ic_keyboard_down,s(R.string.show_results),dismissKeyboard)
     val more=ui.button(s(R.string.load_more),action=load)
@@ -46,6 +48,8 @@ class HistoryHome(
     private val bar=LinearLayout(ui.activity)
     private val header=ui.column()
     private var renderedStatus:Triple<RecorderState,Boolean,Boolean>?=null
+    private var keyboardShowing=false
+    private var copyableRows=false
     data class Anchor(val id:Long,val position:Int,val top:Int)
     fun anchor():Anchor {
         val position=list.firstVisiblePosition
@@ -57,10 +61,14 @@ class HistoryHome(
         list.setSelectionFromTop(if(index!=null)index+list.headerViewsCount else anchor.position.coerceIn(0,adapter.count),anchor.top)
     }
     fun keyboard(showing:Boolean) {
+        keyboardShowing=showing
         bar.visibility=if(showing)View.GONE else View.VISIBLE
         header.visibility=if(showing)View.GONE else View.VISIBLE
         results.visibility=if(showing)View.VISIBLE else View.GONE
-        hint.visibility=if(showing || ui.activity.resources.configuration.screenHeightDp<600 || ui.activity.resources.configuration.fontScale>1.3f)View.GONE else View.VISIBLE
+        updateHint()
+    }
+    private fun updateHint() {
+        hint.visibility=if(!copyableRows || keyboardShowing || ui.activity.resources.configuration.screenHeightDp<600 || ui.activity.resources.configuration.fontScale>1.3f)View.GONE else View.VISIBLE
     }
     private fun s(id:Int)=ui.activity.getString(id)
 
@@ -129,8 +137,16 @@ class HistoryHome(
         more.visibility=if(rows.size<page.total)View.VISIBLE else View.GONE;more.isEnabled=true
         empty.visibility=if(rows.isEmpty())View.VISIBLE else View.GONE;progress.visibility=View.GONE;emptyIcon.visibility=View.VISIBLE
         val failed=page.issue.isNotEmpty()
+        copyableRows=rows.isNotEmpty() && !failed;updateHint()
         emptyTitle.text=s(if(failed)R.string.history_failed else if(query.isNotEmpty())R.string.no_matches else R.string.empty_title)
-        emptyBody.text=s(if(failed)R.string.files_preserved else if(query.isNotEmpty())R.string.try_word else R.string.empty_body)
+        emptyBody.text=s(when {
+            failed->R.string.files_preserved
+            query.isNotEmpty()->R.string.try_word
+            state==RecorderState.PAUSED->R.string.port_empty_paused
+            page.offline->R.string.port_empty_offline
+            state in listOf(RecorderState.RECORDING,RecorderState.LISTENING)->R.string.empty_body
+            else->R.string.port_empty_setup
+        })
         emptyIcon.setImageResource(if(failed)R.drawable.ic_warning else if(query.isNotEmpty())R.drawable.ic_search else R.drawable.ic_clipboard)
         retryButton.visibility=if(failed)View.VISIBLE else View.GONE
         diagnosticsButton.visibility=if(failed)View.VISIBLE else View.GONE

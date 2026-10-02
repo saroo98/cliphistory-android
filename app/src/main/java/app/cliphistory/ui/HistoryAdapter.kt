@@ -12,7 +12,7 @@ import android.widget.*
 import app.cliphistory.client.DaemonClient
 import app.cliphistory.R
 
-class HistoryAdapter(private val ui:Ui,private val preview:(DaemonClient.Row)->Unit):BaseAdapter() {
+class HistoryAdapter(private val ui:Ui,private val preview:(DaemonClient.Row)->Unit,private val copy:(Long)->Unit,private val options:(DaemonClient.Row)->Unit):BaseAdapter() {
     private val context get()=ui.activity
     private var rows:List<DaemonClient.Row> = emptyList()
     private var query=""
@@ -30,7 +30,12 @@ class HistoryAdapter(private val ui:Ui,private val preview:(DaemonClient.Row)->U
                 addView(ui.text("",13f,true).apply { setPadding(0,dp(8),0,0) })
             }
             addView(body,LinearLayout.LayoutParams(0,-2,1f))
-            addView(ui.icon(R.drawable.ic_eye,context.getString(R.string.view_full)) {}.apply { isFocusable=false })
+            addView(ui.button(context.getString(R.string.port_view)) {}.apply {
+                setCompoundDrawablesRelativeWithIntrinsicBounds(0,R.drawable.ic_eye,0,0)
+                compoundDrawableTintList=android.content.res.ColorStateList.valueOf(ui.muted)
+                setTextColor(ui.muted);textSize=12f;setPadding(dp(8),dp(4),dp(8),dp(4));isFocusable=true
+                minWidth=dp(48);minimumWidth=dp(48)
+            },LinearLayout.LayoutParams(-2,-2))
         }
         val row=getItem(position)
         val preview=SpannableString(row.preview)
@@ -42,14 +47,23 @@ class HistoryAdapter(private val ui:Ui,private val preview:(DaemonClient.Row)->U
             }
         }
         val body=layout.getChildAt(0) as LinearLayout
+        body.importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
         (body.getChildAt(0) as TextView).text=preview
         val now=System.currentTimeMillis()
         (body.getChildAt(1) as TextView).text=if(now-row.time in 0 until DateUtils.MINUTE_IN_MILLIS)context.getString(R.string.just_now)
             else DateUtils.getRelativeTimeSpanString(row.time,now,DateUtils.MINUTE_IN_MILLIS)
-        layout.getChildAt(1).setOnClickListener { this.preview(row) }
+        val time=(body.getChildAt(1) as TextView).text.toString()
+        layout.getChildAt(1).apply {
+            contentDescription=context.getString(R.string.port_view_entry,row.preview,time)
+            setOnClickListener { this@HistoryAdapter.preview(row) }
+        }
+        layout.contentDescription=context.getString(R.string.port_copy_entry,row.preview,time)
+        layout.isFocusable=true;layout.setOnClickListener { copy(row.id) }
+        layout.setOnLongClickListener { options(row);true }
         layout.accessibilityDelegate=object:View.AccessibilityDelegate() {
             override fun onInitializeAccessibilityNodeInfo(host:View,info:AccessibilityNodeInfo) {
                 super.onInitializeAccessibilityNodeInfo(host,info)
+                info.className=Button::class.java.name
                 info.addAction(AccessibilityNodeInfo.AccessibilityAction(R.id.action_view_text,context.getString(R.string.view_full)))
             }
             override fun performAccessibilityAction(host:View,action:Int,args:android.os.Bundle?):Boolean {

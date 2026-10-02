@@ -139,14 +139,14 @@ class AuditNavigationChecks(private val test:Instrumentation) {
         main { call("entryActions",(field("home") as HistoryHome).adapter.getItem(0)) }
         test.waitForIdleSync()
         main {
-            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single()
+            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
             checkThat(texts(dialog.window!!.decorView).contains(context.getString(R.string.copy_return)),"Action sheet identifies copy-and-return")
             dialog.dismiss();AppSettings(context).returnAfterCopy=false
             call("entryActions",(field("home") as HistoryHome).adapter.getItem(0))
         }
         test.waitForIdleSync()
         main {
-            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single()
+            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
             checkThat(texts(dialog.window!!.decorView).contains(context.getString(R.string.copy)) &&
                 !texts(dialog.window!!.decorView).contains(context.getString(R.string.copy_return)),"Action sheet identifies copy-and-stay")
             click(dialog.window!!.decorView,R.string.copy)

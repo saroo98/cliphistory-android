@@ -1,13 +1,23 @@
 package app.cliphistory
 
 import android.app.Instrumentation
+import android.os.Build
 import android.os.ParcelFileDescriptor
 import android.os.SystemClock
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
+/** Seeding history or changing the clipboard is permitted only on disposable emulators. */
+fun requireDisposableEmulator(test:Instrumentation) {
+    check(BuildConfig.DEBUG && (Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk"))) {
+        "Synthetic history and clipboard fixtures require a disposable emulator"
+    }
+    check(test.targetContext.packageName==BuildConfig.APPLICATION_ID) { "Fixture target does not match the test build" }
+}
+
 /** No test fixture may race the independently running single writer. */
 fun stopRecorderForFixture(test:Instrumentation) {
+    requireDisposableEmulator(test)
     val finished=CountDownLatch(1)
     var confirmed=false
     var issue=""

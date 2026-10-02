@@ -1,6 +1,6 @@
-# Current local build: ClipHistory 1.3.2
+# Current build: ClipHistory 1.3.3
 
-The quick-copy Activity transition and native-dialog lifecycle fix are recorded in [the 1.3.2 verification report](docs/TILE_LAUNCH_FIX.md). Its current build, device results and limits are separate from the historical release evidence below.
+The native UI changes and their actual runtime checks are recorded in [the 1.3.3 port report](docs/HTML_UI_PORT.md). Exact publication-source and reproducibility results are recorded separately in [F-Droid preparation](docs/F_DROID_PUBLICATION.md). The preceding quick-copy transition fix remains in [the 1.3.2 report](docs/TILE_LAUNCH_FIX.md). Historical release evidence below does not qualify the current binary.
 
 # ClipHistory 1.3.0 verification
 

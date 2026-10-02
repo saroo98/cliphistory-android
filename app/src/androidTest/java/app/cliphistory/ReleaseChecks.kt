@@ -159,7 +159,7 @@ class ReleaseChecks(private val test:Instrumentation) {
         capture("regression-layout-results")
         main { call("limitDialog") };SystemClock.sleep(400)
         main {
-            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().last()
+            val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
             val decor=dialog.window!!.decorView
             checkThat(decor.height<=activity.windowManager.currentWindowMetrics.bounds.height(),"Sheet fits current window")
             val handle=views(decor).first { it.contentDescription?.toString()?.startsWith("Close panel")==true }
@@ -168,6 +168,7 @@ class ReleaseChecks(private val test:Instrumentation) {
         main { activity.finish() }
     }
     private fun live() {
+        requireDisposableEmulator(test)
         activity=test.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as MainActivity
         val client=(activity.application as ClipApplication).daemon
         main { client.connect(true) }
@@ -193,7 +194,7 @@ class ReleaseChecks(private val test:Instrumentation) {
         }
         val initial=status()
         checkThat(initial.getInt("uid")==2000 && initial.getBoolean("listening") && initial.getBoolean("storageVerified"),"Shell listener and durable private storage, API ${Build.VERSION.SDK_INT}")
-        // Preserve the phone clipboard as an opaque ClipData object. Never print or inspect its contents.
+        // Keep the disposable emulator's opaque ClipData for fixture cleanup. Never print its contents.
         var original:ClipData?=null
         main { original=activity.getSystemService(ClipboardManager::class.java).primaryClip }
         try {

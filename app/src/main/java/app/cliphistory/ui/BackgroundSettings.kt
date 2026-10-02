@@ -12,9 +12,9 @@ class BackgroundSettings(private val activity:Activity) {
     fun status():String {
         val exempt=activity.getSystemService(PowerManager::class.java).isIgnoringBatteryOptimizations(activity.packageName)
         val restricted=activity.getSystemService(ActivityManager::class.java).isBackgroundRestricted
-        return activity.getString(app.cliphistory.R.string.battery_status,
-            activity.getString(if(exempt)app.cliphistory.R.string.yes else app.cliphistory.R.string.no),
-            activity.getString(if(restricted)app.cliphistory.R.string.yes else app.cliphistory.R.string.no))
+        return activity.getString(app.cliphistory.R.string.port_battery_status,
+            activity.getString(if(exempt)app.cliphistory.R.string.port_battery_off else app.cliphistory.R.string.port_battery_on),
+            activity.getString(if(restricted)app.cliphistory.R.string.port_background_restricted else app.cliphistory.R.string.port_background_allowed))
     }
     /** Undocumented AOSP action is best effort. Only trusted system Settings can handle it. */
     fun open(packageName:String):Boolean {
