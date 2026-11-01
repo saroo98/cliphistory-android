@@ -1,6 +1,6 @@
-# Current local candidate: ClipHistory 1.4.5
+# Current release: ClipHistory 1.4.5
 
-The 1 November 2026 local candidate is **1.4.5/code 15**, minimum API 30. Current checks, artifact identities, device findings and remaining limits are recorded in [1.4.5 qualification](docs/release-1.4.5/FINAL_QUALIFICATION.md). Before publication, freeze a reviewed release commit and repeat exact-commit build and recipe verification. See the [reusable F-Droid guide](docs/F_DROID_ANDROID_GUIDE.md). The published 1.4.4 source and its earlier evidence remain in [the 1.4.4 release record](docs/release-1.4.4/FINAL_RELEASE.md).
+Published on 1 November 2026: **1.4.5/code 15**, minimum API 30, source `329ab008db02a66aae151891b56e2db9d533d9a0`. The [release record](docs/release-1.4.5/FINAL_RELEASE.md) identifies the exact public APK, reproducible builds, final Pixel check and F-Droid status. The [candidate qualification](docs/release-1.4.5/FINAL_QUALIFICATION.md) retains the broader matrix and its distinct artifact hashes. See the [reusable F-Droid guide](docs/F_DROID_ANDROID_GUIDE.md). Earlier evidence remains in [the 1.4.4 release record](docs/release-1.4.4/FINAL_RELEASE.md).
 
 ## Historical local 1.4.1 qualification
 

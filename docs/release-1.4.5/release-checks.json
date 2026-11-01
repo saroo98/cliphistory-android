@@ -1,0 +1,135 @@
+{
+  "checked_at_utc": "2026-11-01T22:13:13.667609+00:00",
+  "version": "1.4.5",
+  "version_code": 15,
+  "tag": "v1.4.5",
+  "source_commit": "329ab008db02a66aae151891b56e2db9d533d9a0",
+  "signed_public_and_installed_apk_sha256": "4f60af8bf952db2d344a7fe939ea8b4f0b8296ee40e733e8859b895e5194bc63",
+  "windows_linux_local_fdroid_and_gitlab_ci_unsigned_sha256": "a91688bb661c2b4ba78d81eb711db5f5081cd96eaafdff7d4a51f0f966a78b06",
+  "certificate_sha256": "ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82",
+  "tested_candidate_difference_only": [
+    "META-INF/version-control-info.textproto"
+  ],
+  "local_fdroid_reference_comparison": "passed",
+  "source_audit": {
+    "passed": 74,
+    "total": 74
+  },
+  "unit_tests": {
+    "passed": 80,
+    "failed": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 24
+  },
+  "phone": {
+    "model": "Pixel 8 Pro",
+    "android": "17",
+    "manager": "thedjchi Shizuku 13.7",
+    "helper_uid": 2000,
+    "helper_replaced": true,
+    "connection_probe": "passed",
+    "observed_count_limit_settings_and_encryption_metadata_preserved": true,
+    "eligible_clipboard_and_pause_state_restored": true
+  },
+  "candidate_matrix": "checks.json",
+  "submission_sha256": "fab33f004e59f74df4f285127de0292425682828536eaa662ee42fe95cf08d98",
+  "gitlab": {
+    "state": "opened",
+    "sha": "c86f77422e02a5de07ca5446c62d7c58b11541ae",
+    "web_url": "https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917",
+    "merge_status": "can_be_merged",
+    "detailed_merge_status": "mergeable",
+    "blocking_discussions_resolved": true,
+    "head_pipeline": {
+      "id": 3015458811,
+      "project_id": 87156869,
+      "sha": "c86f77422e02a5de07ca5446c62d7c58b11541ae",
+      "status": "success",
+      "web_url": "https://gitlab.com/xizirsaro/fdroiddata/-/pipelines/3015458811",
+      "created_at": "2026-11-01T22:02:15.017Z",
+      "finished_at": "2026-11-01T22:08:36.209Z",
+      "yaml_errors": null
+    },
+    "jobs": [
+      {
+        "id": 17648728034,
+        "name": "check apk",
+        "status": "success",
+        "web_url": "https://gitlab.com/xizirsaro/fdroiddata/-/jobs/17648728034",
+        "failure_reason": null
+      },
+      {
+        "id": 17648728033,
+        "name": "check source code",
+        "status": "success",
+        "web_url": "https://gitlab.com/xizirsaro/fdroiddata/-/jobs/17648728033",
+        "failure_reason": null
+      },
+      {
+        "id": 17648728032,
+        "name": "schema validation",
+        "status": "success",
+        "web_url": "https://gitlab.com/xizirsaro/fdroiddata/-/jobs/17648728032",
+        "failure_reason": null
+      },
+      {
+        "id": 17648728031,
+        "name": "tools check scripts",
+        "status": "success",
+        "web_url": "https://gitlab.com/xizirsaro/fdroiddata/-/jobs/17648728031",
+        "failure_reason": null
+      },
+      {
+        "id": 17648728030,
+        "name": "fdroid rewritemeta",
+        "status": "success",
+        "web_url": "https://gitlab.com/xizirsaro/fdroiddata/-/jobs/17648728030",
+        "failure_reason": null
+      },
+      {
+        "id": 17648728029,
+        "name": "fdroid lint",
+        "status": "success",
+        "web_url": "https://gitlab.com/xizirsaro/fdroiddata/-/jobs/17648728029",
+        "failure_reason": null
+      },
+      {
+        "id": 17648728028,
+        "name": "git redirect",
+        "status": "success",
+        "web_url": "https://gitlab.com/xizirsaro/fdroiddata/-/jobs/17648728028",
+        "failure_reason": null
+      },
+      {
+        "id": 17648728027,
+        "name": "checkupdates",
+        "status": "success",
+        "web_url": "https://gitlab.com/xizirsaro/fdroiddata/-/jobs/17648728027",
+        "failure_reason": null
+      },
+      {
+        "id": 17648728026,
+        "name": "fdroid build",
+        "status": "success",
+        "web_url": "https://gitlab.com/xizirsaro/fdroiddata/-/jobs/17648728026",
+        "failure_reason": null
+      }
+    ]
+  },
+  "report_review": {
+    "apk_job_info": 8,
+    "apk_job_minor_r8": 1,
+    "local_fastlane_info": 1,
+    "mr_reports_view": "No scanning jobs configured",
+    "raw_ci_source_report": "CDN download blocked by Chrome; not retrieved",
+    "reports_checklist": "open"
+  },
+  "remaining_limits": [
+    "HyperOS 3 exact-device retest",
+    "Official Shizuku 13.6 background Binder delivery on Android 17",
+    "Shevery 14.6.1 fresh approval on Android 17",
+    "Maintainer acceptance and catalogue publication"
+  ]
+}

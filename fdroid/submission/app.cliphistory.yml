@@ -15,9 +15,9 @@ Binaries:
   https://github.com/saroo98/cliphistory-android/releases/download/v%v/ClipHistory-%v.apk
 
 Builds:
-  - versionName: 1.4.4
-    versionCode: 14
-    commit: f240f9b39ba8425747d4180e7b6932f09717b817
+  - versionName: 1.4.5
+    versionCode: 15
+    commit: 329ab008db02a66aae151891b56e2db9d533d9a0
     subdir: app
     gradle:
       - yes
@@ -31,5 +31,5 @@ MaintainerNotes: |-
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 1.4.4
-CurrentVersionCode: 14
+CurrentVersion: 1.4.5
+CurrentVersionCode: 15

@@ -50,6 +50,13 @@ Builds:
     gradle:
       - yes
 
+  - versionName: 1.4.5
+    versionCode: 15
+    commit: 329ab008db02a66aae151891b56e2db9d533d9a0
+    subdir: app
+    gradle:
+      - yes
+
 AllowedAPKSigningKeys: ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82
 
 MaintainerNotes: |-
@@ -59,5 +66,5 @@ MaintainerNotes: |-
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 1.4.4
-CurrentVersionCode: 14
+CurrentVersion: 1.4.5
+CurrentVersionCode: 15

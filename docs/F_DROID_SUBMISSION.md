@@ -2,9 +2,9 @@
 
 Local state checked 1 November 2026. Follow the [Quick Start Guide](https://f-droid.org/en/docs/Submitting_to_F-Droid_Quick_Start_Guide/), [Inclusion Policy](https://f-droid.org/en/docs/Inclusion_Policy/) and [contribution instructions](https://gitlab.com/fdroid/fdroiddata/-/blob/master/CONTRIBUTING.md). The reusable engineering and publication workflow is in [F_DROID_ANDROID_GUIDE.md](F_DROID_ANDROID_GUIDE.md).
 
-Reuse [MR !50917](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917). The local submission recipe currently pins published **1.4.4/code 14**, source `f240f9b39ba8425747d4180e7b6932f09717b817`. The unpublished **1.4.5/code 15** candidate has [separate qualification](release-1.4.5/FINAL_QUALIFICATION.md). Do not relabel the older public APK, recipe or pipeline as qualification of 1.4.5. Read the live MR before making any external status claim.
+Reuse [MR !50917](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917). The local and submitted recipes pin published **1.4.5/code 15**, source `329ab008db02a66aae151891b56e2db9d533d9a0`. Its [release record](release-1.4.5/FINAL_RELEASE.md) identifies exact-commit reproduction, the public reference, the final Pixel check and CI status. The [candidate qualification](release-1.4.5/FINAL_QUALIFICATION.md) retains its distinct hashes and wider matrix. Read the live MR before making any external status claim.
 
-## Current candidate
+## Current release
 
 - `app.cliphistory`, Android 11/API 30 minimum, native Android Views.
 - Public MIT source and issue tracker: https://github.com/saroo98/cliphistory-android. Artwork provenance and runtime dependency notices are included.
@@ -15,7 +15,7 @@ Reuse [MR !50917](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917). 
 
 ## Build and submission gates
 
-AGP 9.1.1, Gradle 9.3.1, JDK 17, platform android-37.0, Build Tools 36.0.0. No NDK, build account or API key. Original-key reproduction uses `Binaries` and `AllowedAPKSigningKeys`. The current candidate source and APK scans use no custom exclusions.
+AGP 9.1.1, Gradle 9.3.1, JDK 17, platform android-37.0, Build Tools 36.0.0. No NDK, build account or API key. Original-key reproduction uses `Binaries` and `AllowedAPKSigningKeys`. Current source and APK scans use no custom exclusions.
 
 1. Close confirmed app defects and maintain the qualification register. Retain reproducible upstream limitations and exact hardware gaps. Never replace a reported HyperOS 3 retest with a claim based on a stock emulator or different firmware.
 2. With release authorization, freeze reviewed source and store materials in an immutable release commit. Rebuild from that exact commit on Windows and independently on Linux. Compare unsigned bytes, alignment, original certificate and exact signature reproduction. A working-tree build is preparation, not this release gate.
@@ -26,4 +26,4 @@ AGP 9.1.1, Gradle 9.3.1, JDK 17, platform android-37.0, Build Tools 36.0.0. No N
 7. Inspect the actual latest CI jobs and reports. A jobless pipeline is not a pass. If account access prevents the run, ask a maintainer to run it; never change billing or provide identity documents automatically. Historic verification notices do not establish the current account state.
 8. After merge, check the production build, signing and index. Confirm the app/version appears in the catalogue. Maintainers decide inclusion; a prepared APK, open MR or passing local build is not publication.
 
-The current local APK and tests are recorded in [1.4.5 qualification](release-1.4.5/FINAL_QUALIFICATION.md). [Publication history](F_DROID_PUBLICATION.md) and [the 1.4.4 release](release-1.4.4/FINAL_RELEASE.md) retain earlier evidence without implying a new pass.
+The current public APK and tests are recorded in [1.4.5 release verification](release-1.4.5/FINAL_RELEASE.md). [Publication history](F_DROID_PUBLICATION.md) and [the 1.4.4 release](release-1.4.4/FINAL_RELEASE.md) retain earlier evidence without implying a new pass.
