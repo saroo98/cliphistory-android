@@ -12,6 +12,11 @@ import java.security.MessageDigest;
 public class SyntheticClipboardActivity extends Activity {
     public static final String ACTION="app.cliphistory.test.WRITE_SYNTHETIC";
     public static final String READ_HASH="app.cliphistory.test.READ_HASH";
+    public static final String CHECKPOINT="app.cliphistory.test.CHECKPOINT";
+    public static final String RESTORE="app.cliphistory.test.RESTORE";
+    public static final String READ_SYNTHETIC_STATE="app.cliphistory.test.READ_SYNTHETIC_STATE";
+    private static ClipData checkpoint;
+    private static boolean checkpointReady;
     private boolean copied;
     private TextView message;
     private final BroadcastReceiver writer=new BroadcastReceiver() {
@@ -29,8 +34,37 @@ public class SyntheticClipboardActivity extends Activity {
     public void onWindowFocusChanged(boolean focused) { super.onWindowFocusChanged(focused);if(focused)write(); }
     private void write() {
         String action=getIntent().getAction();
-        if(copied || !hasWindowFocus() || (!ACTION.equals(action) && !READ_HASH.equals(action)))return;
+        if(copied || !hasWindowFocus() || (!ACTION.equals(action) && !READ_HASH.equals(action) && !CHECKPOINT.equals(action) && !RESTORE.equals(action) && !READ_SYNTHETIC_STATE.equals(action)))return;
         copied=true;
+        if(READ_SYNTHETIC_STATE.equals(action)) {
+            ClipData current=getSystemService(ClipboardManager.class).getPrimaryClip();
+            boolean fixture=current!=null && current.getItemCount()==1 && "Synthetic_private".equals(String.valueOf(current.getItemAt(0).getText()));
+            boolean marked=fixture && current.getDescription().getExtras()!=null && current.getDescription().getExtras().getBoolean("android.content.extra.IS_SENSITIVE",false);
+            message.setText("Synthetic clipboard state: fixture="+fixture+", marked="+marked);return;
+        }
+        if(CHECKPOINT.equals(action)) {
+            if(checkpointReady) { message.setText("Clipboard checkpoint already held");return; }
+            ClipData current=getSystemService(ClipboardManager.class).getPrimaryClip();
+            if(current!=null && (current.getItemCount()!=1 || current.getItemAt(0).getText()==null ||
+                current.getItemAt(0).getUri()!=null || current.getItemAt(0).getIntent()!=null ||
+                (current.getDescription().getExtras()!=null && current.getDescription().getExtras().getBoolean("android.content.extra.IS_SENSITIVE",false)))) {
+                message.setText("Clipboard checkpoint refused");return;
+            }
+            // In this separate foreground process only. Never write the user's value to disk or output.
+            checkpoint=current==null ? null : new ClipData(current);checkpointReady=true;
+            message.setText("Clipboard checkpoint ready");return;
+        }
+        if(RESTORE.equals(action)) {
+            if(!checkpointReady) { message.setText("Clipboard checkpoint unavailable");return; }
+            ClipboardManager manager=getSystemService(ClipboardManager.class);
+            if(checkpoint==null)manager.clearPrimaryClip();else manager.setPrimaryClip(checkpoint);
+            ClipData restored=manager.getPrimaryClip();
+            boolean equal=checkpoint==null ? restored==null : restored!=null &&
+                java.util.Objects.equals(checkpoint.getItemAt(0).getText().toString(),restored.getItemAt(0).getText().toString()) &&
+                java.util.Objects.equals(checkpoint.getItemAt(0).getHtmlText(),restored.getItemAt(0).getHtmlText());
+            if(equal) { checkpoint=null;checkpointReady=false; }
+            message.setText(equal ? "Clipboard checkpoint restored" : "Clipboard checkpoint restore failed");return;
+        }
         if(READ_HASH.equals(action)) {
             // Foreground test-only verification: do not alter or display clipboard text.
             ClipData current=getSystemService(ClipboardManager.class).getPrimaryClip();

@@ -36,4 +36,17 @@ class RecoveryPolicyTest {
         assertTrue(isNewUserStop(30, true, 20, 0,null))
         assertTrue(isNewUserStop(30, true, 20, 0,"unrecognized OEM remove task exit"))
     }
+    @Test fun verifiedPackageReplacementDoesNotBecomeAnOwnerStop() {
+        for (pkg in listOf("app.cliphistory","app.cliphistory.validation")) {
+            val replacement="stop $pkg due to installPackageLI"
+            assertFalse(isDeliberateUserStop(true,replacement,pkg))
+            assertFalse(isNewUserStop(30,true,20,0,replacement,pkg))
+            assertTrue(isDeliberateUserStop(true,"stop $pkg due to from pid 1234",pkg))
+            assertTrue(isDeliberateUserStop(true,"[stop app] fully stop app by user request",pkg))
+            assertTrue(isDeliberateUserStop(true,null,pkg))
+            assertTrue(isDeliberateUserStop(true,"stop other.package due to installPackageLI",pkg))
+            assertTrue(isDeliberateUserStop(true,replacement+" unknown OEM suffix",pkg))
+        }
+        assertTrue(isDeliberateUserStop(true,"stop app.cliphistory due to installPackageLI"))
+    }
 }

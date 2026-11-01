@@ -1,6 +1,6 @@
 # The reusable guide to publishing an Android app on F-Droid
 
-Research checked: **31 October 2026**. This guide is for the **official F-Droid main repository**, also called `f-droid.org` or the main repo. It can be copied into any Android project. Rules, tools and review practices change, so check the linked official documents again before each submission.
+Research checked: **1 November 2026**. This guide is for the **official F-Droid main repository**, also called `f-droid.org` or the main repo. It can be copied into any Android project. Rules, tools and review practices change, so check the linked official documents again before each submission.
 
 The main idea is simple: **F-Droid reviews the app and normally builds its APK from public source.** Uploading an APK, making an F-Droid-compatible repository, opening a request, passing CI, having a merge request merged and appearing in the public catalogue are different things.
 
@@ -19,6 +19,25 @@ A separate F-Droid-compatible repository can distribute apps under its own rules
 **A useful distinction:** policy requirements and the current new-app merge-request checklist are not identical. Some practices below are strongly recommended rather than universal rules. No guide can guarantee acceptance: the reviewers apply the current policy to the actual app.
 
 ## 1. Understand the parts
+
+### Start with comparable apps and an evidence register
+
+This is an engineering workflow, not an extra F-Droid policy. Apply it before implementation and repeat the relevant parts before each release, especially after a platform, permission, dependency or distribution change.
+
+1. Identify the product's actual dependencies and boundaries: OS APIs, external apps, services, file formats, permissions, signing identity, supported devices and profiles. For each boundary, list the assumption that could fail. A package name, one device or one happy-path test is not a compatibility contract.
+2. Inspect two or three maintained comparable apps. Read their setup and troubleshooting guides, relevant integration source, recent issues and release notes. Prefer a comparable F-Droid recipe when one exists. Follow primary sources; verify claims from forums against code or a reproduction. Record the URL, date and relevant revision. If no useful analogue exists, record that instead of inventing one.
+3. Convert useful findings into explicit decisions: adopt a small established pattern, test a failure mode, document a limitation, or reject an unrelated feature with a reason. Do not copy code without satisfying its licence. Other apps' features and permissions are not a mandatory feature list.
+4. Review forks, renamed packages, companion apps and alternate distribution variants for each external integration. Separate protocol/API compatibility, manager discovery, fresh authorization, lifecycle and actual operations. Test the F-Droid variant when it differs; an upstream APK is not interchangeable evidence.
+5. Keep one short register in the source repository. Each row needs: user impact, source or reproduction, affected versions, decision or fix, exact validation, result and remaining limitation. Distinguish confirmed defect, upstream defect, intentional boundary, untested risk and passed check. Give external blockers a concrete retest procedure.
+6. Turn every confirmed product regression into a focused automated or repeatable manual check. Reproduce the failure first, fix its cause, then repeat the same scenario on the changed build. Never mark an intermittently passing failure fixed without diagnosing it.
+
+Example register format:
+
+| Risk / reported failure | Evidence and affected build | Decision / change | Test and exact artifact | Result / remaining gap |
+| --- | --- | --- | --- | --- |
+| External manager uses a different package | Link to source or issue; versions | Detect the live API; offer an explicit manager choice | Fresh authorization and actual operation; APK SHA-256 and manager variant | Passed / failed / blocked, with scope |
+
+For clipboard apps, [Octoclip's Shizuku setup](https://docs.octoclip.app/features/source/background-monitoring/android/shizuku) is useful for external-copy and recovery scenarios. [Easy Clipboard](https://github.com/Qutaiba-Khader/easy-clipboard) illustrates alternative capture mechanisms, whose extra permissions and interaction costs need a product decision. [Install with Options](https://github.com/zacharee/InstallWithOptions/blob/main/app/src/main/java/dev/zwander/installwithoptions/util/ShizukuUtils.kt) illustrates checking the running service before manager discovery. These examples motivate tests; they do not prove your app works or require adopting their architecture.
 
 | Term | Meaning |
 | --- | --- |
@@ -213,6 +232,54 @@ At minimum, verify the actual release flavour, not only a debug build:
 - Device/Android versions and ABIs relevant to the app. Use a real device when hardware, background restrictions or manufacturer behaviour matters.
 
 Test data migration, backup/restore, background services, account sign-in, native libraries, large-screen layouts and network failure **when those features exist**. Do not invent a large test matrix for an app that does not need it. Note what you did not test.
+
+### Build a bounded, risk-based qualification matrix
+
+Use the register above to select tests. Record the app ID, version code, source revision or uncommitted candidate status, APK and test-APK hashes, installation channel, device model, full OS build, ABI, dependency version/mode, initial state, command or steps, duration and result. A test count without its scope is not sufficient evidence.
+
+| Area | Applicable checks |
+| --- | --- |
+| Installation and updates | Exact signed release fresh install; supported minimum SDK; same-signer update from the last public version preserving synthetic data/settings; intended behavior below minimum SDK. For persistent apps, update once with recording active and once after an intentional stop. Cover older supported OS boundaries, not only the newest phone. Never uninstall a personal copy just to bypass a signer mismatch. |
+| Integrations | Missing/stopped/old service, different package, multiple installed managers, required companion absent/present, fresh grant, denial, revocation, service/app update and restart. Exercise the actual capability, not only a green connection indicator. |
+| Android boundaries | Minimum and latest supported stable OS plus versions where permission, lifecycle, clipboard, tile or storage APIs changed. Treat previews separately. Use stock emulators for platform coverage and physical OEM hardware for OEM claims. |
+| Background work | Screen off, battery saver, Doze, app/process/helper death, task dismissal versus explicit force-stop, reboot and first unlock, recovery enabled/disabled. Record whether a service had to be restarted manually. Never promise recovery from an explicit force-stop against Android's rules. |
+| Sensitive data | Defaults, consent, marked/unmarked input, timeout while visible/background/locked, reboot, duplicate copies, undo, setting changes, screenshots/Recents, backup rules, corruption and key loss. Explain what expiry deletes and what it does not. Use only synthetic secrets. |
+| Functional boundaries | Empty/large/Unicode/RTL/multiline input, unsupported content, duplicate policy, history capacity, search, deletion/Undo, source-app auto-clear, external-copy/paste, rapid input and meaningful overload reporting. |
+| UX and accessibility | Light/dark/system theme, large fonts, small and large screens, portrait/landscape, TalkBack spoken navigation and actions, keyboard focus, contrast, touch targets, reduced motion, close/back/cancel and permission-denied states. An accessibility-tree assertion does not replace a TalkBack listening check. |
+| Performance | Cold and warm launch, first use after idle, repeated tile/panel open-close, long history and rapid copies. Record observed latency and dropped frames on a named device; do not promise zero delay on every phone. |
+| Distribution | Exact release manifest and permissions, no debug hooks, dependency/licence audit, source and APK scans, local reproducibility where used, recipe build from immutable public source, current CI, clean-device F-Droid installation once published. |
+
+For persistent background apps, include a bounded screen-off/Doze run before release and a longer natural-use observation when feasible. Record exact duration and power state. A forced-idle emulator run does not establish overnight OEM battery reliability. Never fabricate a multi-day result during a short session.
+
+When lowering the minimum Android version, repeat upgrade and stop/recovery tests on the newly supported versions. A fresh-install pass does not cover their older process-exit semantics. For example, Android's [ApplicationExitInfo documentation](https://developer.android.com/reference/android/app/ApplicationExitInfo#REASON_PACKAGE_UPDATED) explains that before Android 14 an update could be reported as `REASON_USER_REQUESTED`. Preserve real user stops and unknown cases; do not broadly disable stop protection to make update recovery pass.
+
+For an independent helper that can survive an app replacement, verify that the helper itself uses the candidate code. An installed APK hash alone cannot prove that an older running process was replaced. A same-version development reinstall may retain a helper whose lifecycle is keyed to the version code; restart it through the app's supported controls before the final check. Preserve the user's history, pause state and recovery choices.
+
+Run narrow checks while fixing a defect. Run the affected regression matrix and release gates once the candidate is stable. Serialize operations that share a device, clipboard, service, build output or settings; parallelize independent devices only. Stop a failed suite, keep its logs and earlier passing evidence, diagnose, then resume. After two similar failed attempts reconsider the fixture or hypothesis; do not keep blindly retrying until it passes.
+
+Verify the test environment before attributing a failure to the app. A boot-time System UI non-response dialog can take focus before the app starts; a legitimate onboarding sheet can hide correctly saved content. Preserve the first failure's logcat, crash buffer, focused window, activities and process-exit records in UTF-8. Compare timestamps and inspect the actual UI. Handle only observed setup prompts, and record any environmental recovery before resuming. Never suppress system errors globally or weaken the functional assertion. Use one UI-automation owner per device, and run emulators sequentially when host resources are constrained.
+
+### Release decision
+
+Release-blocking defects include data loss, unauthorized access, unreadable existing data, crashes or failure of the documented core workflow on a supported configuration, incompatible signing, proprietary dependencies contrary to policy, and failed required build/verification checks. Fix and retest them before publication. For inaccessible hardware or an upstream bug, narrow claims, document the limitation and workaround, and make an explicit release decision; do not tick the test as passed. A reviewer-requested retest remains open until accepted by that reviewer. A clean Pixel test cannot close a HyperOS-specific report.
+
+Freeze the candidate before final checks. Any later code/resource change invalidates the affected APK results. Rebuild, update hashes and rerun the relevant checks. Keep the tested local candidate, tagged public source, published APK, F-Droid recipe, CI revision and catalogue version distinct. Never replace an already published APK or move its tag silently.
+
+### If the app uses Shizuku or a compatible fork
+
+Treat the live service and its capabilities as the source of truth. A manager may have a different package name, or no launcher at the original Shizuku package. Use the documented Shizuku API and provider, wait for the Binder, then check the API version, user approval and the privilege identity required by the feature. Do not reject a running service solely because the original manager package is absent. A list of known packages may help open a manager, but it cannot identify every fork or prove which one supplied a Binder. When multiple known managers are installed, offer an explicit choice for manager and battery shortcuts rather than guessing the active service. For unknown managers, explain how to open them manually. Do not enumerate every installed app or request broad package visibility just for this shortcut.
+
+For a real-world example, [Install with Options checks the running Binder](https://github.com/zacharee/InstallWithOptions/blob/main/app/src/main/java/dev/zwander/installwithoptions/util/ShizukuUtils.kt). [Mihon had a reported fork-detection failure](https://github.com/mihonapp/mihon/issues/3575), illustrating why installation checks alone need testing. Neither example establishes compatibility with every fork.
+
+Test at least the original manager and relevant forks on disposable devices or emulators. Record the exact app and manager versions, Android version, activation mode and build variant. Exercise a fresh install, a running service with permission not yet granted, denial and recovery, a stopped service, an actual privileged operation, service restart and an update that preserves data. Where the app uses a Shizuku UserService, test that service too. Use synthetic data and avoid changing a personal phone's existing manager or clipboard without understanding the effects.
+
+When switching managers, stop the previous service through its own controls and confirm which service is actually running. A fork's native watchdog may restart a killed process even after its manager Activity is closed. Do not attribute a result to the newly opened manager while another service still supplies the Binder. Use a clean disposable reboot when necessary, start only the intended service, and record its provenance. Preserve failed setup logs and collect the crash buffer before shutting down a failed test device.
+
+Check service restart while the client is already running in the background as well as after opening it again. These paths can use different manager-side discovery mechanisms. A foreground connection does not prove automatic background reconnection. If an OS update breaks the manager's discovery or approval UI, preserve the reproduction, identify the affected manager version, test a user-controlled workaround or compatible release, and record the upstream limitation. Do not bypass authorization or add continuous polling to conceal it.
+
+Compatibility is not automatic for every fork or operating mode. For example, [Shizako](https://github.com/cr1437/Shizako) uses a different application ID, while [Porter](https://porter.darken.eu/compatibility) can provide Shizuku compatibility through a companion app. Porter's [direct Shizuku bridge](https://porter.darken.eu/developers) does not implement upstream UserServices, so an app that depends on them needs a supported alternative or the compatibility companion. [Shevery](https://github.com/HmnDev-Tech/shevery/tree/14.6.1/shevery-api) has a separate native permission; test that the user can approve it and that the required operations work. If a manager's approval prompt does not appear, test its manual app-authorization screen instead of bypassing the user’s consent. If it fails to recognize an installed or updated client, also test restarting its service. Check each fork's current documentation and test the actual setup. Do not claim support for untested forks, root, device-owner modes or Android versions.
+
+For F-Droid, test the **F-Droid build variant** of both the app and any relevant separate manager when it differs from the upstream release. Record any unavailable artifacts or hardware as untested; a successful source review or GitHub-build test does not establish that the F-Droid variant works. Document the external service requirement and its setup in the listing and app help.
 
 If the app or any shipped dependency includes native libraries, check ABI coverage and Android's [16 KB page-size support](https://developer.android.com/guide/practices/page-sizes) for applicable devices.
 
@@ -466,6 +533,9 @@ Each link below goes to the actual F-Droid catalogue, its public upstream and it
 
 ### Before submission
 
+- [ ] Comparable apps, relevant integration source and known issues were reviewed; decisions and rejected alternatives are recorded.
+- [ ] A risk/evidence register covers dependency variants, actual user workflows, failure/recovery states and platform boundaries. Every result names its exact tested artifact and environment.
+- [ ] Confirmed release-blocking defects are fixed and retested; unexplained flakes, external defects and inaccessible-device tests remain explicitly identified.
 - [ ] The real source is public, current and buildable; the full licence, attribution and asset rights are clear.
 - [ ] The app is useful, maintained, functional and meets the current quality and development-history guidance, or an applicable exception is explained.
 - [ ] Application ID and branding are legitimate; fork changes and author non-opposition are documented where applicable.
@@ -473,6 +543,7 @@ Each link below goes to the actual F-Droid catalogue, its public upstream and it
 - [ ] Network behaviour, permissions, external requirements, executable downloads and Anti-Features are accurately described.
 - [ ] Signing is chosen deliberately; the exact release is tagged and the full source commit is known.
 - [ ] The release flavour has been tested, including a data-preserving upgrade where applicable.
+- [ ] If the app uses Shizuku, the required service capabilities, compatible forks, companion requirements and tested build variants are documented; untested combinations are identified.
 - [ ] `en-US` summary and full description are upstream; icon, screenshots and version-code changelog are prepared.
 - [ ] The recipe uses the correct ID, source, licence, version, flavour, full commit and update settings. Any upstream signing fingerprint and binary URL are real.
 - [ ] Available lint, scan, build, CI and reproducibility checks were performed or their exact blockers are recorded.

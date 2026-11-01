@@ -2,11 +2,12 @@ package app.cliphistory
 
 import android.app.Instrumentation
 import android.os.SystemClock
+import android.os.Bundle
 import android.view.accessibility.AccessibilityNodeInfo
 import org.json.JSONObject
 
-/** Read only known UI metadata. Never export history text, screenshots or clipboard data. */
-class PhoneObservationChecks(private val test:Instrumentation) {
+/** Export known metadata only. Explicit pause arguments also operate the native pause control. */
+class PhoneObservationChecks(private val test:Instrumentation,private val arguments:Bundle=Bundle()) {
     private val packageName="app.cliphistory"
     private fun nodes(root:AccessibilityNodeInfo?):List<AccessibilityNodeInfo> = if(root==null)emptyList()
         else listOf(root)+(0 until root.childCount).flatMap { nodes(root.getChild(it)) }
@@ -34,6 +35,17 @@ class PhoneObservationChecks(private val test:Instrumentation) {
         click(home,"More options")
         click(waitFor { it.any { node -> node.text?.toString()=="Settings" } },"Settings")
         waitFor { it.any { node -> node.text?.toString()=="Automatic recovery" } }
+        arguments.getString("pause")?.let { requested ->
+            check(requested in setOf("true","false"))
+            val desired=requested=="true"
+            val before=current().single { it.className?.toString()=="android.widget.Switch" && it.text?.toString()=="Pause recording" }
+            check(before.isEnabled) { "Recorder must be connected before changing pause" }
+            val original=before.isChecked
+            if(original!=desired)click(current(),"Pause recording")
+            waitFor { it.any { node -> node.text?.toString()=="Pause recording" && node.isEnabled && node.isChecked==desired } }
+            shell("input keyevent KEYCODE_BACK")
+            return "PRODUCTION_PAUSE ${JSONObject().put("before",original).put("after",desired)}\nPASS Production pause acknowledged without reading or deleting history.\n"
+        }
         val controls=JSONObject()
         val labels=setOf("Pause recording","Automatic recovery","Resume after reboot","Suggest background setup once","Return after copying","Quick Settings tile enabled","Allow screenshots","Hide history in Recents","Capture sensitive text","Auto-delete sensitive text")
         for(index in 0..7) {

@@ -10,7 +10,7 @@
     <string name="recovery_channel">Background recovery</string>
     <string name="recovery_channel_body">Status and controls for optional recorder recovery. No saved text is shown.</string>
     <string name="recovery_connected">Recovery enabled · Recorder connected</string>
-    <string name="recovery_waiting">Recovery enabled · Waiting for Shizuku</string>
+    <string name="recovery_waiting">Recovery enabled · Waiting for service</string>
     <string name="duplicate_handling">Duplicate handling</string>
     <string name="duplicates_unique">One entry per exact text</string>
     <string name="duplicates_consecutive">Skip only consecutive repeats</string>
@@ -18,13 +18,13 @@
     <string name="automatic_recovery">Automatic recovery</string>
     <string name="automatic_recovery_body">Reconnect after supported interruptions. Turning this off leaves the current recorder running.</string>
     <string name="resume_after_boot">Resume after reboot</string>
-    <string name="resume_after_boot_body">Prepare recovery after unlocking. Start non-root Shizuku again after every reboot.</string>
+    <string name="resume_after_boot_body">Prepare recovery after unlocking. Start your service again after reboot if needed.</string>
     <string name="stop_recorder_body">Stop capture and automatic resumption until you choose Start recorder or Connect. Saved text stays on this device.</string>
     <string name="background_reliability">Background reliability</string>
     <string name="background_optional">Your phone may limit background work. For better reliability, allow background usage and choose Unrestricted if your phone offers it. This is optional and may increase battery use.</string>
     <string name="battery_status">Battery optimization exemption: %1$s\nApp background restriction: %2$s\nManufacturer battery controls may have additional restrictions.</string>
     <string name="open_app_battery">Open app battery settings</string>
-    <string name="open_shizuku_battery">Shizuku battery settings</string>
+    <string name="open_shizuku_battery">Service app battery settings</string>
     <string name="battery_optimization_list">Battery optimization list</string>
     <string name="battery_manual">Open Android Settings → Apps → the app → Battery. Allow background usage or choose Unrestricted if offered.</string>
     <string name="recovery_notification">Recovery notification</string>
@@ -53,7 +53,7 @@
     <string name="welcome_off">Never</string>
     <string name="show_welcome">Show welcome now</string>
     <string name="welcome_title">Your clipboard, on your device</string>
-    <string name="welcome_body">Free, open source, and local. Saved text stays on your device.\n\nStart Shizuku and connect the recorder, then copy text in another app. Tap a saved entry here to copy it back. The setup guide explains the steps.\n\nFeedback or a GitHub star is always optional.</string>
+    <string name="welcome_body">Free, open source, and local. Saved text stays on your device.\n\nStart Shizuku or a compatible service and connect the recorder, then copy text in another app. Tap a saved entry here to copy it back. The setup guide explains the steps.\n\nFeedback or a GitHub star is always optional.</string>
     <string name="welcome_continue">Continue</string>
     <string name="support_project">Support the project</string>
     <string name="support_optional">Feedback, stars, and sharing are entirely optional. No payment or rating is required.</string>
@@ -73,6 +73,6 @@
     <string name="quick_copy_failed">Copy was not allowed. Tap a saved text to retry, or close this panel.</string>
     <string name="quick_retry">Retry</string>
     <string name="quick_close">Close quick copy</string>
-    <string name="setup_background">6. Leave Automatic recovery and Resume after reboot enabled if desired. In Background reliability, optionally allow background usage for both ClipHistory and Shizuku.</string>
-    <string name="setup_reboot">7. After every reboot, unlock the phone and start Shizuku again. ClipHistory reconnects when recovery is permitted. If recording remains stopped, open ClipHistory and tap Connect. Copies made before recording resumes cannot be recovered.</string>
+    <string name="setup_background">6. Leave Automatic recovery and Resume after reboot enabled if desired. In Background reliability, optionally allow background usage for ClipHistory and your service app.</string>
+    <string name="setup_reboot">7. After a reboot, unlock the phone and start your service again if needed. ClipHistory reconnects when recovery is permitted. If recording remains stopped, open ClipHistory and tap Connect. Copies made before recording resumes cannot be recovered.</string>
 </resources>

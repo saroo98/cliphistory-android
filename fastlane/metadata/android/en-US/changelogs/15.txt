@@ -1,0 +1,1 @@
+Recognize compatible Shizuku services with different package names. Choose the service app when several are installed, including for battery settings. Improve approval guidance and clarify sensitive-text limits. Add native Shevery access support. Fix recording recovery after APK updates on older Android versions.

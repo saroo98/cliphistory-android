@@ -23,7 +23,7 @@ class OwnerStopGuard(private val context:Context,private val uid:Int) {
             } else {
                 val exits=context.getSystemService(ActivityManager::class.java)
                     .getHistoricalProcessExitReasons(context.packageName,0,16)
-                val stopped=exits.any { isDeliberateUserStop(it.reason==ApplicationExitInfo.REASON_USER_REQUESTED,it.description) && it.timestamp>startedAt }
+                val stopped=exits.any { isDeliberateUserStop(it.reason==ApplicationExitInfo.REASON_USER_REQUESTED,it.description,context.packageName) && it.timestamp>startedAt }
                 issue=if(stopped)"OWNER_STOPPED" else ""
                 !stopped
             }

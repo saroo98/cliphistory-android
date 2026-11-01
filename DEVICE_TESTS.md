@@ -4,6 +4,19 @@
 
 The 1.4.4 candidate has focused emulator and remote physical-device evidence in [release qualification](docs/release-1.4.4/RELEASE.md). Earlier tests are documented separately for [1.4.3](docs/release-1.4.3/RELEASE.md) and [1.4.2](docs/release-1.4.2/RELEASE.md); their results do not by themselves qualify the newer APK.
 
+## Earlier 1.4.5 fork candidates
+
+The following checks preceded the latest manager chooser and privacy descriptions. They are retained as scoped integration history, not as tests of the current APK hash. Current artifact identities and reruns are in [1.4.5 qualification](docs/release-1.4.5/QUALIFICATION.md).
+
+- Official Shizuku 13.6.0, shell mode on an Android 14 emulator: the 1.4.5 validation build passed the 34-assertion live capture suite.
+- Shizako zako3.17, upstream GitHub build, shell mode on an Android 14 emulator: the 1.4.5 validation build passed the 34-assertion live capture suite. Version 1.4.4 initially showed a misleading missing-service state with this fork, although manually retrying could connect.
+- Porter 0.8.1-rc0 with Porter Compatibility, shell mode on an Android 17 emulator: the 1.4.5 validation build passed the same live capture suite. The signed release also connected and captured synthetic text.
+- Shevery 14.6.1, upstream GitHub build, shell mode on an Android 17 emulator: the 1.4.5 validation build passed the live capture suite with previously granted access. In a fresh-authorization test, the prompt did not remain visible, so access was granted manually in Shevery.
+- Shizuku+ 13.6.0.r2551, upstream native-package build, shell mode on an Android 17 emulator: the 1.4.5 validation build passed the live capture suite without a companion installed. The fixture already had an authorization from earlier manager tests, so this does not establish the fresh-approval flow.
+- An in-place signed 1.4.4 to 1.4.5 update on a Pixel 8 Pro with thedjchi's Shizuku 13.7.0 fork preserved the observed history count and settings, and the recorder reported Listening. No clipboard text was read or changed for this phone observation.
+
+Those earlier checks did not verify Shizako's F-Droid variant. The subsequent [current-candidate qualification](docs/release-1.4.5/QUALIFICATION.md) adds its actual CI-built `zako3.17-f` artifact, fresh permission approval without the official launcher, live capture, sensitive retention and Settings checks. It also records the latest Pixel and Android matrix results. Other unlisted forks, root and device-owner modes remain unverified or outside the supported contract. The maintainer's reported symptom did not include enough detail to establish whether it was identical to the reproduced missing-service state. The 1.4.5 source and release have not been submitted to F-Droid.
+
 Use harmless test text, not passwords or private messages. Do not clear or alter valuable history to run a test without first deciding that it is safe to do so. The app intentionally has no cloud backup/export in this version.
 
 ## First gate: installation and connection
@@ -66,6 +79,8 @@ Record the APK hash, app version, Android build/security patch, Shizuku version 
 
 ## Automated isolated regression suites
 
+For fork discovery, install the validation app and test APK on a disposable emulator. With Shizako running as shell and validation access not yet granted, `adb shell am instrument -w -e suite fork-discovery app.cliphistory.validation.test/app.cliphistory.UiSmokeInstrumentation` checks that a live compatible Binder reaches the permission state without an official Shizuku launcher. With Shizako installed but its service stopped, use `-e suite fork-stopped -e expected_manager com.churan.shizako` to check stopped-service detection and the manager shortcut. With both Shizako and Porter installed, `-e suite fork-ambiguous` checks that the shortcut does not choose one silently. These checks do not establish capture until a separate live capture test is run.
+
 Build the validation variant described in `BUILDING.md` for an owned disposable emulator. Grant that separate application Shizuku access first. The `live`, `html-port`, `html-port-live`, history-seeding and corruption suites refuse physical devices. A separate package does not isolate Android's shared clipboard: synthetic writes can still reach a personal phone's production recorder. Never use these suites on personal history.
 
 ```sh
@@ -124,8 +139,24 @@ The timing driver requires `--expected-version` with the exact validation versio
 
 `tools/test-lifecycle.py` uses native UI and the actual process/task registry instead of instrumentation for lifecycle observations. Android starts and finishes instrumentation by force-stopping its target, which would invalidate a recorder-recovery check. The driver waits for acknowledged listener readiness and verifies synthetic producer events against Android's clipboard hash. Destructive modes refuse a physical device and require this task's disposable ClipHistory emulator. A protected Recents task can omit its accessibility label; the driver verifies native Overview dismissal against the task registry.
 
+For a fork, supply its observed `--manager-package` and `--server-process` to the lifecycle driver, for example `com.churan.shizako` and `shizako_server`. Startup uses that manager's installed native starter; this driver is not a universal launcher for forks with different setup mechanisms. Verify the process name and shell UID first. Stop the previous service through its manager and account for native watchdogs before switching. An empty server query is a fixture failure, not proof that app recovery failed.
+
 After `--mode start`, `--mode clear-storage` explicitly clears only this owned emulator's `app.cliphistory.validation` data. It verifies a connected zero-entry fresh store, a replacement key record/helper, and exactly one newly captured synthetic entry. This is a destructive fixture test, never a personal-phone command. Authentication can then be checked with `-e suite stored-status`; instrumentation must run after, not during, lifecycle observation.
 
-`-e suite phone-observe` is read-only on production ClipHistory while running from the separate validation package. It exports only count, limit, known recorder/settings state and whitelisted encryption diagnostics. It performs no clipboard writes, personal-history export, screenshot, clearing, pause change or connection test.
+`-e suite phone-observe` without a `pause` argument is read-only on production ClipHistory while running from the separate validation package. It exports only count, limit, known recorder/settings state and whitelisted encryption diagnostics. It performs no clipboard writes, personal-history export, screenshot, clearing, pause change or connection test. With explicit `-e pause true` or `false`, it operates the native pause switch and waits for acknowledgement instead; the caller must restore the reported original state in `finally`.
+
+`-e suite phone-core -e allowPhone isolated-synthetic` runs the committed-sensitivity, queued-expiry and Undo regressions in private synthetic memory. `-e suite phone-live -e allowPhone isolated-synthetic -e productionPaused acknowledged` requires the production recorder to have been paused through its acknowledged UI first. It binds a separate `:phonecheck` helper with new encrypted test files, tests actual sensitive capture, interleaved recopy and one-minute expiry, then restores the eligible original system clipboard from foreground process memory. It refuses marked-sensitive, multi-item, URI and intent clipboard checkpoints. Never run it concurrently with another clipboard recorder or the owner copying text. Restore the production pause state and any temporary service authorization afterward, including on failure. A process crash can prevent clipboard restoration; these safeguards do not make a shared clipboard isolated.
+
+`-e suite manager-shortcuts` uses only the validation app. With two or more known managers installed, it checks chooser cancellation, every selected launcher and the corresponding trusted Android battery-settings destination. Outgoing intents are intercepted; separately open one actual system Settings destination on hardware and inspect the chooser in both themes and at large font scale.
+
+The matrix driver requires the exact validation version and records the APK hashes, AVD identity and OS build. Set `--manager-package` for a fork. The requested manager and its installed version do not independently prove it supplies the active Binder; verify only its service is running. Older reports' `shizuku_package` field described the installed official manager, not necessarily the active service. Record the service and distribution separately:
+
+```sh
+python tools/test-android-matrix.py --adb /path/to/adb --serial emulator-5596 --apk /path/to/validation.apk --test-apk /path/to/validation-test.apk --expected-version 1.4.5-validation --output reports/current --suite live settings encryption
+```
 
 Before cold or idle timing, restore the three-entry ordinary synthetic fixture with the existing `quick-errors` suite. Sensitive-expiry tests intentionally remove their fixture entries and are not a timing baseline. Select the serial from fresh device and AVD identity checks; do not reuse another project's emulator port. Raw video and traces remain private under `.tools/`.
+
+For a signed current-release upgrade, use a fresh disposable emulator with the production package absent. Verify the public baseline APK's hash and certificate, install it, give real service approval and capture two synthetic texts in A/B/A/B order. Handle the observed optional background-setup sheet with **Not now** before asserting visible history. Record the UID, exact synthetic contents and inspected settings. Install the candidate with `adb -s <owned-emulator> install -r <candidate.apk>`, verify its version and unchanged UID, then require retained contents/settings, an active recorder and a new external copy. Repeat after Android Force stop: reopening and reinstalling must preserve the stopped state, and only explicit **Start recorder** should restore capture. Cover API 30, 31, 32 and 33 when qualifying the older-Android update policy. Do not use the historical `test-upgrade.py` legacy-format fixture as evidence of this current signed flow.
+
+On a failed matrix suite, the driver preserves logcat, the crash buffer, windows, activities and target exit records in UTF-8 before stopping. Check the focused window and timestamps before attributing a hidden control or failed copy to the product. Keep only one UI-automation process on each device. A boot-time System UI failure must be recorded and the fixture recovered before testing; never disable ANR reporting to obtain a pass.

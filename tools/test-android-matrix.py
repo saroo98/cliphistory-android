@@ -16,10 +16,15 @@ def main():
     parser.add_argument('--serial', required=True)
     parser.add_argument('--apk', type=Path, required=True)
     parser.add_argument('--test-apk', type=Path, required=True)
+    parser.add_argument('--expected-version', required=True, help='Exact validation versionName, for example 1.4.5-validation')
+    parser.add_argument('--manager-package', default='moe.shizuku.privileged.api',
+                        help='Manager under test; caller must verify only its service is running')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--suite', nargs='+', required=True)
     parser.add_argument('--theme', choices=['light', 'dark'], default='light')
     args = parser.parse_args()
+    if not re.fullmatch(r'[A-Za-z]\w*(?:\.[A-Za-z]\w*)+', args.manager_package):
+        raise RuntimeError('Invalid manager package name')
     package = 'app.cliphistory.validation'
 
     def adb(*parts, timeout=50):
@@ -53,10 +58,13 @@ def main():
         if 'Success' not in adb('install', '-r', str(path.resolve())):
             raise RuntimeError('Validation APK installation did not report success')
     info = adb('shell', 'dumpsys', 'package', package)
-    if 'DEBUGGABLE' not in info or 'versionName=1.4.4-validation' not in info:
-        raise RuntimeError('Expected the isolated 1.4.4 validation package')
-    report['shizuku_package'] = '\n'.join(line.strip() for line in
-        adb('shell', 'dumpsys', 'package', 'moe.shizuku.privileged.api').splitlines()
+    versions = re.findall(r'^\s*versionName=(\S+)\s*$', info, re.M)
+    if 'DEBUGGABLE' not in info or args.expected_version not in versions or not args.expected_version.endswith('-validation'):
+        raise RuntimeError('Installed package does not match the explicitly requested validation version')
+    report['version_name'] = args.expected_version
+    report['manager_package'] = args.manager_package
+    report['installed_manager_version'] = '\n'.join(line.strip() for line in
+        adb('shell', 'dumpsys', 'package', args.manager_package).splitlines()
         if re.search(r'versionName=|versionCode=', line))
     for suite in args.suite:
         started = time.monotonic()
@@ -74,6 +82,21 @@ def main():
         except Exception as error:
             row = {'suite': suite, 'passed': False, 'error': str(error),
                    'seconds': round(time.monotonic() - started, 3)}
+            # Preserve the first failure before a disposable emulator is stopped.
+            # A non-crashing focus or lifecycle failure needs more than the crash buffer.
+            diagnostics = {
+                'crash': ('logcat', '-d', '-b', 'crash'),
+                'logcat': ('logcat', '-d'),
+                'windows': ('shell', 'dumpsys', 'window'),
+                'activities': ('shell', 'dumpsys', 'activity', 'activities'),
+                'exit-info': ('shell', 'dumpsys', 'activity', 'exit-info', package),
+            }
+            for name, command in diagnostics.items():
+                try:
+                    (args.output / (suite + '-' + name + '.txt')).write_text(
+                        adb(*command) + '\n', encoding='utf-8')
+                except Exception as diagnostic_error:
+                    row[name + '_log_error'] = str(diagnostic_error)
         report['suites'].append(row)
         (args.output / 'checks.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
         print(json.dumps(row), flush=True)

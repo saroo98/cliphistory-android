@@ -100,7 +100,7 @@ class MainActivity:Activity() {
         restoredLicenseScroll=state?.getInt("licenses_scroll",0)?:0
         previewScroll=state?.getInt("preview_scroll",-1)?:-1
         root=FrameLayout(this).apply { setBackgroundColor(ui.color(R.color.canvas)) }
-        home=HistoryHome(ui,::showMenu,{ client.connect(true) },{ client.openShizuku() },::help,::recorder,
+        home=HistoryHome(ui,::showMenu,{ client.connect(true) },::openManager,::help,::recorder,
             { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview,::copyEntry,::entryActions)
         root.addView(home.root,FrameLayout.LayoutParams(-1,-1));setContentView(root)
         window.insetsController?.setSystemBarsAppearance(if(light)WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS else 0,
@@ -566,7 +566,7 @@ class MainActivity:Activity() {
     private fun showHelp() {
         if(pageKind=="help")helpScroll=findScroll(page)?.scrollY?:helpScroll
         helpConnected=client.connected()
-        val view=pages.help(::backPage,::openWebsite,{client.openShizuku()},{client.connect(true)},helpConnected,helpTopics) {
+        val view=pages.help(::backPage,::openWebsite,::openManager,{client.connect(true)},helpConnected,helpTopics) {
             helpScroll=findScroll(page)?.scrollY?:0;showLicenses()
         }
         val scroll=helpScroll
@@ -582,6 +582,26 @@ class MainActivity:Activity() {
     private fun openWebsite(url:String) {
         try { startActivity(Intent(Intent.ACTION_VIEW,android.net.Uri.parse(url))) }
         catch (_:ActivityNotFoundException){notifyUser(R.string.browser_missing)}
+    }
+    private fun openManager() {
+        chooseManager(R.string.open_manager_manually) { client.openShizuku(it) }
+    }
+    private fun chooseManager(failure:Int,open:(String)->Boolean) {
+        val packages=client.installedManagers()
+        fun launch(packageName:String) { if(!open(packageName))notifyUser(failure) }
+        when(packages.size) {
+            0->notifyUser(failure)
+            1->launch(packages.single())
+            else->sheet(R.string.choose_service_app) { box,dialog ->
+                ui.paragraph(box,s(R.string.choose_service_app_body))
+                packages.forEach { packageName ->
+                    val label=try { packageManager.getApplicationInfo(packageName,0).loadLabel(packageManager).toString() }
+                        catch (_:android.content.pm.PackageManager.NameNotFoundException) { packageName }
+                    ui.preferenceRow(box,label,packageName) { dialog.dismiss();launch(packageName) }
+                }
+                box.addView(ui.button(s(R.string.cancel)){dialog.dismiss()})
+            }
+        }
     }
     private fun diagnostics() {
         val details=pages.diagnostics(latest,offline,::closePage,copy={
@@ -855,7 +875,7 @@ class MainActivity:Activity() {
             box.addView(ui.button(s(R.string.open_app_battery),primary=true) { d.dismiss();if(!battery.open(packageName))notifyUser(R.string.battery_manual) })
             val other=ui.column().apply { visibility=View.GONE }
             box.addView(ui.button(s(R.string.port_battery_options)) { other.visibility=if(other.visibility==View.GONE)View.VISIBLE else View.GONE })
-            ui.actionRow(other,s(R.string.open_shizuku_battery)) { d.dismiss();if(!battery.open("moe.shizuku.privileged.api"))notifyUser(R.string.battery_manual) }
+            ui.actionRow(other,s(R.string.open_shizuku_battery)) { d.dismiss();chooseManager(R.string.battery_manual) { battery.open(it) } }
             ui.actionRow(other,s(R.string.battery_optimization_list)) { d.dismiss();if(!battery.openOptimizationList())notifyUser(R.string.battery_manual) }
             ui.actionRow(other,s(R.string.recovery_notification)) { d.dismiss();requestRecoveryNotifications() }
             box.addView(other)

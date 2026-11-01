@@ -21,8 +21,8 @@ manifest = ET.parse(MAIN / "AndroidManifest.xml").getroot()
 app = manifest.find("application")
 assert app is not None
 permissions = {p.get(ANDROID + "name") for p in manifest.findall("uses-permission")}
-check("source requests exactly the five reviewed permissions", permissions == {
-    "moe.shizuku.manager.permission.API_V23", "android.permission.FOREGROUND_SERVICE",
+check("source requests exactly the six reviewed permissions", permissions == {
+    "moe.shizuku.manager.permission.API_V23", "com.hamondev.shevery.permission.PRIVILEGED_API", "android.permission.FOREGROUND_SERVICE",
     "android.permission.FOREGROUND_SERVICE_SPECIAL_USE", "android.permission.POST_NOTIFICATIONS",
     "android.permission.RECEIVE_BOOT_COMPLETED"})
 check("source disables Android backup", app.get(ANDROID + "allowBackup") == "false" and app.get(ANDROID + "fullBackupContent") == "false")

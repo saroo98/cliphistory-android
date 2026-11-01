@@ -16,6 +16,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--adb", required=True)
     parser.add_argument("--serial", required=True)
+    parser.add_argument("--manager-package", default="moe.shizuku.privileged.api",
+                        help="Exact installed manager used for service restart and boot tests")
+    parser.add_argument("--server-process", default="shizuku_server",
+                        help="Observed shell service process name for the selected manager")
     parser.add_argument("--mode", choices=["start", "helper-death", "helper-death-off", "server-death", "app-death", "recents", "task-stop", "force-stop", "boot", "boot-off", "idle", "clear-storage"], required=True)
     parser.add_argument("--automatic",choices=["on","off"])
     parser.add_argument("--after-boot",choices=["on","off"])
@@ -23,6 +27,10 @@ def main():
     parser.add_argument("--seconds", type=int, default=1800)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    if not re.fullmatch(r"[A-Za-z]\w*(?:\.[A-Za-z]\w*)+", args.manager_package):
+        raise RuntimeError("Invalid manager package name")
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_.:-]*", args.server_process):
+        raise RuntimeError("Invalid server process name")
     package = "app.cliphistory.validation"
 
     def adb(*parts):
@@ -57,6 +65,8 @@ def main():
     started = time.monotonic()
     observations = {"mode": args.mode, "serial": args.serial, "api": adb("shell", "getprop", "ro.build.version.sdk"),
                     "before": before, "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    observations["manager_package"] = args.manager_package
+    observations["server_process"] = args.server_process
     def ui_tree():
         adb("shell","uiautomator","dump","/sdcard/cliphistory-lifecycle.xml")
         return ET.fromstring(adb("shell","cat","/sdcard/cliphistory-lifecycle.xml"))
@@ -76,19 +86,24 @@ def main():
     def recording_options():
         tree=ET.fromstring(adb("shell","run-as",package,"cat","shared_prefs/recorder_recovery.xml"))
         return {n.get("name"):n.get("value") for n in tree}
+    def wait_label(label, seconds=10):
+        deadline=time.monotonic()+seconds
+        while True:
+            node=find_label(ui_tree(),label)
+            if node is not None:return node
+            if time.monotonic()>deadline:return None
     def stored_state():
         # Starting/finishing instrumentation force-stops its target on Android.
-        # Observe native settings instead, preserving the lifecycle under test.
+        # Observe the acknowledged recorder status without opening menus during
+        # the post-boot activity transition. Capture behavior is checked below.
         adb("shell","am","start","-W","-a","app.cliphistory.OPEN_HISTORY","-n",package+"/app.cliphistory.ui.MainActivity")
-        tree=ui_tree();button=find_label(tree,"More options")
-        if button is None:raise RuntimeError("History metadata is not visible")
-        tap(button);tree=ui_tree();button=find_label(tree,"Settings")
-        if button is None:raise RuntimeError("Settings are not visible")
-        tap(button);tree=ui_tree();toggle=find_label(tree,"Pause recording")
-        if toggle is None or toggle.get("class")!="android.widget.Switch":raise RuntimeError("Pause setting is not visible")
-        state={"paused":toggle.get("checked")=="true"}
-        adb("shell","input","keyevent","4")
-        return state
+        deadline=time.monotonic()+25
+        while time.monotonic()<deadline:
+            tree=ui_tree()
+            if find_label(tree,"Recording paused") is not None:return {"paused":True}
+            if any(find_label(tree,label) is not None for label in ("Listening","Recording")):
+                return {"paused":False}
+        raise RuntimeError("Acknowledged recorder status is not visible")
     def produce(value):
         component=package+".test/app.cliphistory.SyntheticClipboardActivity"
         adb("shell","am","start","-W","-n",component,"-a","app.cliphistory.test.WRITE_SYNTHETIC","--es","text",value)
@@ -227,7 +242,7 @@ def main():
             else:raise RuntimeError("Enabled recovery did not restore the interrupted process")
     elif args.mode=="server-death":
         servers=[line.split() for line in adb("shell","ps","-A","-o","PID,UID,NAME").splitlines()
-                 if line.strip().endswith(" shizuku_server")]
+                 if line.strip().endswith(" "+args.server_process)]
         if len(servers)!=1 or servers[0][1]!="2000" or package+":clipboard" not in before:
             raise RuntimeError("An authorized shell server and helper must be active")
         old_helper=before[package+":clipboard"]
@@ -237,8 +252,8 @@ def main():
             if time.monotonic()>deadline:raise RuntimeError("Server death did not terminate its leased helper")
             time.sleep(.1)
         observations["server_lease_terminated_helper"]=True
-        base=adb("shell","pm","path","moe.shizuku.privileged.api").removeprefix("package:").removesuffix("/base.apk")
-        if not re.fullmatch(r"/data/app/~~[A-Za-z0-9_=-]+/moe\.shizuku\.privileged\.api-[A-Za-z0-9_=-]+",base):
+        base=adb("shell","pm","path",args.manager_package).removeprefix("package:").removesuffix("/base.apk")
+        if not re.fullmatch(r"/data/app/~~[A-Za-z0-9_=-]+/"+re.escape(args.manager_package)+r"-[A-Za-z0-9_=-]+",base):
             raise RuntimeError("Unexpected Shizuku APK location")
         if adb("shell","getprop","ro.product.cpu.abi")!="x86_64":raise RuntimeError("Expected disposable x86_64 emulator")
         adb("shell",base+"/lib/x86_64/libshizuku.so")
@@ -311,8 +326,8 @@ def main():
             raise RuntimeError("Disposable emulator did not finish rebooting")
         adb("shell", "input", "keyevent", "82")
         # Starting non-root Shizuku remains the documented manual prerequisite.
-        base = adb("shell", "pm", "path", "moe.shizuku.privileged.api").removeprefix("package:").removesuffix("/base.apk")
-        if not re.fullmatch(r"/data/app/~~[A-Za-z0-9_=-]+/moe\.shizuku\.privileged\.api-[A-Za-z0-9_=-]+", base):
+        base = adb("shell", "pm", "path", args.manager_package).removeprefix("package:").removesuffix("/base.apk")
+        if not re.fullmatch(r"/data/app/~~[A-Za-z0-9_=-]+/"+re.escape(args.manager_package)+r"-[A-Za-z0-9_=-]+", base):
             raise RuntimeError("Unexpected Shizuku APK location")
         abi = adb("shell", "getprop", "ro.product.cpu.abi")
         architecture = {"x86_64": "x86_64", "arm64-v8a": "arm64"}.get(abi)

@@ -1,27 +1,29 @@
 # ClipHistory F-Droid submission
 
-The upstream owner requests inclusion. Follow the [Quick Start Guide](https://f-droid.org/en/docs/Submitting_to_F-Droid_Quick_Start_Guide/), [Inclusion Policy](https://f-droid.org/en/docs/Inclusion_Policy/) and [contribution instructions](https://gitlab.com/fdroid/fdroiddata/-/blob/master/CONTRIBUTING.md).
+Local state checked 1 November 2026. Follow the [Quick Start Guide](https://f-droid.org/en/docs/Submitting_to_F-Droid_Quick_Start_Guide/), [Inclusion Policy](https://f-droid.org/en/docs/Inclusion_Policy/) and [contribution instructions](https://gitlab.com/fdroid/fdroiddata/-/blob/master/CONTRIBUTING.md). The reusable engineering and publication workflow is in [F_DROID_ANDROID_GUIDE.md](F_DROID_ANDROID_GUIDE.md).
 
-Current request: [MR !50917](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917), updated to **1.3.4/code 8** at `550696372b43e4dedb641c2a8cc618125ae1d235`. The previous 1.3.3 maintainer run passed all nine jobs. The latest automatic fork run has no jobs under the account verification gate; a new maintainer run is requested. See [current publication status](F_DROID_PUBLICATION.md).
+Reuse [MR !50917](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917). The local submission recipe currently pins published **1.4.4/code 14**, source `f240f9b39ba8425747d4180e7b6932f09717b817`. The unpublished **1.4.5/code 15** candidate has [separate qualification](release-1.4.5/FINAL_QUALIFICATION.md). Do not relabel the older public APK, recipe or pipeline as qualification of 1.4.5. Read the live MR before making any external status claim.
 
-## Current app
+## Current candidate
 
-- `app.cliphistory`, 1.3.4/code 8, Android 14+, native Android Views.
-- Public MIT source/contact: https://github.com/saroo98/cliphistory-android and its issue tracker. Artwork provenance and runtime dependency notices included.
-- Separate Shizuku API 13+ must run as non-root shell UID 2000 on the primary profile. It needs starting again after reboot.
-- No Internet, overlay, Accessibility-service or keyboard permission, ads, analytics, account, cloud service, proprietary runtime SDK or native library.
-- The five permissions cover Shizuku, foreground recovery, its special-use type, notifications and boot. Recovery respects explicit Stop and Android's user-stop controls.
-- Fastlane en-US descriptions, changelog 8, approved 512px icon, 1024 x 500 feature graphic and seven native images are upstream. Personal-device media is excluded.
+- `app.cliphistory`, Android 11/API 30 minimum, native Android Views.
+- Public MIT source and issue tracker: https://github.com/saroo98/cliphistory-android. Artwork provenance and runtime dependency notices are included.
+- Separately installed Shizuku API 13+ service with upstream UserService support, non-root shell UID 2000, primary profile. Known manager shortcuts include Shizuku, Shizako, Porter, Shevery and Shizuku+. A known package does not certify every version or mode. Porter needs its compatibility companion. See qualification for tested versions and fresh-approval limits.
+- No Internet, overlay, Accessibility-service or keyboard permission, advertising, analytics, account, cloud service, proprietary runtime SDK or bundled native library.
+- Six declared permissions: the original Shizuku access permission, Shevery's user-controlled access permission, foreground service, foreground special use, notifications and boot. The additional fork permission never substitutes for actual user authorization. Recovery respects explicit Stop and Android user-stop controls.
+- Fastlane English descriptions, changelog 15, approved icon, feature graphic and native screenshots are in source. Personal-device evidence remains local.
 
-## Build and submission
+## Build and submission gates
 
-AGP 9.1.1, Gradle 9.3.1, JDK 17, platform android-37.0, Build Tools 36.0.0. No NDK, build account or API key. Original-key reproduction uses Binaries and AllowedAPKSigningKeys. No scanner exemption, disabled build or lint baseline.
+AGP 9.1.1, Gradle 9.3.1, JDK 17, platform android-37.0, Build Tools 36.0.0. No NDK, build account or API key. Original-key reproduction uses `Binaries` and `AllowedAPKSigningKeys`. The current candidate source and APK scans use no custom exclusions.
 
-1. Freeze a clean source revision containing current code and store materials. Build independently on Windows/Linux. Verify matching unsigned bytes, original certificate, alignment and exact signature reproduction.
-2. Publish the immutable tag and versioned reference APK. Pin its full source hash. Never move old tags or overwrite release assets. Current source: `97c1e996e2619a5cf6f86f7f70614576d795b8c3`, tag `v1.3.4`.
-3. Check current fdroiddata metadata and related requests. Reuse MR !50917; do not open a duplicate. Initial scoped checks and their limits are recorded in the publication report.
-4. Copy only `fdroid/submission/app.cliphistory.yml` into `metadata/app.cliphistory.yml` on the public unprotected branch. New-app metadata keeps only the latest build; upstream historical metadata retains earlier builds. Store materials stay upstream.
-5. Run `fdroid readmeta`, `fdroid rewritemeta app.cliphistory`, `fdroid lint app.cliphistory`, `fdroid checkupdates app.cliphistory` and `fdroid build --test --scan-binary --no-tarball app.cliphistory:8`. All passed locally. Inspect source/APK scans, downloaded reference and allowed signer. Use CI's fdroidserver source and serializer for canonical YAML. Preserve its exact continuation-line output, including the space after `Binaries:`.
-6. Inspect actual latest GitLab CI and reports. Check template items only after observing results for the submitted revision. If GitLab requests sensitive identity or financial information, leave a succinct maintainer rerun request instead. A local pass or prior-release pass does not qualify latest-release CI.
+1. Close confirmed app defects and maintain the qualification register. Retain reproducible upstream limitations and exact hardware gaps. Never replace a reported HyperOS 3 retest with a claim based on a stock emulator or different firmware.
+2. With release authorization, freeze reviewed source and store materials in an immutable release commit. Rebuild from that exact commit on Windows and independently on Linux. Compare unsigned bytes, alignment, original certificate and exact signature reproduction. A working-tree build is preparation, not this release gate.
+3. Publish the immutable tag and versioned reference APK. Do not move an old tag or overwrite a public release asset. Download the reference again and verify its hash and signer.
+4. Update `fdroid/submission/app.cliphistory.yml` to the real release commit/version/code. Keep only the latest build in the new-app submission and retain historical builds in `fdroid/metadata/app.cliphistory.yml`. Never invent a commit or point the public recipe at an uncommitted candidate.
+5. Run current fdroidserver `readmeta`, `rewritemeta app.cliphistory`, `lint app.cliphistory`, `checkupdates app.cliphistory`, and `build --test --scan-binary --no-tarball app.cliphistory:15` after the code-15 public reference exists. Inspect source/APK scans and reference/signing comparison. Preserve canonical YAML produced by the CI-compatible serializer, including a wrapped `Binaries` value.
+6. Update the existing MR with only the app metadata. Keep its description concise: behavior fixed, exact versions/devices tested, remaining external retest. Check checklist items only when their evidence exists for the submitted commit.
+7. Inspect the actual latest CI jobs and reports. A jobless pipeline is not a pass. If account access prevents the run, ask a maintainer to run it; never change billing or provide identity documents automatically. Historic verification notices do not establish the current account state.
+8. After merge, check the production build, signing and index. Confirm the app/version appears in the catalogue. Maintainers decide inclusion; a prepared APK, open MR or passing local build is not publication.
 
-Exact release hashes, executed checks and external workflow are in [F_DROID_PUBLICATION.md](F_DROID_PUBLICATION.md). Readiness and a submitted request do not mean accepted/listed. Shizuku reboot requirements, private API compatibility and bounded runtime coverage remain disclosed.
+The current local APK and tests are recorded in [1.4.5 qualification](release-1.4.5/FINAL_QUALIFICATION.md). [Publication history](F_DROID_PUBLICATION.md) and [the 1.4.4 release](release-1.4.4/FINAL_RELEASE.md) retain earlier evidence without implying a new pass.

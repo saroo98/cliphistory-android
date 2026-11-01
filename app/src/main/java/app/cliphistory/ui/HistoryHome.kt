@@ -188,6 +188,7 @@ class HistoryHome(
                 state==RecorderState.CONNECTING->R.string.connecting
                 state in listOf(RecorderState.MISSING,RecorderState.UNSUPPORTED)->R.string.setup_help
                 state==RecorderState.STOPPED->R.string.open_shizuku
+                state==RecorderState.DENIED->R.string.open_shizuku
                 state==RecorderState.PERMISSION->R.string.connect
                 else->R.string.reconnect
             }
@@ -195,19 +196,23 @@ class HistoryHome(
                 when {
                     stoppedByUser->connect()
                     state in listOf(RecorderState.MISSING,RecorderState.UNSUPPORTED)->help()
-                    state==RecorderState.STOPPED->openShizuku()
+                    state==RecorderState.STOPPED || state==RecorderState.DENIED->openShizuku()
                     else->connect()
                 }
             }.apply { isEnabled=state!=RecorderState.CONNECTING })
-            status.addView(row);return
+            status.addView(row)
+            if(!stoppedByUser && state==RecorderState.PERMISSION)status.addView(ui.button(s(R.string.open_shizuku),action=openShizuku))
+            return
         }
         val box=ui.column().apply { background=ui.shape(ui.color(R.color.secondary_surface),16);setPadding(ui.dp(16),ui.dp(12),ui.dp(16),ui.dp(8)) }
         box.addView(ui.title(s(title),16f));box.addView(ui.space(4));box.addView(ui.text(s(body),14f,true))
-        val actions=LinearLayout(ui.activity)
+        val actions=LinearLayout(ui.activity).apply {
+            orientation=if(ui.activity.resources.configuration.fontScale>1.3f)LinearLayout.VERTICAL else LinearLayout.HORIZONTAL
+        }
         if(stoppedByUser)actions.addView(ui.button(s(R.string.start_recorder),action=connect)) else when(state) {
             RecorderState.CONNECTING->actions.addView(ProgressBar(ui.activity).apply { isIndeterminate=true },LinearLayout.LayoutParams(ui.dp(24),ui.dp(36)))
             RecorderState.MISSING->{ actions.addView(ui.button(s(R.string.setup_help),action=help));actions.addView(ui.button(s(R.string.try_again),action=connect)) }
-            RecorderState.PERMISSION->actions.addView(ui.button(s(R.string.connect),action=connect))
+            RecorderState.PERMISSION->{ actions.addView(ui.button(s(R.string.connect),action=connect));actions.addView(ui.button(s(R.string.open_shizuku),action=openShizuku)) }
             else->{actions.addView(ui.button(s(R.string.open_shizuku),action=openShizuku));actions.addView(ui.button(s(R.string.reconnect),action=connect))}
         }
         box.addView(actions);status.addView(box)

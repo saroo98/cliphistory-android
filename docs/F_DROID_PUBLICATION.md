@@ -1,5 +1,7 @@
 # F-Droid publication status
 
+**Current local work, 1 November 2026:** 1.4.5/code 15 is the unpublished compatibility candidate. Its [qualification](release-1.4.5/FINAL_QUALIFICATION.md) separates current tests from external limitations. The repository's submission recipe still pins the published 1.4.4/code 14 source. No 1.4.5 tag, reference release, recipe CI pass, merge or listing is claimed. Use the [current submission procedure](F_DROID_SUBMISSION.md); the dated notes below are historical evidence, including account-verification states that must not be assumed current.
+
 **1 November compatibility follow-up:** the local candidate was 1.4.4/code 14; its [qualification](release-1.4.4/RELEASE.md) supersedes the earlier local-candidate notes below. At the time of those checks, the submitted 1.3.4 pipeline had passed all nine jobs and the merge request remained open. Check the merge request for its current status.
 
 **31 October historical follow-up:** the existing submission records and local F-Droid recipes targeted 1.3.4/code 8. At that time, the local encrypted-history update was 1.4.2/code 12; see its [qualification](release-1.4.2/RELEASE.md) and the [reusable publication guide](F_DROID_ANDROID_GUIDE.md). The records below qualify the earlier public version only.

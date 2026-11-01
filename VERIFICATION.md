@@ -1,10 +1,10 @@
-# Current local candidate: ClipHistory 1.4.4
+# Current local candidate: ClipHistory 1.4.5
 
-The 1 November 2026 candidate is **1.4.4/code 14**, minimum API 30. Current checks, signed APK details, device findings and remaining limits are recorded in [1.4.4 qualification](docs/release-1.4.4/RELEASE.md). The candidate must be rebuilt from the release commit before submission. See the [reusable F-Droid guide](docs/F_DROID_ANDROID_GUIDE.md).
+The 1 November 2026 local candidate is **1.4.5/code 15**, minimum API 30. Current checks, artifact identities, device findings and remaining limits are recorded in [1.4.5 qualification](docs/release-1.4.5/FINAL_QUALIFICATION.md). Before publication, freeze a reviewed release commit and repeat exact-commit build and recipe verification. See the [reusable F-Droid guide](docs/F_DROID_ANDROID_GUIDE.md). The published 1.4.4 source and its earlier evidence remain in [the 1.4.4 release record](docs/release-1.4.4/FINAL_RELEASE.md).
 
 ## Historical local 1.4.1 qualification
 
-The earlier review follow-up and Android 14–17 evidence are retained in [1.4.1 qualification](docs/release-1.4.1/RELEASE.md). Those results do not automatically qualify the 1.4.4 binary.
+The earlier review follow-up and Android 14–17 evidence are retained in [1.4.1 qualification](docs/release-1.4.1/RELEASE.md). Those results do not automatically qualify a newer binary.
 
 ## Historical local 1.4.0 qualification
 

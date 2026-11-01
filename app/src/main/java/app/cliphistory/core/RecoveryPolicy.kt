@@ -17,12 +17,14 @@ fun mayRecover(options: RecoveryOptions, boot: Int?, explicitlyActivatedThisSess
 fun mayConnect(options: RecoveryOptions, boot: Int?, explicit: Boolean, explicitlyActivatedThisSession: Boolean): Boolean =
     explicit || mayRecover(options, boot, explicitlyActivatedThisSession)
 
-/** Public exit descriptions are not stable. Recognize only the verified AOSP
- * task-removal descriptions; an unknown user-requested exit still fails closed. */
-fun isDeliberateUserStop(userRequested: Boolean, description: String?): Boolean =
-    userRequested && description != "[REMOVE TASK] remove task" && description != "remove task"
+/** Pre-Android 14 package replacement also uses USER_REQUESTED. Recognize only
+ * verified AOSP descriptions, with replacement tied to this exact package.
+ * An unknown user-requested exit still fails closed. */
+fun isDeliberateUserStop(userRequested: Boolean, description: String?, packageName: String? = null): Boolean =
+    userRequested && description != "[REMOVE TASK] remove task" && description != "remove task" &&
+        (packageName == null || description != "stop $packageName due to installPackageLI")
 
 /** Only a deliberate owner stop after the last explicit activation blocks recovery. */
 fun isNewUserStop(exitTime: Long, userRequested: Boolean, explicitStartTime: Long, acknowledgedExit: Long,
-    description: String? = null): Boolean =
-    isDeliberateUserStop(userRequested, description) && exitTime > explicitStartTime && exitTime > acknowledgedExit
+    description: String? = null, packageName: String? = null): Boolean =
+    isDeliberateUserStop(userRequested, description, packageName) && exitTime > explicitStartTime && exitTime > acknowledgedExit

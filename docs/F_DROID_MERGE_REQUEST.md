@@ -1,6 +1,10 @@
-# Submitted F-Droid inclusion request
+# F-Droid merge request record
 
-[MR !50917: New app: ClipHistory](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917), created and updated 2026-10-02. The verified submitted description follows. The current recipe is 1.3.4/code 8 at `55069637`; current CI and report items await a maintainer run. The previous 1.3.3 pipeline passed all nine jobs. Acceptance and listing are not claimed.
+Current local guidance, checked 1 November 2026, is in [F_DROID_SUBMISSION.md](F_DROID_SUBMISSION.md). The submission recipe pins published 1.4.4/code 14. The [1.4.5 qualification](release-1.4.5/FINAL_QUALIFICATION.md) concerns the newer local candidate. Re-read the live MR before posting; do not reuse the historical checklist below as proof for a newer release.
+
+## Historical submitted description, 2 October 2026
+
+[MR !50917: New app: ClipHistory](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917), created and updated 2026-10-02. The verified description from that date follows. Its recipe was 1.3.4/code 8 at `55069637`; CI and report items awaited a maintainer run. The previous 1.3.3 pipeline had passed all nine jobs. Acceptance and listing were not claimed.
 
 ## Checklist
 

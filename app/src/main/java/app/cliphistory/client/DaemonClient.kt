@@ -37,7 +37,7 @@ class DaemonClient(private val context: Context) {
     private val pageRequest=AtomicLong(0)
     @Volatile private var remote:IClipboardDaemon?=null
     private var attaching:IClipboardDaemon?=null
-    @Volatile var message="Start Shizuku, then tap Connect.";private set
+    @Volatile var message="Start your service app, then tap Connect.";private set
     private var connectionIssue=""
     private var connecting=false
     private var permissionDenied=false
@@ -113,7 +113,7 @@ class DaemonClient(private val context: Context) {
         Shizuku.addBinderReceivedListenerSticky { main.post {
             if(ready){cancelRetries();startRecoveryIfAllowed();connect(false)} else changed()
         } }
-        Shizuku.addBinderDeadListener { main.post { disconnected("Shizuku stopped. Start Shizuku, then reconnect.") } }
+        Shizuku.addBinderDeadListener { main.post { disconnected("Service stopped. Start it again, then reconnect.") } }
         Shizuku.addRequestPermissionResultListener { requestCode, grant ->
             if(requestCode==71)main.post {
                 permissionDenied=grant!=PackageManager.PERMISSION_GRANTED
@@ -125,7 +125,7 @@ class DaemonClient(private val context: Context) {
             try {
                 val exits=context.getSystemService(ActivityManager::class.java).getHistoricalProcessExitReasons(null,0,16)
                 val stop=exits.firstOrNull { isNewUserStop(it.timestamp,it.reason==ApplicationExitInfo.REASON_USER_REQUESTED,
-                    preferences.explicitStartTime,preferences.acknowledgedExit,it.description) }
+                    preferences.explicitStartTime,preferences.acknowledgedExit,it.description,context.packageName) }
                 if(stop!=null && !preferences.stop(stop.timestamp))error("PREFERENCES_NOT_SAVED")
                 val loaded=preferences.options();val marker=preferences.bootCount()
                 historyBoot=marker?:-1
@@ -196,12 +196,18 @@ class DaemonClient(private val context: Context) {
         bundle.putBoolean("autoDeleteSensitive",snapshot.autoDeleteSensitive)
         bundle.putInt("sensitiveMinutes",snapshot.sensitiveMinutes)
     }
+    fun installedManagers()=listOf("moe.shizuku.privileged.api","com.churan.shizako",
+        "eu.darken.porter","com.hamondev.shevery","af.shizuku.plus.api").filter {
+        context.packageManager.getLaunchIntentForPackage(it)!=null
+    }
+    /** A shortcut is safe only when the installed manager is unambiguous. */
+    fun managerPackage():String?=installedManagers().singleOrNull()
     fun connectionStage():ConnectionStage = try {
         when {
             connected() -> ConnectionStage.CONNECTED
             connecting -> ConnectionStage.CONNECTING
-            context.packageManager.getLaunchIntentForPackage("moe.shizuku.privileged.api")==null -> ConnectionStage.MISSING
-            !Shizuku.pingBinder() -> ConnectionStage.STOPPED
+            !Shizuku.pingBinder() -> if(installedManagers().isEmpty())
+                ConnectionStage.MISSING else ConnectionStage.STOPPED
             Shizuku.getVersion()<13 -> ConnectionStage.UNSUPPORTED
             Shizuku.checkSelfPermission()!=PackageManager.PERMISSION_GRANTED ->
                 if(permissionDenied || Shizuku.shouldShowRequestPermissionRationale()) ConnectionStage.DENIED else ConnectionStage.PERMISSION
@@ -245,17 +251,17 @@ class DaemonClient(private val context: Context) {
         }
         if(connecting)return
         try {
-            if(!Shizuku.pingBinder()) { message="Shizuku is not running. Open Shizuku and press Start.";changed();return }
-            if(Shizuku.getVersion()<13) { message="Update Shizuku; API 13 or newer is required.";changed();return }
+            if(!Shizuku.pingBinder()) { message="Start or restart your compatible service, then reconnect.";changed();return }
+            if(Shizuku.getVersion()<13) { message="Update your service app; Shizuku API 13 or newer is required.";changed();return }
             if(Shizuku.checkSelfPermission()!=PackageManager.PERMISSION_GRANTED) {
-                message="Tap Connect and allow Shizuku access."
+                message="Tap Connect and allow service access."
                 if(askPermission) {
-                    if(Shizuku.shouldShowRequestPermissionRationale()) message="Open Shizuku → Authorised applications → allow ClipHistory."
+                    if(Shizuku.shouldShowRequestPermissionRationale()) message="Allow ClipHistory in your service app's authorised applications."
                     else Shizuku.requestPermission(71)
                 }
                 changed();return
             }
-            if(Shizuku.getUid()!=2000) { message="Use Shizuku's wireless-debugging (non-root) mode for this build.";changed();return }
+            if(Shizuku.getUid()!=2000) { message="Use a non-root shell service started with wireless debugging or ADB.";changed();return }
             if(!storageReady) {
                 connecting=true;message="Checking private history…";changed()
                 io.execute {
@@ -462,9 +468,10 @@ class DaemonClient(private val context: Context) {
             main.post { callback(result);changed() }
         }
     }
-    fun openShizuku() {
-        val launch=context.packageManager.getLaunchIntentForPackage("moe.shizuku.privileged.api")
-        if(launch!=null)context.startActivity(launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-        else { message="Shizuku is not installed in this phone profile.";changed() }
+    fun openShizuku(packageName:String):Boolean {
+        val launch=context.packageManager.getLaunchIntentForPackage(packageName) ?: return false
+        return try { context.startActivity(launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));true }
+        catch (_:ActivityNotFoundException) { false }
+        catch (_:SecurityException) { false }
     }
 }

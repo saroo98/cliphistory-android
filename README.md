@@ -5,7 +5,13 @@
 
 # ClipHistory
 
-A local clipboard-history companion for Android, with **Shizuku started in non-root shell mode**. It is not a keyboard and does not modify Gboard.
+A local clipboard-history companion for Android, using **Shizuku or a compatible service started in non-root shell mode**. It is not a keyboard and does not modify Gboard.
+
+Compatible services must provide Shizuku API 13 or newer and support UserServices. Some forks require a compatibility companion; follow the fork's setup instructions. The current source recognizes a running compatible service without relying on the original manager package name. Compatibility depends on the service, activation mode and Android version, so individual forks still need testing.
+
+## Version 1.4.5 (local)
+
+**1.4.5/code 15** improves compatible service discovery, adds an explicit manager choice when several are installed, fixes recovery after APK updates on older Android, and clarifies setup and sensitive-history settings. The [current qualification](docs/release-1.4.5/FINAL_QUALIFICATION.md) records exact artifacts, device checks and remaining limits; [device procedures](DEVICE_TESTS.md) describe how to repeat them. This version has not yet been submitted to F-Droid.
 
 ## Version 1.4.4
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="capture_sensitive">Capture sensitive text</string>
-    <string name="capture_sensitive_body">Save text marked sensitive by its source app. Turning this off removes saved sensitive text and its Undo.</string>
+    <string name="capture_sensitive_body">Save text marked sensitive by its source app. Some apps do not mark private text; pause recording when needed. Turning this off removes saved sensitive text and its Undo.</string>
     <string name="auto_delete_sensitive">Auto-delete sensitive text</string>
-    <string name="auto_delete_sensitive_body">Remove timed sensitive text after the chosen duration or a reboot. Copying it again does not extend its current timer.</string>
+    <string name="auto_delete_sensitive_body">Remove timed sensitive text from saved history, not Android’s clipboard, after the chosen duration or a reboot. Copying it again does not extend its current timer.</string>
     <string name="sensitive_delete_after">Delete after</string>
     <string name="sensitive_duration_body">Choose how long to keep sensitive text. A shorter duration can shorten active timers; a longer one applies to new text.</string>
     <string name="sensitive_custom">Custom duration</string>

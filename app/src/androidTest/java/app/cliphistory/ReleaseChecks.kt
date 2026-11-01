@@ -230,6 +230,8 @@ class ReleaseChecks(private val test:Instrumentation) {
         var original:ClipData?=null
         main { original=activity.getSystemService(ClipboardManager::class.java).primaryClip }
         try {
+            checkThat(service.setSensitivePolicy(false,true,5).getBoolean("ok"),"Set synthetic sensitive-filter policy")
+            checkThat(service.setPaused(false).getBoolean("ok"),"Start synthetic recording")
             checkThat(service.setLimit(20).getBoolean("ok"),"Set validation history limit")
             checkThat(service.clearHistory().getBoolean("ok"),"Clear only synthetic validation history")
             checkThat(service.setDuplicateMode(DuplicateMode.UNIQUE_TEXT.value).getBoolean("ok"),"Select exact unique-text policy")
@@ -247,8 +249,12 @@ class ReleaseChecks(private val test:Instrumentation) {
             checkThat(status().getBoolean("paused") && status().getInt("count")==1,"Pause prevents capture")
             service.setPaused(false)
             var before=status().getLong("sensitiveSkipped")
-            produce("Synthetic validation sensitive canary",sensitive=true);SystemClock.sleep(700)
-            checkThat(status().getInt("count")==1 && status().getLong("sensitiveSkipped")>before,"Marked sensitive payload skipped")
+            produce("Synthetic validation sensitive canary",sensitive=true)
+            val sensitiveDeadline=SystemClock.elapsedRealtime()+8000
+            while(SystemClock.elapsedRealtime()<sensitiveDeadline && status().getLong("sensitiveSkipped")==before && status().getInt("count")==1)SystemClock.sleep(80)
+            val sensitiveStatus=status()
+            log.append("Sensitive counters: count=${sensitiveStatus.getInt("count")}, skippedBefore=$before, skipped=${sensitiveStatus.getLong("sensitiveSkipped")}, captureEnabled=${sensitiveStatus.getBoolean("captureSensitive")}\n")
+            checkThat(sensitiveStatus.getInt("count")==1 && sensitiveStatus.getLong("sensitiveSkipped")>before,"Marked sensitive payload skipped")
             before=status().getLong("oversizedSkipped")
             produce("",oversized=true)
             val oversizeDeadline=SystemClock.elapsedRealtime()+8000
@@ -299,6 +305,11 @@ class ReleaseChecks(private val test:Instrumentation) {
             main { activity.startActivity(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }
             until("History returns after background capture") { field("visible")==true }
             capture("live-connected-api-${Build.VERSION.SDK_INT}")
+        } catch(error:Throwable) {
+            // Cleanup can also fail after focus/process loss. Keep the original
+            // failure visible so a restoration error cannot hide its cause.
+            log.append("Primary live failure: ${error.stackTraceToString()}\n")
+            throw error
         } finally {
             service.setPaused(true)
             main { activity.startActivity(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) }

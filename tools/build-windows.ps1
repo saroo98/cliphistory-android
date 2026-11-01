@@ -192,7 +192,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Could not inspect APK permissions.' }
     [IO.File]::WriteAllText((Join-Path $Root 'apk-permissions.txt'),$Permissions)
     $DeclaredPermissions = [regex]::Matches($Permissions, "uses-permission(?:-sdk-\d+)?: name='([^']+)'")
-    $AllowedPermissions = @('moe.shizuku.manager.permission.API_V23', 'android.permission.FOREGROUND_SERVICE',
+    $AllowedPermissions = @('moe.shizuku.manager.permission.API_V23', 'com.hamondev.shevery.permission.PRIVILEGED_API', 'android.permission.FOREGROUND_SERVICE',
         'android.permission.FOREGROUND_SERVICE_SPECIAL_USE', 'android.permission.POST_NOTIFICATIONS',
         'android.permission.RECEIVE_BOOT_COMPLETED')
     foreach ($Permission in $DeclaredPermissions) {

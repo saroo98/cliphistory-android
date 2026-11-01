@@ -146,7 +146,7 @@ class DetailPages(private val ui:Ui) {
     fun advanced(b:Bundle,offline:Boolean)=listOf(
         s(R.string.recorder_connection) to b.getString("connectionMessage",s(R.string.not_confirmed)),
         s(R.string.connection_issue) to b.getString("connectionIssue").orEmpty().ifEmpty { s(R.string.none) },
-        s(R.string.shizuku_version) to try { ui.activity.packageManager.getPackageInfo("moe.shizuku.privileged.api",0).versionName.orEmpty().ifEmpty { s(R.string.not_confirmed) } } catch (_:Exception) { s(R.string.not_confirmed) },
+        s(R.string.shizuku_version) to try { if(rikka.shizuku.Shizuku.pingBinder())rikka.shizuku.Shizuku.getVersion().toString() else s(R.string.not_confirmed) } catch (_:Exception) { s(R.string.not_confirmed) },
         s(R.string.security_patch) to Build.VERSION.SECURITY_PATCH,
         s(R.string.generation) to if(offline)s(R.string.not_connected) else b.getLong("generation").toString(),
         s(R.string.api_signature) to b.getString("signature",s(R.string.not_connected)),

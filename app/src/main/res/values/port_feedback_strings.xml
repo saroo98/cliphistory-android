@@ -4,7 +4,7 @@
     <string name="port_copy_entry">Copy: %1$s · %2$s</string>
     <string name="port_empty_setup">Set up recording to save the text you copy. Your history stays on this phone.</string>
     <string name="port_empty_paused">Resume recording to save your next copy.</string>
-    <string name="port_empty_offline">Start Shizuku and connect ClipHistory to save new copies.</string>
+    <string name="port_empty_offline">Start your service and connect ClipHistory to save new copies.</string>
     <string name="port_undo">Undo</string>
     <string name="port_dismiss_notice">Dismiss notice</string>
     <string name="port_restored">Saved text restored</string>

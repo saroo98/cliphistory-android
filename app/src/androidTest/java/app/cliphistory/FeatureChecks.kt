@@ -137,7 +137,9 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
     private fun screenshots() {
         val directory=File(context.filesDir,"ui-evidence").apply { mkdirs() }
         main { AppSettings(context).allowScreenshots=false;ScreenPrivacy.apply(activity,AppSettings(context)) }
-        SystemClock.sleep(300)
+        // Activity recreation completes before SystemUI's rotation animation.
+        // Wait for the stable surface rather than testing its redacted transition frame.
+        test.waitForIdleSync();test.uiAutomation.waitForIdle(1000,5000)
         val secure=test.uiAutomation.takeScreenshot()
         main { AppSettings(context).allowScreenshots=true;ScreenPrivacy.apply(activity,AppSettings(context)) }
         SystemClock.sleep(300)

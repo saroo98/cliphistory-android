@@ -1,0 +1,296 @@
+{
+  "scope": "Local final candidate, not a public release commit or F-Droid acceptance",
+  "version": "1.4.5",
+  "version_code": 15,
+  "signed_apk_sha256": "3713d2a2a9c9194cf8c146bb295f8992b51672356927d924d78c50a625d24ba9",
+  "validation_apk_sha256": "b4bcc4b330b053337d38184b44642f9b7b758caaaf64532e0151c2379aa06701",
+  "test_apk_sha256": "438359e5461150bfdae56960192960e934c6885b7bdd0d500ae9f59e778d29ac",
+  "unit_tests": {
+    "tests": 80,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "emulators": [
+    {
+      "api": 30,
+      "sdk_full": "",
+      "release": "11",
+      "fingerprint": "google/sdk_gphone_x86_64/generic_x86_64_arm64:11/RSR1.240422.006/12134477:userdebug/dev-keys",
+      "version_name": "1.4.5-validation",
+      "manager_package": "moe.shizuku.privileged.api",
+      "installed_manager_version": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c",
+      "suites": [
+        {
+          "suite": "live",
+          "passed": true,
+          "summary": "PASS 36 release assertions (live). Synthetic data only.",
+          "seconds": 7.69
+        },
+        {
+          "suite": "encryption",
+          "passed": true,
+          "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+          "seconds": 2.566
+        }
+      ]
+    },
+    {
+      "api": 31,
+      "sdk_full": "",
+      "release": "12",
+      "fingerprint": "google/sdk_gphone64_x86_64/emulator64_x86_64_arm64:12/SE1A.220826.008/10564458:userdebug/dev-keys",
+      "version_name": "1.4.5-validation",
+      "manager_package": "moe.shizuku.privileged.api",
+      "installed_manager_version": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c",
+      "suites": [
+        {
+          "suite": "live",
+          "passed": true,
+          "summary": "PASS 36 release assertions (live). Synthetic data only.",
+          "seconds": 8.445
+        },
+        {
+          "suite": "encryption",
+          "passed": true,
+          "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+          "seconds": 2.556
+        }
+      ]
+    },
+    {
+      "api": 32,
+      "sdk_full": "",
+      "release": "12",
+      "fingerprint": "google/sdk_gphone64_x86_64/emulator64_x86_64_arm64:12/SE1B.240122.005/11418786:userdebug/dev-keys",
+      "version_name": "1.4.5-validation",
+      "manager_package": "moe.shizuku.privileged.api",
+      "installed_manager_version": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c",
+      "suites": [
+        {
+          "suite": "live",
+          "passed": true,
+          "summary": "PASS 36 release assertions (live). Synthetic data only.",
+          "seconds": 8.489
+        },
+        {
+          "suite": "encryption",
+          "passed": true,
+          "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+          "seconds": 3.214
+        }
+      ]
+    },
+    {
+      "api": 33,
+      "sdk_full": "",
+      "release": "13",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+      "version_name": "1.4.5-validation",
+      "manager_package": "moe.shizuku.privileged.api",
+      "installed_manager_version": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c",
+      "suites": [
+        {
+          "suite": "live",
+          "passed": true,
+          "summary": "PASS 36 release assertions (live). Synthetic data only.",
+          "seconds": 11.615
+        },
+        {
+          "suite": "encryption",
+          "passed": true,
+          "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+          "seconds": 3.057
+        }
+      ]
+    },
+    {
+      "api": 34,
+      "sdk_full": "",
+      "release": "14",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys",
+      "version_name": "1.4.5-validation",
+      "manager_package": "moe.shizuku.privileged.api",
+      "installed_manager_version": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c",
+      "suites": [
+        {
+          "suite": "live",
+          "passed": true,
+          "summary": "PASS 36 release assertions (live). Synthetic data only.",
+          "seconds": 25.15
+        },
+        {
+          "suite": "encryption",
+          "passed": true,
+          "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+          "seconds": 3.973
+        }
+      ]
+    },
+    {
+      "api": 35,
+      "sdk_full": "",
+      "release": "15",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:15/AE3A.240806.043/12960925:userdebug/dev-keys",
+      "version_name": "1.4.5-validation",
+      "manager_package": "moe.shizuku.privileged.api",
+      "installed_manager_version": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c",
+      "suites": [
+        {
+          "suite": "live",
+          "passed": true,
+          "summary": "PASS 36 release assertions (live). Synthetic data only.",
+          "seconds": 20.303
+        },
+        {
+          "suite": "encryption",
+          "passed": true,
+          "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+          "seconds": 5.003
+        }
+      ]
+    },
+    {
+      "api": 36,
+      "sdk_full": "36.1",
+      "release": "16",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE4B.251210.005/14574095:userdebug/dev-keys",
+      "version_name": "1.4.5-validation",
+      "manager_package": "moe.shizuku.privileged.api",
+      "installed_manager_version": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c",
+      "suites": [
+        {
+          "suite": "live",
+          "passed": true,
+          "summary": "PASS 36 release assertions (live). Synthetic data only.",
+          "seconds": 45.148
+        },
+        {
+          "suite": "encryption",
+          "passed": true,
+          "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+          "seconds": 4.314
+        },
+        {
+          "suite": "sensitive-live",
+          "passed": true,
+          "summary": "PASS 40 sensitive assertions (sensitive-live). Synthetic emulator only.",
+          "seconds": 67.278
+        }
+      ]
+    },
+    {
+      "api": 37,
+      "sdk_full": "37.0",
+      "release": "17",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:17/CE2A.260420.051.A3/16571990:userdebug/dev-keys",
+      "version_name": "1.4.5-validation",
+      "manager_package": "com.churan.shizako",
+      "installed_manager_version": "versionCode=317 minSdk=24 targetSdk=36\nversionName=zako3.17-f",
+      "suites": [
+        {
+          "suite": "live",
+          "passed": true,
+          "summary": "PASS 36 release assertions (live). Synthetic data only.",
+          "seconds": 20.504
+        },
+        {
+          "suite": "encryption",
+          "passed": true,
+          "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+          "seconds": 4.148
+        },
+        {
+          "suite": "settings",
+          "passed": true,
+          "summary": "PASS 23 feature assertions (settings), API 37. Synthetic validation only.",
+          "seconds": 7.5
+        },
+        {
+          "suite": "tile",
+          "passed": true,
+          "summary": "PASS 75 feature assertions (tile), API 37. Synthetic validation only.",
+          "seconds": 29.938
+        }
+      ]
+    }
+  ],
+  "signed_upgrades": [
+    {
+      "old_apk_sha256": "0f2e159208d3757e1180d6baf935721908acd9e708826e132f1f2d6135c826ae",
+      "new_apk_sha256": "3713d2a2a9c9194cf8c146bb295f8992b51672356927d924d78c50a625d24ba9",
+      "old_version": "1.4.4",
+      "new_version": "1.4.5",
+      "api": "30",
+      "fingerprint": "google/sdk_gphone_x86_64/generic_x86_64_arm64:11/RSR1.240422.006/12134477:userdebug/dev-keys",
+      "same_uid": true,
+      "approval_dialog_observed": true,
+      "exact_two_synthetic_texts_retained": true,
+      "interleaved_duplicates_suppressed": true,
+      "settings_and_encryption_metadata_preserved": true,
+      "new_external_copy_after_upgrade": true,
+      "fresh_sensitive_capture_default_off": true,
+      "acknowledged_recorder_wait_seconds": 1.573,
+      "genuine_force_stop_prevents_capture": true,
+      "genuine_force_stop_survives_reinstallation": true,
+      "explicit_start_after_stop_captures_again": true
+    },
+    {
+      "old_apk_sha256": "0f2e159208d3757e1180d6baf935721908acd9e708826e132f1f2d6135c826ae",
+      "new_apk_sha256": "3713d2a2a9c9194cf8c146bb295f8992b51672356927d924d78c50a625d24ba9",
+      "old_version": "1.4.4",
+      "new_version": "1.4.5",
+      "api": "31",
+      "fingerprint": "google/sdk_gphone64_x86_64/emulator64_x86_64_arm64:12/SE1A.220826.008/10564458:userdebug/dev-keys",
+      "same_uid": true,
+      "approval_dialog_observed": true,
+      "exact_two_synthetic_texts_retained": true,
+      "interleaved_duplicates_suppressed": true,
+      "settings_and_encryption_metadata_preserved": true,
+      "new_external_copy_after_upgrade": true,
+      "fresh_sensitive_capture_default_off": true,
+      "acknowledged_recorder_wait_seconds": 2.068,
+      "genuine_force_stop_prevents_capture": true,
+      "genuine_force_stop_survives_reinstallation": true,
+      "explicit_start_after_stop_captures_again": true
+    },
+    {
+      "old_apk_sha256": "0f2e159208d3757e1180d6baf935721908acd9e708826e132f1f2d6135c826ae",
+      "new_apk_sha256": "3713d2a2a9c9194cf8c146bb295f8992b51672356927d924d78c50a625d24ba9",
+      "old_version": "1.4.4",
+      "new_version": "1.4.5",
+      "api": "32",
+      "fingerprint": "google/sdk_gphone64_x86_64/emulator64_x86_64_arm64:12/SE1B.240122.005/11418786:userdebug/dev-keys",
+      "same_uid": true,
+      "approval_dialog_observed": false,
+      "exact_two_synthetic_texts_retained": true,
+      "interleaved_duplicates_suppressed": true,
+      "settings_and_encryption_metadata_preserved": true,
+      "new_external_copy_after_upgrade": true,
+      "fresh_sensitive_capture_default_off": true,
+      "acknowledged_recorder_wait_seconds": 2.014,
+      "genuine_force_stop_prevents_capture": true,
+      "genuine_force_stop_survives_reinstallation": true,
+      "explicit_start_after_stop_captures_again": true
+    },
+    {
+      "old_apk_sha256": "0f2e159208d3757e1180d6baf935721908acd9e708826e132f1f2d6135c826ae",
+      "new_apk_sha256": "3713d2a2a9c9194cf8c146bb295f8992b51672356927d924d78c50a625d24ba9",
+      "old_version": "1.4.4",
+      "new_version": "1.4.5",
+      "api": "33",
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64x:13/TE1A.240213.009/12342917:userdebug/dev-keys",
+      "same_uid": true,
+      "approval_dialog_observed": true,
+      "exact_two_synthetic_texts_retained": true,
+      "interleaved_duplicates_suppressed": true,
+      "settings_and_encryption_metadata_preserved": true,
+      "new_external_copy_after_upgrade": true,
+      "fresh_sensitive_capture_default_off": true,
+      "acknowledged_recorder_wait_seconds": 2.125,
+      "genuine_force_stop_prevents_capture": true,
+      "genuine_force_stop_survives_reinstallation": true,
+      "explicit_start_after_stop_captures_again": true
+    }
+  ]
+}
