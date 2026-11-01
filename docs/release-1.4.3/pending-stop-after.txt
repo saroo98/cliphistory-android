@@ -1,0 +1,15 @@
+PASS Actual Shizuku connection for pending Stop
+PASS Recovery supervisor is running
+PASS Stop request is pending
+PASS Recovery supervisor remains active while Stop is pending
+PASS Failed Stop finishes
+PASS Failed Stop leaves its notification visible
+PASS Failed Stop keeps the recorder and recovery supervisor active
+PASS Actual Shizuku connection for pending Stop
+PASS Recovery supervisor is running
+PASS Stop request is pending
+PASS Recovery supervisor remains active while Stop is pending
+PASS Failed Stop finishes
+PASS Failed Stop leaves its notification visible
+PASS Failed Stop keeps the recorder and recovery supervisor active
+PASS 7 release assertions (recovery-pending). Synthetic data only.

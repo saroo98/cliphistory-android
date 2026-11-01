@@ -1,0 +1,22 @@
+[
+  {
+    "variant": "metadata",
+    "parser_commit": "c21c177ff6d813697aaf9c988ca9fbb2b571b468",
+    "ruamel": "0.18.10",
+    "values_preserved": true,
+    "canonical_LF_idempotent": true,
+    "changed_bytes": true,
+    "current_version": "1.3.4",
+    "current_code": 8
+  },
+  {
+    "variant": "submission",
+    "parser_commit": "c21c177ff6d813697aaf9c988ca9fbb2b571b468",
+    "ruamel": "0.18.10",
+    "values_preserved": true,
+    "canonical_LF_idempotent": true,
+    "changed_bytes": true,
+    "current_version": "1.3.4",
+    "current_code": 8
+  }
+]

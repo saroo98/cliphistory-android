@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="app.cliphistory.RecorderStateTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-31T21:54:50.681Z" hostname="local-test-host" time="0.001">
+  <properties/>
+  <testcase name="disconnectedNeverDisplaysStaleActiveStatus" classname="app.cliphistory.RecorderStateTest" time="0.001"/>
+  <testcase name="unavailableListenerDoesNotBecomeRecordingAfterOldTestPass" classname="app.cliphistory.RecorderStateTest" time="0.0"/>
+  <testcase name="pauseIsNeutralAndNeverActive" classname="app.cliphistory.RecorderStateTest" time="0.0"/>
+  <testcase name="listeningIsNotVerifiedRecording" classname="app.cliphistory.RecorderStateTest" time="0.0"/>
+  <testcase name="errorsOverridePauseAndActiveFlags" classname="app.cliphistory.RecorderStateTest" time="0.0"/>
+  <testcase name="setupStatesStayDistinct" classname="app.cliphistory.RecorderStateTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

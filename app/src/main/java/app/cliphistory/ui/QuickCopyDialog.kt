@@ -11,11 +11,13 @@ import android.graphics.drawable.RippleDrawable
 import android.os.Handler
 import android.os.Looper
 import android.os.Bundle
+import android.os.Build
 import android.text.TextUtils
 import android.view.*
 import android.widget.*
 import app.cliphistory.R
 import app.cliphistory.client.DaemonClient
+import app.cliphistory.core.Expiry
 
 /** A native QS dialog: no activity/task launch or overlay permission. */
 class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
@@ -39,9 +41,17 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
     private var copyFailure=false
     private var populatedHeight=0
     private var nextNotice:Int?=null
+    private var shown=emptyList<DaemonClient.Row>()
+    private var failureId=-1L
+    private var failureExpiry:Expiry?=null
+    private val expire=Runnable {
+        rows.removeAllViews();shown=emptyList();copyFailure=false;failureId=-1;failureExpiry=null
+        nextNotice=R.string.quick_missing;refresh()
+    }
     private val reload=Runnable { refresh() }
     private val changed:()->Unit={
-        if(loading || copyFailure)dirty=true else { main.removeCallbacks(reload);main.postDelayed(reload,120) }
+        if(copyFailure)recheckFailure()
+        else if(loading)dirty=true else { main.removeCallbacks(reload);main.postDelayed(reload,120) }
     }
     private val preferences=SharedPreferences.OnSharedPreferenceChangeListener { _,_ ->
         if(closed)return@OnSharedPreferenceChangeListener
@@ -106,7 +116,7 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
     }
     private fun dp(value:Int)=(value*context.resources.displayMetrics.density).toInt()
     private fun shape(color:Int,radius:Int)=GradientDrawable().apply { setColor(color);cornerRadius=dp(radius).toFloat() }
-    private fun label(text:String,size:Float,secondary:Boolean=false)=TextView(context).apply {
+    private fun label(text:String,size:Float,secondary:Boolean=false)=ClipboardPayload.CopyText(context).apply {
         this.text=text;textSize=size;setTextColor(context.getColor(if(secondary)R.color.muted else R.color.ink))
         setPadding(0,dp(6),0,dp(6));accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE
     }
@@ -129,14 +139,28 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
         }
     }
     private fun retryRead() {
-        copyFailure=false;notice.text=context.getString(R.string.quick_loading);showSkeleton();refresh()
+        copyFailure=false;failureId=-1;failureExpiry=null;notice.text=context.getString(R.string.quick_loading);showSkeleton();refresh()
+    }
+    private fun scheduleExpiry() {
+        main.removeCallbacks(expire)
+        (shown.mapNotNull { it.expiry }+listOfNotNull(failureExpiry)).mapNotNull { client.expiryDelay(it) }
+            .minOrNull()?.let { main.postDelayed(expire,it) }
+    }
+    private fun recheckFailure() {
+        val id=failureId
+        client.getText(id) { result ->
+            if(closed || !copyFailure || failureId!=id)return@getText
+            if(result.text==null) { copyFailure=false;failureId=-1;failureExpiry=null;rows.removeAllViews();refresh() }
+            else { failureExpiry=result.expiry;scheduleExpiry() }
+        }
     }
     override fun onAttachedToWindow() {
         trace("start")
         super.onAttachedToWindow();closed=false
         ScreenPrivacy.apply(window,settings)
         client.addListener(changed);settings.register(preferences)
-        context.applicationContext.registerReceiver(locked,IntentFilter(Intent.ACTION_SCREEN_OFF),Context.RECEIVER_NOT_EXPORTED)
+        if(Build.VERSION.SDK_INT>=33)context.applicationContext.registerReceiver(locked,IntentFilter(Intent.ACTION_SCREEN_OFF),Context.RECEIVER_NOT_EXPORTED)
+        else context.applicationContext.registerReceiver(locked,IntentFilter(Intent.ACTION_SCREEN_OFF))
         observing=true;main.post(reload)
     }
     private fun stopObserving() {
@@ -168,6 +192,7 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
             loading=false
             if(!unlocked()){dismiss();return@requestLatest}
             rows.removeAllViews()
+            shown=page.rows.filterNot { client.expired(it.expiry) };scheduleExpiry()
             rows.minimumHeight=if(page.issue.isEmpty() && page.rows.isNotEmpty())populatedHeight else 0
             if(page.issue.isNotEmpty()) {
                 notice.text=context.getString(R.string.quick_failed)
@@ -176,7 +201,7 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
                 notice.text=context.getString(nextNotice ?: if(page.rows.isEmpty())R.string.quick_empty else if(page.offline)R.string.quick_offline else R.string.quick_hint)
                 nextNotice=null
                 if(page.rows.isEmpty())action(R.string.open_app){openApp()}
-                page.rows.forEach { row ->
+                shown.forEach { row ->
                     val button=entryButton(row.preview).apply {
                         setOnClickListener { copy(row.id) }
                     }
@@ -197,32 +222,45 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
             copying=false
             if(!unlocked()){dismiss();return@getText}
             if(result.issue.isNotEmpty()) {
+                copyFailure=false;failureId=-1;failureExpiry=null
                 notice.text=context.getString(R.string.quick_failed);rows.removeAllViews()
                 rows.minimumHeight=0
                 action(R.string.quick_retry){retryRead()};action(R.string.open_app){openApp()};return@getText
             }
             val text=result.text
-            if(text==null){nextNotice=R.string.quick_missing;refresh();return@getText}
-            writeCopy(text)
+            if(text==null || client.expired(result.expiry)) {
+                copyFailure=false;failureId=-1;failureExpiry=null;nextNotice=R.string.quick_missing;refresh();return@getText
+            }
+            writeCopy(id,result)
         }
     }
-    private fun writeCopy(text:String) {
+    private fun writeCopy(id:Long,result:DaemonClient.TextResult) {
         if(closed || !isShowing || !unlocked())return
+        val text=result.text
+        if(text==null || client.expired(result.expiry)){copyFailure=false;nextNotice=R.string.quick_missing;refresh();return}
         try {
-            context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText(context.getString(R.string.app_name),text));dismiss()
-        } catch (_:Exception) { showCopyFailure(text) }
+            context.getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipboardPayload.text(context.getString(R.string.app_name),text,result.sensitive));dismiss()
+        } catch (_:Exception) { showCopyFailure(id,result.expiry) }
     }
-    private fun showCopyFailure(text:String) {
-        copyFailure=true;main.removeCallbacks(reload)
+    private fun showCopyFailure(id:Long,expiry:Expiry?) {
+        copyFailure=true;failureId=id;failureExpiry=expiry;main.removeCallbacks(reload);shown=emptyList();scheduleExpiry()
         notice.text=context.getString(R.string.copy_failed_title)
         rows.removeAllViews();rows.minimumHeight=0
-        action(R.string.port_retry){writeCopy(text)}
+        action(R.string.port_retry){copy(id)}
         action(R.string.view_full) {
-            rows.removeAllViews()
-            rows.addView(label(text,16f).apply { setTextIsSelectable(true);isSaveEnabled=false })
-            action(R.string.port_retry){writeCopy(text)}
-            action(R.string.back){showCopyFailure(text)}
+            client.getText(id) { result ->
+                if(closed || !copyFailure || failureId!=id)return@getText
+                val text=result.text
+                if(text==null || client.expired(result.expiry)) { copyFailure=false;rows.removeAllViews();refresh();return@getText }
+                failureExpiry=result.expiry;scheduleExpiry();rows.removeAllViews()
+                rows.addView(label(text,16f).apply {
+                    setTextIsSelectable(true);isSaveEnabled=false
+                    ClipboardPayload.protectSelection(this,client,id){copyFailure=false;rows.removeAllViews();refresh()}
+                })
+                action(R.string.port_retry){copy(id)}
+                action(R.string.back){showCopyFailure(id,result.expiry)}
+            }
         }
-        action(R.string.cancel){copyFailure=false;refresh()}
+        action(R.string.cancel){copyFailure=false;failureId=-1;failureExpiry=null;refresh()}
     }
 }

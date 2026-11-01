@@ -8,6 +8,7 @@ local.properties
 .DS_Store
 *.apk
 *.apk.sha256
+*.apk.idsig
 /build-windows.log
 /apk-permissions.txt
 .DS_Store

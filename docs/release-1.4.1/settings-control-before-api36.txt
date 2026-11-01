@@ -1,0 +1,72 @@
+PASS History loads 3 available entries
+PASS Real Shizuku recorder attaches encrypted storage
+PASS Sensitive policy is durably acknowledged
+PASS Sensitive capture is off by default policy
+PASS Sensitive flag is skipped without saving its text
+PASS Sensitive policy is durably acknowledged
+PASS Recorder establishes the Android boot identity
+PASS Opt-in captures source-sensitive text
+PASS Source-sensitive metadata reaches the entry response
+PASS Both encrypted snapshots authenticate and preserve the sensitive capture
+PASS Saved and skipped sensitive counters are distinct
+PASS Normal capture still works
+PASS Recopy moves the existing exact text to the top
+PASS Unmarked recopy preserves sensitivity and the original deadline
+PASS History foregrounds for copy
+PASS History copy retains Android's sensitive preview flag
+PASS Sensitive quick-copy entry is visible
+PASS Quick copy dismisses and retains the sensitive flag
+PASS Sensitive full-text preview is selectable
+PASS Native selected-text copy preserves sensitivity
+PASS Sensitive policy is durably acknowledged
+PASS Disabling capture purges sensitive text while retaining normal text
+PASS Connected sensitive control is available
+PASS Capture switch saves true
+PASS Native duration choice saves 15 minutes
+PASS Custom duration rejects zero
+PASS Custom duration rejects 1441
+PASS Custom duration saves seven minutes
+PASS Indefinite retention does not save before confirmation
+PASS Cancel preserves auto-delete
+PASS Confirmed indefinite retention saves false
+FAIL after 0 assertions: java.lang.IllegalStateException: PASS History loads 3 available entries
+PASS Real Shizuku recorder attaches encrypted storage
+PASS Sensitive policy is durably acknowledged
+PASS Sensitive capture is off by default policy
+PASS Sensitive flag is skipped without saving its text
+PASS Sensitive policy is durably acknowledged
+Recorder status before timed capture: bootKnown=true, listening=true, paused=false, issue=
+PASS Recorder establishes the Android boot identity
+PASS Opt-in captures source-sensitive text
+PASS Source-sensitive metadata reaches the entry response
+PASS Both encrypted snapshots authenticate and preserve the sensitive capture
+PASS Saved and skipped sensitive counters are distinct
+PASS Normal capture still works
+PASS Recopy moves the existing exact text to the top
+PASS Unmarked recopy preserves sensitivity and the original deadline
+PASS History foregrounds for copy
+PASS History copy retains Android's sensitive preview flag
+PASS Sensitive quick-copy entry is visible
+PASS Quick copy dismisses and retains the sensitive flag
+PASS Sensitive full-text preview is selectable
+PASS Native selected-text copy preserves sensitivity
+PASS Sensitive policy is durably acknowledged
+PASS Disabling capture purges sensitive text while retaining normal text
+PASS Connected sensitive control is available
+PASS Capture switch saves true
+PASS Native duration choice saves 15 minutes
+PASS Custom duration rejects zero
+PASS Custom duration rejects 1441
+PASS Custom duration saves seven minutes
+PASS Indefinite retention does not save before confirmation
+PASS Cancel preserves auto-delete
+PASS Confirmed indefinite retention saves false
+
+	at app.cliphistory.SensitiveChecks.run(SensitiveChecks.kt:222)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:80)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2597)
+Caused by: java.lang.IllegalStateException: Indefinite retention is reflected by the available switch
+	at app.cliphistory.SensitiveChecks.await(SensitiveChecks.kt:31)
+	at app.cliphistory.SensitiveChecks.live(SensitiveChecks.kt:198)
+	at app.cliphistory.SensitiveChecks.run(SensitiveChecks.kt:221)
+	... 2 more

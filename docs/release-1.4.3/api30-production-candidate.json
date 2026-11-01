@@ -1,0 +1,12 @@
+{
+  "api": 30,
+  "fingerprint": "google/sdk_gphone_x86_64/generic_x86_64_arm64:11/RSR1.240422.006/12134477:userdebug/dev-keys",
+  "package": "app.cliphistory",
+  "version": "1.4.3",
+  "apk_sha256": "b9f95c4b4d9dcf6e29af23dea49bab1cc932b39f7e85cd93f2cc7719230040b5",
+  "debuggable": false,
+  "shizuku": "official installed package",
+  "connection": "Listening",
+  "sequence": "A,B,A,B",
+  "visible_unique_order": "B,A"
+}

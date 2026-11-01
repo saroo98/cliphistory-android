@@ -1,0 +1,740 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Quick tile keeps the underlying activity resumed; no task launch animation
+PASS Tile service cleanup leaves its independently attached dialog open
+PASS Actual OS capture follows quick-panel privacy
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Repeated tile click collapses shade
+PASS Re-tap keeps exactly one attached quick panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Initial performance panel dismissed
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 1: app loaded pre-draw=237.92844 ms; accessibility availability=840 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 1
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 2: app loaded pre-draw=249.806595 ms; accessibility availability=871 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 2
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 3: app loaded pre-draw=307.861277 ms; accessibility availability=882 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 3
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 4: app loaded pre-draw=136.137402 ms; accessibility availability=809 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 4
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 5: app loaded pre-draw=179.490233 ms; accessibility availability=835 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 5
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 6: app loaded pre-draw=210.061064 ms; accessibility availability=840 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 6
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 7: app loaded pre-draw=165.630708 ms; accessibility availability=809 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 7
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 8: app loaded pre-draw=271.434977 ms; accessibility availability=832 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 8
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 9: app loaded pre-draw=146.598397 ms; accessibility availability=810 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 9
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 10: app loaded pre-draw=213.069261 ms; accessibility availability=804 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 10
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 11: app loaded pre-draw=200.410683 ms; accessibility availability=819 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 11
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 12: app loaded pre-draw=228.402199 ms; accessibility availability=826 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 12
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 13: app loaded pre-draw=330.426906 ms; accessibility availability=965 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 13
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 14: app loaded pre-draw=234.637395 ms; accessibility availability=845 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 14
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 15: app loaded pre-draw=155.723635 ms; accessibility availability=823 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 15
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 16: app loaded pre-draw=214.446434 ms; accessibility availability=831 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 16
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 17: app loaded pre-draw=126.964795 ms; accessibility availability=800 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 17
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 18: app loaded pre-draw=263.565377 ms; accessibility availability=887 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 18
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 19: app loaded pre-draw=151.129394 ms; accessibility availability=795 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 19
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 20: app loaded pre-draw=129.464628 ms; accessibility availability=800 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 20
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 21: app loaded pre-draw=125.496932 ms; accessibility availability=792 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 21
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 22: app loaded pre-draw=127.284377 ms; accessibility availability=798 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 22
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 23: app loaded pre-draw=127.735212 ms; accessibility availability=796 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 23
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 24: app loaded pre-draw=124.691906 ms; accessibility availability=784 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 24
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 25: app loaded pre-draw=126.053781 ms; accessibility availability=796 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 25
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 26: app loaded pre-draw=125.978605 ms; accessibility availability=802 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 26
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 27: app loaded pre-draw=127.842 ms; accessibility availability=786 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 27
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 28: app loaded pre-draw=123.917066 ms; accessibility availability=797 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 28
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 29: app loaded pre-draw=162.685341 ms; accessibility availability=796 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 29
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 30: app loaded pre-draw=196.865022 ms; accessibility availability=811 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 30
+Actual SystemUI tile invocation (native touch) to accessibility availability, 30 warm openings: p50=809 ms, p95=887 ms, max=965 ms
+Actual loaded dialog pre-draw p95=307.861277 ms; accessibility timeouts=0/30
+PASS Warm latest-three loaded pre-draw meets p95 <= 500 ms
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Quick tile keeps the underlying activity resumed; no task launch animation
+PASS Tile service cleanup leaves its independently attached dialog open
+PASS Actual OS capture follows quick-panel privacy
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Repeated tile click collapses shade
+PASS Re-tap keeps exactly one attached quick panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Initial performance panel dismissed
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 1
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 2
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 3
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 4
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 5
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 6
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 7
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 8
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 9
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 10
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 11
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 12
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 13
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 14
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 15
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 16
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 17
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 18
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 19
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 20
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 21
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 22
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 23
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 24
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 25
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 26
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 27
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 28
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 29
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 30
+Actual SystemUI tile invocation (native touch) to accessibility availability, 30 warm openings: p50=809 ms, p95=887 ms, max=965 ms
+PASS Warm latest-three loaded pre-draw meets p95 <= 500 ms
+PASS 353 feature assertions (tile-performance), API 35. Synthetic validation only.

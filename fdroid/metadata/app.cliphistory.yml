@@ -45,6 +45,10 @@ Builds:
 
 AllowedAPKSigningKeys: ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82
 
+MaintainerNotes: |-
+  FOREGROUND_SERVICE_SPECIAL_USE maintains the user-enabled local clipboard
+  recorder and reconnects its authorized Shizuku helper. It has no network role.
+
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
 CurrentVersion: 1.3.4

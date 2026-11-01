@@ -1,0 +1,23 @@
+{
+  "fdroidserver_commit": "cdfdce835a8231996b02392bc79c1879e6bef501",
+  "input": "Nonignored working-tree source copied into isolated staging; not a committed release",
+  "file_count": 542,
+  "input_manifest_sha256": "58566f86bb965d59d706cce1500823f2c62fb7b1cac22772c57e71387c355923",
+  "fatal_count": 0,
+  "errors": [],
+  "warnings": [],
+  "infos": [
+    [
+      "Removing gradlew at gradlew",
+      "gradlew"
+    ],
+    [
+      "Removing gradlew.bat at gradlew.bat",
+      "gradlew.bat"
+    ],
+    [
+      "Removing gradle-wrapper.jar at gradle\\wrapper\\gradle-wrapper.jar",
+      "gradle\\wrapper\\gradle-wrapper.jar"
+    ]
+  ]
+}

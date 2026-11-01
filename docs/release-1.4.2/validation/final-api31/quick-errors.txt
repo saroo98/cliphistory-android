@@ -1,0 +1,50 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Real quick panel shows synthetic storage-read error
+PASS Error panel releases absent entries and exposes two recovery actions
+PASS Quick error recovery actions retain their visible gaps
+PASS Quick error exposes both accessible recovery actions
+PASS Actual Try again accessibility control accepts activation
+PASS Try again reloads all three exact valid entries
+PASS Real quick panel shows synthetic storage-read error
+PASS Error panel releases absent entries and exposes two recovery actions
+PASS Quick error recovery actions retain their visible gaps
+PASS Quick error exposes both accessible recovery actions
+PASS Actual error Open app accessibility control accepts activation
+PASS Error Open app closes floating panel and restores Main focus
+PASS Main exposes failed-history Try again and Diagnostics controls
+PASS Actual failed-history Diagnostics control accepts activation
+PASS Failed-history Diagnostics opens its real page
+PASS Failed-history Diagnostics exposes Advanced details
+PASS Failed-read Diagnostics Advanced details accepts activation
+PASS Failed-read Diagnostics identifies the unavailable duplicate policy
+PASS Actual Back restores failed-history recovery controls
+PASS Actual failed-history Try again control accepts activation
+PASS Failed-history Try again reloads the three saved entries
+PASS Valid synthetic history is restored after error controls
+Accessibility flags before window retrieval: 65554
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Real quick panel shows synthetic storage-read error
+PASS Error panel releases absent entries and exposes two recovery actions
+PASS Quick error recovery actions retain their visible gaps
+PASS Quick error exposes both accessible recovery actions
+PASS Actual Try again accessibility control accepts activation
+PASS Try again reloads all three exact valid entries
+PASS Real quick panel shows synthetic storage-read error
+PASS Error panel releases absent entries and exposes two recovery actions
+PASS Quick error recovery actions retain their visible gaps
+PASS Quick error exposes both accessible recovery actions
+PASS Actual error Open app accessibility control accepts activation
+PASS Error Open app closes floating panel and restores Main focus
+PASS Main exposes failed-history Try again and Diagnostics controls
+PASS Actual failed-history Diagnostics control accepts activation
+PASS Failed-history Diagnostics opens its real page
+PASS Failed-history Diagnostics exposes Advanced details
+PASS Failed-read Diagnostics Advanced details accepts activation
+PASS Failed-read Diagnostics identifies the unavailable duplicate policy
+PASS Actual Back restores failed-history recovery controls
+PASS Actual failed-history Try again control accepts activation
+PASS Failed-history Try again reloads the three saved entries
+PASS Valid synthetic history is restored after error controls
+PASS 24 feature assertions (quick-errors), API 31. Synthetic validation only.

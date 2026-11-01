@@ -1,0 +1,5 @@
+PASS One empty slot recovers from the authenticated copy
+PASS A completed store with both slots empty fails closed
+PASS A completed store with both slots missing fails closed
+PASS Missing snapshots do not replace the wrapped key
+PASS 4 encryption assertions (missing-snapshots). No clipboard writes.

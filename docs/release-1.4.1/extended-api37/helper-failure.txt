@@ -1,0 +1,13 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS A helper launch failure never claims a connection
+PASS Actual failed helper startup reaches the copied diagnostic report
+PASS Actual startup failure shows specific recovery guidance
+PASS Startup failure setup action opens the native guide
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS A helper launch failure never claims a connection
+PASS Actual failed helper startup reaches the copied diagnostic report
+PASS Actual startup failure shows specific recovery guidance
+PASS Startup failure setup action opens the native guide
+PASS 6 feature assertions (helper-failure), API 37. Synthetic validation only.

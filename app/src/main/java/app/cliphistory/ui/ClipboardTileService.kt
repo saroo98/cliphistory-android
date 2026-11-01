@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.view.WindowManager
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
@@ -22,12 +23,17 @@ class ClipboardTileService:TileService() {
     }
     private fun trace(event:String) { if(app.cliphistory.BuildConfig.DEBUG)android.util.Log.d("ClipHistoryTileTrace","${android.os.SystemClock.uptimeMillis()} tile $event") }
     override fun onCreate() { super.onCreate();trace("created") }
-    private fun historyLaunch():PendingIntent {
-        val intent=Intent(this,MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        intent.action=MainActivity.ACTION_OPEN_HISTORY
-        return PendingIntent.getActivity(this,0,intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+    private fun historyIntent()=Intent(this,MainActivity::class.java)
+        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        .setAction(MainActivity.ACTION_OPEN_HISTORY)
+    private fun historyLaunch()=PendingIntent.getActivity(this,0,historyIntent(),
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+    // The Intent overload is required below API 34 and forbidden on API 34+.
+    @android.annotation.SuppressLint("StartActivityAndCollapseDeprecated")
+    @Suppress("DEPRECATION")
+    private fun openHistory() {
+        if(Build.VERSION.SDK_INT>=34)startActivityAndCollapse(historyLaunch())
+        else startActivityAndCollapse(historyIntent())
     }
     override fun onStartListening() {
         super.onStartListening()
@@ -47,11 +53,12 @@ class ClipboardTileService:TileService() {
             // onBind acknowledges the connection. Only changed state needs an
             // update; unchanged updates lower our priority against other tiles.
             if(label?.toString()==title.toString() && subtitle?.toString()==detail &&
-                contentDescription?.toString()==description && state==availability && activityLaunchForClick==launch)return
+                contentDescription?.toString()==description && state==availability &&
+                (Build.VERSION.SDK_INT<34 || activityLaunchForClick==launch))return
             label=title;subtitle=detail;contentDescription=description;state=availability
             // A direct Activity launch asks SystemUI to expand the tile into a
             // task, even for a tiny floating window. Quick mode uses showDialog.
-            activityLaunchForClick=launch
+            if(Build.VERSION.SDK_INT>=34)activityLaunchForClick=launch
             updateTile()
         }
     }
@@ -60,17 +67,17 @@ class ClipboardTileService:TileService() {
         if(!settings.tileEnabled)return
         val action:()->Unit={
             if(settings.tileEnabled && !isLocked) {
-                if(settings.tileMode=="history")startActivityAndCollapse(historyLaunch())
+                if(settings.tileMode=="history")openHistory()
                 else {
                     val existing=quick?.get()?.takeIf { it.isShowing && it.window?.decorView?.isAttachedToWindow==true }
-                    val dialog=existing ?: QuickCopyDialog(this) { startActivityAndCollapse(historyLaunch()) }
+                    val dialog=existing ?: QuickCopyDialog(this) { openHistory() }
                     quick=WeakReference(dialog)
                     dialog.setOnDismissListener { if(quick?.get()===dialog)quick=null }
                     try { showDialog(dialog);existing?.refresh() }
                     catch(_:WindowManager.BadTokenException) {
                         dialog.dismiss();quick=null
                         // Use full history if Android rejects the dialog window.
-                        startActivityAndCollapse(historyLaunch())
+                        openHistory()
                     }
                 }
             }

@@ -99,10 +99,13 @@ class DetailPages(private val ui:Ui) {
         fun topics(entries:List<Pair<Int,Int>>) {
             entries.forEach { (title,body) ->
                 val text=ui.column();ui.paragraph(text,s(body))
+                if(title==R.string.help_helper_start)ui.actionRow(text,s(R.string.shizuku_compatibility_reports)) {
+                    website("https://github.com/RikkaApps/Shizuku/issues/1198")
+                }
                 disclosure(content,s(title),text,title in openTopics,heading=true) { expanded -> if(expanded)openTopics.add(title) else openTopics.remove(title) }
             }
         }
-        topics(listOf(R.string.help_gboard to R.string.help_gboard_body,R.string.help_restart to R.string.help_restart_body,R.string.help_limits to R.string.help_limits_body))
+        topics(listOf(R.string.help_gboard to R.string.help_gboard_body,R.string.help_restart to R.string.help_restart_body,R.string.help_helper_start to R.string.help_helper_start_body,R.string.help_limits to R.string.help_limits_body))
         content.addView(ui.space(28));content.addView(ui.title(s(R.string.html_port_privacy_saved_text),18f).apply { isAccessibilityHeading=true });content.addView(ui.space(12))
         topics(listOf(R.string.help_local to R.string.help_local_body,R.string.help_sensitive to R.string.help_sensitive_body,R.string.help_screen to R.string.help_screen_body))
         content.addView(ui.space(24));content.addView(ui.text(ui.activity.getString(R.string.version_license,BuildConfig.VERSION_NAME),13f,true))
@@ -119,7 +122,7 @@ class DetailPages(private val ui:Ui) {
         fun flag(key:String,on:Int,off:Int)=if(offline)s(R.string.not_connected) else s(if(b.getBoolean(key))on else off)
         return listOf(
             s(R.string.app_name) to BuildConfig.VERSION_NAME,
-            s(R.string.device) to Build.MODEL,
+            s(R.string.device) to "${Build.MANUFACTURER} ${Build.MODEL}",
             s(R.string.android_version) to "${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}",
             s(R.string.mode) to s(if(offline)R.string.offline_mode else R.string.recorder_mode),
             s(R.string.duplicate_handling) to s(if(!b.containsKey("duplicateMode"))R.string.not_confirmed
@@ -141,9 +144,17 @@ class DetailPages(private val ui:Ui) {
         )
     }
     fun advanced(b:Bundle,offline:Boolean)=listOf(
+        s(R.string.recorder_connection) to b.getString("connectionMessage",s(R.string.not_confirmed)),
+        s(R.string.connection_issue) to b.getString("connectionIssue").orEmpty().ifEmpty { s(R.string.none) },
+        s(R.string.shizuku_version) to try { ui.activity.packageManager.getPackageInfo("moe.shizuku.privileged.api",0).versionName.orEmpty().ifEmpty { s(R.string.not_confirmed) } } catch (_:Exception) { s(R.string.not_confirmed) },
         s(R.string.security_patch) to Build.VERSION.SECURITY_PATCH,
         s(R.string.generation) to if(offline)s(R.string.not_connected) else b.getLong("generation").toString(),
-        s(R.string.api_signature) to b.getString("signature",s(R.string.not_connected))
+        s(R.string.api_signature) to b.getString("signature",s(R.string.not_connected)),
+        s(R.string.encryption_storage) to s(if(b.getInt("encryptionVersion")==1)R.string.encryption_enabled else R.string.not_confirmed),
+        s(R.string.encryption_key_security) to b.getString("encryptionSecurity",s(R.string.not_confirmed)),
+        s(R.string.sensitive_saved) to if(offline)s(R.string.not_connected) else b.getLong("sensitiveSaved").toString(),
+        s(R.string.capture_sensitive) to if(b.containsKey("captureSensitive"))s(if(b.getBoolean("captureSensitive"))R.string.enabled else R.string.disabled) else s(R.string.not_confirmed),
+        s(R.string.expiry_clock) to s(if(b.getBoolean("bootIdentityKnown"))R.string.passed else R.string.expiry_clock_unavailable)
     )
     fun report(b:Bundle,offline:Boolean)=(diagnosticRows(b,offline)+advanced(b,offline)).joinToString("\n") { "${it.first}: ${it.second}" }+"\n\n"+s(R.string.report_privacy)+"\n"+s(R.string.test_boundary)
     private fun displayedValue(key:String,value:String):String {
@@ -163,12 +174,14 @@ class DetailPages(private val ui:Ui) {
         block.addView(ui.text(key,13f,true));block.addView(text);parent.addView(block);parent.addView(ui.divider());return text
     }
     data class DiagnosticPage(val view:View,val update:(Bundle,Boolean)->Unit)
-    enum class DiagnosticAction { RETRY, CONNECT, RESUME, TEST }
+    enum class DiagnosticAction { RETRY, CONNECT, RESUME, TEST, HELP }
     private data class Health(val title:Int,val body:Int,val action:DiagnosticAction,val label:Int,val enabled:Boolean=true)
     private fun health(b:Bundle,offline:Boolean):Health {
         val issue=b.getString("issue").orEmpty()
         val readFailed=b.getBoolean("historyReadFailed") || issue=="BOTH_SNAPSHOTS_UNREADABLE" || issue.startsWith("HISTORY_READ_FAILED") || issue=="HISTORY_ACCESS_DENIED"
         if(readFailed)return Health(R.string.history_failed,R.string.html_port_read_retry_advice,DiagnosticAction.RETRY,R.string.try_again)
+        if(offline && b.getString("connectionIssue")=="HELPER_START_TIMEOUT")
+            return Health(R.string.helper_start_failed,R.string.helper_start_failed_body,DiagnosticAction.HELP,R.string.setup_help)
         if(offline)return Health(R.string.html_port_recorder_disconnected,R.string.html_port_connect_advice,DiagnosticAction.CONNECT,R.string.connect)
         if(issue.isNotEmpty() || b.containsKey("storageVerified") && !b.getBoolean("storageVerified") || b.containsKey("listening") && !b.getBoolean("listening"))
             return Health(R.string.attention_title,R.string.attention_body,DiagnosticAction.TEST,R.string.run_connection_test,b.getString("selfTest")!="WAITING")

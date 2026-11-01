@@ -1,0 +1,35 @@
+PASS Encrypted upgrade fixture contains sensitive and ordinary text
+
+STORED_FINGERPRINT cfe12b8c4f8c969aadc3ac544a96cbe6f7e0d5b75f2c558f285dfdad41ef98ac
+
+PASS Authenticated offline metadata is readable
+
+STORED_STATUS {"generation":12,"count":3,"paused":false,"limit":137,"duplicateMode":0}
+
+PASS Migration phase is durably complete
+
+PASS Slot 0 has the encrypted envelope
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 authenticates and preserves exact state
+
+PASS Slot 1 has the encrypted envelope
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 authenticates and preserves exact state
+
+PASS The stored key record does not contain its plaintext data key
+
+Observed Keystore security level: Software
+
+PASS 14 encryption assertions (stored-fingerprint). No clipboard writes.

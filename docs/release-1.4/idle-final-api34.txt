@@ -1,0 +1,2 @@
+Qualification summary from results.json and decoded frame review, code 9:
+12/12 native openings after 840 seconds of requested waits; 1,167 encoded frames reviewed; decoded counts match ffprobe. No observed flash, layout jump or immediate dismissal. App-frame timeline has 20 App Deadline Missed classifications in 128 records. This is not a zero-jank or every-physical-frame claim.

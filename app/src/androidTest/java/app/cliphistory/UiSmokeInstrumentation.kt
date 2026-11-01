@@ -76,7 +76,11 @@ class UiSmokeInstrumentation:Instrumentation() {
                     "audit-navigation"->AuditNavigationChecks(this).run()
                     "audit-diagnostics"->AuditDiagnosticChecks(this).run()
                     "html-port","html-port-live"->HtmlPortChecks(this,arguments).run(suite)
-                    in listOf("command-errors","quick-errors","accessibility","settings","privacy","tile","tile-performance","paused-connection","recovery","onboarding","customization")->FeatureChecks(this,arguments).run(suite)
+                    "key-check","encryption","missing-snapshots","stored-assert","stored-status","stored-upgrade","stored-fingerprint","upgrade-fixture"->EncryptionChecks(this,arguments).run(suite)
+                    "sensitive-ui","sensitive-live"->SensitiveChecks(this).run(suite)
+                    "keystore-device-probe"->KeyStoreDeviceProbe(this).run()
+                    "phone-observe"->PhoneObservationChecks(this).run()
+                    in listOf("boot-identity","helper-failure","command-errors","quick-errors","accessibility","settings","privacy","tile","tile-performance","paused-connection","recovery","onboarding","customization")->FeatureChecks(this,arguments).run(suite)
                     else->ReleaseChecks(this).run(suite)
                 })
                 finish(Activity.RESULT_OK,report);return
@@ -85,8 +89,7 @@ class UiSmokeInstrumentation:Instrumentation() {
             val samples=listOf("Let's meet at 10:30 by the library.","https://example.com/notes","Keep the interface quiet. Make the next action obvious.","Oats\nCoffee\nGreen apples","The final draft is ready for review. I've added the updated measurements and the installation notes.","A little less, but better.")
             val now=System.currentTimeMillis()
             val entries=(0 until 73).map { i -> Entry(73L-i,now-i*240_000L,if(i<6)samples[i] else "Saved example ${73-i}") }
-            val (first,second)=PrivateHistory.openForDaemon(targetContext)
-            listOf(first,second).forEach { pfd -> FramedSlot(FdAccess(pfd,targetContext.applicationInfo.uid)).use { it.writeAndSync(SnapshotCodec.encode(Snapshot(1,100,74,false,entries))) } }
+            writeFixturePayload(this,SnapshotCodec.encode(Snapshot(1,100,74,false,entries)))
             AppSettings(targetContext).apply { appearance="light";returnAfterCopy=true;welcome="never";backgroundSuggestion=false;allowScreenshots=false }
             activity=startActivitySync(Intent(targetContext,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)) as MainActivity
             until("History did not load") { (field("home") as HistoryHome).adapter.count==40 }

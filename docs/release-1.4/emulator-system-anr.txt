@@ -1,0 +1,5 @@
+ACTIVITY MANAGER LAST ANR (dumpsys activity lastanr)
+  ANR time: Oct 8, 2026 5:33:53 PM
+  Reason: Input dispatching timed out (PointerEventDispatcher0 (server) is not responding. Waited 5084ms for MotionEvent(deviceId=-1, eventTime=630486000000, source=TOUCHSCREEN, displayId=0, action=DOWN, actionButton=0x00000000, flags=0x00000000, metaState=0x00000000, buttonState=0x00000000, classification=NONE, edgeFlags=0x00000000, xPrecision=1.0, yPrecision=1.0, xCursorPosition=nan, yCursorPosition=nan, pointers=[0: (965.0, 220.0)]), policyFlags=0x6b000000)
+
+  mLastHomeActivityStartResult=2

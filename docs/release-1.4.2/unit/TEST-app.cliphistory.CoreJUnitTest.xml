@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="app.cliphistory.CoreJUnitTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2026-10-31T21:54:50.572Z" hostname="local-test-host" time="0.071">
+  <properties/>
+  <testcase name="coreRegressionSuite" classname="app.cliphistory.CoreJUnitTest" time="0.071"/>
+  <system-out><![CDATA[PASS  framed storage roundtrip
+PASS  framed storage erases tail without truncate
+PASS  framed storage handles short IO
+PASS  framed invalid header is corruption
+PASS  Android modern clipboard signature
+PASS  Android listener signature
+PASS  unknown clipboard signatures rejected
+PASS  older user scoped signature
+PASS  probe starts in waiting state
+PASS  probe matches real callback and records pass
+PASS  late probe remains excluded from real history
+PASS  previous probe remains excluded after new test
+PASS  probe storage failure is not a pass
+PASS  empty store defaults to 100
+PASS  capture saves exact text
+PASS  100 item rolling history
+PASS  consecutive duplicates suppressed
+PASS  nonconsecutive repeats move to top without duplicates
+PASS  consecutive-only policy preserves previous behavior
+PASS  unique policy removes older copies from both slots
+PASS  top repeat does not commit
+PASS  text identity is exact including Unicode sequences
+PASS  recopy invalidates old ID and maintains descending order
+PASS  empty text ignored
+PASS  whitespace is not stripped
+PASS  sensitive text never written
+PASS  oversize rejected not truncated
+PASS  exact byte boundary accepted
+PASS  UTF8 byte boundary enforced
+PASS  Unicode persists losslessly
+PASS  shrink removes oldest
+PASS  invalid low limit rejected
+PASS  invalid high limit rejected
+PASS  limit persists
+PASS  pause persists and ignores copies
+PASS  pause redacts active-state fallback
+PASS  delete exact ID
+PASS  unknown ID delete is harmless
+PASS  clear keeps IDs monotonic
+PASS  clear rewrites both snapshots
+PASS  delete redacts fallback snapshot
+PASS  shrink redacts fallback snapshot
+PASS  single corrupt snapshot recovers older generation
+PASS  two corrupt snapshots report error
+PASS  corrupt plus empty does not erase history
+PASS  truncated new write preserves previous committed state
+PASS  failed fsync not acknowledged
+PASS  codec detects one-bit corruption
+PASS  codec rejects appended data
+PASS  codec rejects every truncated prefix
+PASS  disk roundtrip and process-independent reopening
+PASS  search is case-insensitive and preserves order
+PASS  empty search returns entire history
+PASS  durability verification checks current generation
+PASS  initialized empty store is durable
+RESULT 55/55 passed
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

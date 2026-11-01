@@ -1,0 +1,1 @@
+Support Android 11–13, including manual Quick Settings setup on Android 11–12. Keep encrypted history and optional sensitive-text expiry. Fix recovery-notification flooding and prevent delayed system clipboard notifications from restoring cleared text.

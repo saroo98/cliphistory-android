@@ -1,0 +1,2 @@
+2026-10-31 12:56:04,455 WARNING: apksigner not found! Cannot sign or verify modern APKs
+2026-10-31 12:56:04,467 WARNING: unsafe permissions on 'config.yml' (should be 0600)!

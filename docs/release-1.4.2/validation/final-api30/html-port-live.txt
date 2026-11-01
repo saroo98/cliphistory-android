@@ -1,0 +1,101 @@
+PASS Owned synthetic history loads (21 entries)
+PASS Live Undo recovery fixture saved
+PASS Live Undo attaches the actual Shizuku recorder
+PASS Live Undo uses a paused real shell listener
+PASS Connected Help offers a connection test and avoids redundant Connect actions
+PASS Enabled control: Connection test
+PASS Connected guide reaches the real connection-test confirmation
+PASS Enabled control: Cancel
+PASS Connected Settings exposes only Stop recorder
+PASS Native Settings action DUPLICATES is available
+PASS Connected duplicate preference opens two native radio choices
+PASS Enabled control: Done
+PASS Native Settings action LIMIT is available
+PASS Connected capacity preference opens its saved native field
+PASS Enabled control: Cancel
+PASS Enabled control: Back
+PASS Actual native deletion exposes persistent Undo and Dismiss notice
+PASS Daemon status exposes the authoritative pending deletion 11
+PASS Synthetic issue-only status presentation preserves the existing Undo token and notice
+PASS UI status-metadata-loss fixture leaves the actual daemon Undo token unchanged
+PASS Undo notice persists beyond transient feedback
+PASS Navigation retains the daemon Undo token
+PASS Enabled control: Back
+PASS Rotation restores Undo from daemon status
+PASS Delete retains every other exact entry in order
+PASS Undo full fixture reduces only unused capacity
+PASS Enabled control: Undo
+PASS Full Undo opens the specific recovery explanation
+PASS Full history rejects Undo and retains its authoritative token
+PASS Rejected Undo preserves every retained entry and generation without eviction
+PASS Expected Undo capacity refusal leaves the recorder healthy
+PASS Increasing capacity permits an exact restore
+PASS Enabled control: Done
+PASS Enabled control: Undo
+PASS Native Undo restores the deleted entry and clears its notice
+PASS Undo restores original IDs, timestamps, full text and ordering
+PASS Exact Undo contents are durably available offline
+PASS First replacement Undo notice appears
+PASS Daemon status exposes the authoritative pending deletion 11
+PASS New deletion replaces the single pending Undo
+PASS Daemon status exposes the authoritative pending deletion 8
+PASS A stale Undo token cannot restore or alter retained history
+PASS Enabled control: Undo
+PASS Native one-level Undo restores only the most recent deletion
+PASS One-level Undo does not resurrect the preceding deletion
+PASS Dismiss fixture exposes its current Undo notice
+PASS Enabled control: Dismiss notice
+PASS Dismiss notice clears daemon Undo without restoring deleted text
+PASS Dismiss preserves exact retained history
+PASS Live Undo recorder stopped durably after fixtures
+PASS Owned synthetic history loads (21 entries)
+PASS Live Undo recovery fixture saved
+PASS Live Undo attaches the actual Shizuku recorder
+PASS Live Undo uses a paused real shell listener
+PASS Connected Help offers a connection test and avoids redundant Connect actions
+PASS Enabled control: Connection test
+PASS Connected guide reaches the real connection-test confirmation
+PASS Enabled control: Cancel
+PASS Connected Settings exposes only Stop recorder
+PASS Native Settings action DUPLICATES is available
+PASS Connected duplicate preference opens two native radio choices
+PASS Enabled control: Done
+PASS Native Settings action LIMIT is available
+PASS Connected capacity preference opens its saved native field
+PASS Enabled control: Cancel
+PASS Enabled control: Back
+PASS Actual native deletion exposes persistent Undo and Dismiss notice
+PASS Daemon status exposes the authoritative pending deletion 11
+PASS Synthetic issue-only status presentation preserves the existing Undo token and notice
+PASS UI status-metadata-loss fixture leaves the actual daemon Undo token unchanged
+PASS Undo notice persists beyond transient feedback
+PASS Navigation retains the daemon Undo token
+PASS Enabled control: Back
+PASS Rotation restores Undo from daemon status
+PASS Delete retains every other exact entry in order
+PASS Undo full fixture reduces only unused capacity
+PASS Enabled control: Undo
+PASS Full Undo opens the specific recovery explanation
+PASS Full history rejects Undo and retains its authoritative token
+PASS Rejected Undo preserves every retained entry and generation without eviction
+PASS Expected Undo capacity refusal leaves the recorder healthy
+PASS Increasing capacity permits an exact restore
+PASS Enabled control: Done
+PASS Enabled control: Undo
+PASS Native Undo restores the deleted entry and clears its notice
+PASS Undo restores original IDs, timestamps, full text and ordering
+PASS Exact Undo contents are durably available offline
+PASS First replacement Undo notice appears
+PASS Daemon status exposes the authoritative pending deletion 11
+PASS New deletion replaces the single pending Undo
+PASS Daemon status exposes the authoritative pending deletion 8
+PASS A stale Undo token cannot restore or alter retained history
+PASS Enabled control: Undo
+PASS Native one-level Undo restores only the most recent deletion
+PASS One-level Undo does not resurrect the preceding deletion
+PASS Dismiss fixture exposes its current Undo notice
+PASS Enabled control: Dismiss notice
+PASS Dismiss notice clears daemon Undo without restoring deleted text
+PASS Dismiss preserves exact retained history
+PASS Live Undo recorder stopped durably after fixtures
+PASS 50 HTML port assertions (html-port-live), API 30. Owned disposable emulator fixtures only.

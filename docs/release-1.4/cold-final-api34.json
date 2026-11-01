@@ -1,0 +1,59 @@
+{
+  "version": "1.4.0-validation",
+  "api": "34",
+  "trials": [
+    {
+      "trial": 1,
+      "android_first_draw_ms": 412,
+      "matched_history_visible": true
+    },
+    {
+      "trial": 2,
+      "android_first_draw_ms": 389,
+      "matched_history_visible": true
+    },
+    {
+      "trial": 3,
+      "android_first_draw_ms": 384,
+      "matched_history_visible": true
+    },
+    {
+      "trial": 4,
+      "android_first_draw_ms": 384,
+      "matched_history_visible": true
+    },
+    {
+      "trial": 5,
+      "android_first_draw_ms": 415,
+      "matched_history_visible": true
+    },
+    {
+      "trial": 6,
+      "android_first_draw_ms": 397,
+      "matched_history_visible": true
+    },
+    {
+      "trial": 7,
+      "android_first_draw_ms": 410,
+      "matched_history_visible": true
+    },
+    {
+      "trial": 8,
+      "android_first_draw_ms": 398,
+      "matched_history_visible": true
+    },
+    {
+      "trial": 9,
+      "android_first_draw_ms": 387,
+      "matched_history_visible": true
+    },
+    {
+      "trial": 10,
+      "android_first_draw_ms": 384,
+      "matched_history_visible": true
+    }
+  ],
+  "p50_ms": 389,
+  "p95_ms": 415,
+  "scope": "Android am-start cold first draw. History presence verified separately; its async loaded-frame latency is not measured by this metric."
+}

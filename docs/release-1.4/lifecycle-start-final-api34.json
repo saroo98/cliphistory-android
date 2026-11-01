@@ -1,0 +1,21 @@
+{
+  "mode": "start",
+  "serial": "emulator-5574",
+  "api": "34",
+  "before": {
+    "app.cliphistory.validation:clipboard": 4564,
+    "app.cliphistory.validation": 4903
+  },
+  "started_utc": "2026-10-08T16:16:16Z",
+  "explicit_start_connected": true,
+  "requested_settings": {
+    "Automatic recovery": "on",
+    "Resume after reboot": "on",
+    "Pause recording": "off"
+  },
+  "after": {
+    "app.cliphistory.validation": 4903,
+    "app.cliphistory.validation:clipboard": 5083
+  },
+  "elapsed_seconds": 21.281
+}

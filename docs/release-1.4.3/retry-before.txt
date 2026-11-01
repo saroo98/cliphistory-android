@@ -1,0 +1,14 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Automatic recovery is enabled for the retry fixture
+PASS A helper launch failure never claims a connection
+PASS Actual failed helper startup reaches the copied diagnostic report
+PASS Actual startup failure shows specific recovery guidance
+PASS Startup failure setup action opens the native guide
+PASS Automatic recovery starts another connection attempt
+FAIL after 0 assertions: java.lang.IllegalStateException: Retry keeps the previous helper startup failure in diagnostics
+	at app.cliphistory.FeatureChecks.checkThat(FeatureChecks.kt:29)
+	at app.cliphistory.FeatureChecks.helperFailure(FeatureChecks.kt:760)
+	at app.cliphistory.FeatureChecks.run(FeatureChecks.kt:965)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:83)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2205)

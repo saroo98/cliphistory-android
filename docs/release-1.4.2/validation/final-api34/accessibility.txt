@@ -1,0 +1,46 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Actual history accessibility node exposes the full-text action
+PASS History custom action has the exact visible full-text label
+PASS Actual accessibility node accepts the full-text action
+PASS History custom accessibility action opens the exact saved text
+PASS Viewing through the accessibility action leaves clipboard unchanged
+PASS Appearance sheet exposes its pane title
+PASS Appearance title is an accessibility heading
+PASS Help heading: Shizuku setup
+PASS Help heading: Keep using Gboard
+PASS Help heading: After restarting your phone
+PASS Help heading: Only on this phone
+PASS Help heading: Sensitive text
+PASS Help heading: Limits
+PASS Help heading: Screen privacy
+PASS Advanced details exposes collapsed state
+PASS Advanced details exposes expanded state after activation
+PASS Advanced details can collapse again
+PASS Copy feedback appears
+PASS Default error feedback expires after its timeout
+PASS Leaving the Activity removes transient feedback
+Accessibility flags before window retrieval: 65554
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Actual history accessibility node exposes the full-text action
+PASS History custom action has the exact visible full-text label
+PASS Actual accessibility node accepts the full-text action
+PASS History custom accessibility action opens the exact saved text
+PASS Viewing through the accessibility action leaves clipboard unchanged
+PASS Appearance sheet exposes its pane title
+PASS Appearance title is an accessibility heading
+PASS Help heading: Shizuku setup
+PASS Help heading: Keep using Gboard
+PASS Help heading: After restarting your phone
+PASS Help heading: Only on this phone
+PASS Help heading: Sensitive text
+PASS Help heading: Limits
+PASS Help heading: Screen privacy
+PASS Advanced details exposes collapsed state
+PASS Advanced details exposes expanded state after activation
+PASS Advanced details can collapse again
+PASS Copy feedback appears
+PASS Default error feedback expires after its timeout
+PASS Leaving the Activity removes transient feedback
+PASS 22 feature assertions (accessibility), API 34. Synthetic validation only.

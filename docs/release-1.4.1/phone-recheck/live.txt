@@ -1,0 +1,22 @@
+PASS Shizuku service reaches the validation process
+PASS Isolated physical-phone helper starts
+PASS Unknown boot identity attaches without claiming a timed clock
+PASS The same helper recovers a verified boot identity
+PASS Conflicting or downgraded boot identity is rejected
+PASS Rejected identity changes leave the correct helper usable
+PASS Sensitive policy is acknowledged
+PASS A field-only duration update preserves both live policy switches
+PASS Original clipboard checkpointed in foreground RAM only
+PASS Isolated recorder is active
+PASS Marked sensitive text is captured on the physical phone
+Synthetic clipboard state: fixture=true, marked=true
+Isolated capture metadata: fixtureMatches=true, sensitive=true, remainingMs=59828, capture=true, autoDelete=true, minutes=1
+PASS Captured sensitivity has a real elapsed-time deadline
+PASS Ordinary text is captured alongside sensitive text
+PASS Interleaved recopy moves the existing text to the top
+PASS Recopy neither duplicates nor downgrades nor extends sensitive text
+Waiting for the one-minute device elapsed-time deadline.
+PASS Deadline removes sensitive text from both encrypted snapshots
+PASS Offline decryption agrees with durable expiry
+PASS Original clipboard restored and checkpoint released
+PASS 18 phone verification assertions (phone-live). No production history access.

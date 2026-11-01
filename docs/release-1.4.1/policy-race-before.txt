@@ -1,0 +1,72 @@
+PASS History loads 3 available entries
+PASS Real Shizuku recorder attaches encrypted storage
+PASS Sensitive policy is durably acknowledged
+PASS Sensitive capture is off by default policy
+PASS Sensitive flag is skipped without saving its text
+PASS Sensitive policy is durably acknowledged
+PASS Recorder establishes the Android boot identity
+PASS Opt-in captures source-sensitive text
+PASS Source-sensitive metadata reaches the entry response
+PASS Both encrypted snapshots authenticate and preserve the sensitive capture
+PASS Saved and skipped sensitive counters are distinct
+PASS Normal capture still works
+PASS Recopy moves the existing exact text to the top
+PASS Unmarked recopy preserves sensitivity and the original deadline
+PASS History foregrounds for copy
+PASS History copy retains Android's sensitive preview flag
+PASS Sensitive quick-copy entry is visible
+PASS Quick copy dismisses and retains the sensitive flag
+PASS Sensitive full-text preview is selectable
+PASS Native selected-text copy preserves sensitivity
+PASS Sensitive policy is durably acknowledged
+PASS Disabling capture purges sensitive text while retaining normal text
+PASS Connected sensitive control is available
+PASS Capture switch saves true
+PASS Acknowledged capture switch is available
+FAIL after 0 assertions: java.lang.IllegalStateException: PASS History loads 3 available entries
+PASS Real Shizuku recorder attaches encrypted storage
+PASS Sensitive policy is durably acknowledged
+PASS Sensitive capture is off by default policy
+PASS Sensitive flag is skipped without saving its text
+PASS Sensitive policy is durably acknowledged
+Recorder status before timed capture: bootKnown=true, listening=true, paused=false, issue=
+PASS Recorder establishes the Android boot identity
+PASS Opt-in captures source-sensitive text
+PASS Source-sensitive metadata reaches the entry response
+PASS Both encrypted snapshots authenticate and preserve the sensitive capture
+PASS Saved and skipped sensitive counters are distinct
+PASS Normal capture still works
+PASS Recopy moves the existing exact text to the top
+PASS Unmarked recopy preserves sensitivity and the original deadline
+PASS History foregrounds for copy
+PASS History copy retains Android's sensitive preview flag
+PASS Sensitive quick-copy entry is visible
+PASS Quick copy dismisses and retains the sensitive flag
+PASS Sensitive full-text preview is selectable
+PASS Native selected-text copy preserves sensitivity
+PASS Sensitive policy is durably acknowledged
+PASS Disabling capture purges sensitive text while retaining normal text
+PASS Connected sensitive control is available
+PASS Capture switch saves true
+PASS Acknowledged capture switch is available
+
+	at app.cliphistory.SensitiveChecks.run(SensitiveChecks.kt:237)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:80)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2597)
+Caused by: java.lang.IllegalStateException: Changing duration preserves current capture policy despite a stale presentation snapshot
+	at app.cliphistory.SensitiveChecks.verify(SensitiveChecks.kt:28)
+	at app.cliphistory.SensitiveChecks.live$lambda$112(SensitiveChecks.kt:199)
+	at app.cliphistory.SensitiveChecks$$ExternalSyntheticLambda51.invoke(D8$$SyntheticClass:0)
+	at app.cliphistory.SensitiveChecks.main$lambda$0(SensitiveChecks.kt:27)
+	at app.cliphistory.SensitiveChecks$$ExternalSyntheticLambda83.run(D8$$SyntheticClass:0)
+	at app.cliphistory.UiSmokeInstrumentation.runOnMainSync$lambda$1(UiSmokeInstrumentation.kt:25)
+	at app.cliphistory.UiSmokeInstrumentation$$ExternalSyntheticLambda46.run(D8$$SyntheticClass:0)
+	at android.app.Instrumentation$SyncRunnable.run(Instrumentation.java:2616)
+	at android.os.Handler.handleCallback(Handler.java:995)
+	at android.os.Handler.dispatchMessage(Handler.java:103)
+	at android.os.Looper.loopOnce(Looper.java:248)
+	at android.os.Looper.loop(Looper.java:338)
+	at android.app.ActivityThread.main(ActivityThread.java:9067)
+	at java.lang.reflect.Method.invoke(Native Method)
+	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)

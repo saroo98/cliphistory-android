@@ -1,0 +1,14 @@
+{
+  "package": "app.cliphistory",
+  "version": "1.4.2",
+  "api": 30,
+  "apk_sha256": "ca2df31c8f6e09af9f46bff78c6c8eb0307c93acab6a180d465703e177776cec",
+  "debuggable": false,
+  "connection_test": "passed",
+  "helper_uid": 2000,
+  "copies_written": 51,
+  "observed_history_count": 51,
+  "latest_entry_verified": true,
+  "burst_seconds": 1.984,
+  "notification_rate_limit_warnings": 0
+}

@@ -65,10 +65,7 @@ class AuditNavigationChecks(private val test:Instrumentation) {
     private fun seed() {
         stopRecorderForFixture(test)
         val entries=listOf(Entry(3,3,"Audit newest text\nExact whitespace  "),Entry(2,2,"Audit second text"),Entry(1,1,"Audit third text"))
-        val (a,b)=PrivateHistory.openForDaemon(context)
-        listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot ->
-            slot.writeAndSync(SnapshotCodec.encode(Snapshot(1,137,4,false,entries)))
-        } }
+        writeFixturePayload(test,SnapshotCodec.encode(Snapshot(1,137,4,false,entries)))
         PrivateHistory.invalidate()
         AppSettings(context).apply { appearance="system";welcome="never";backgroundSuggestion=false;returnAfterCopy=true }
         activity=test.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)) as MainActivity
@@ -93,8 +90,11 @@ class AuditNavigationChecks(private val test:Instrumentation) {
             val saved=Bundle(field("latest") as Bundle)
             val settingsPage=field("settingsPage") as SettingsPage.Page
             settingsPage.update(Bundle().apply { putString("issue","HISTORY_READ_FAILED") })
-            checkThat(texts(page()).count { it==context.getString(R.string.not_confirmed) }==2,
-                "Unreadable history does not invent a capacity or duplicate policy")
+            for(action in listOf(SettingsPage.Action.LIMIT,SettingsPage.Action.DUPLICATES,SettingsPage.Action.SENSITIVE_DURATION)) {
+                val row=views(page()).single { it.tag==action.name }
+                checkThat(texts(row).contains(context.getString(R.string.not_confirmed)),
+                    "Unreadable history does not invent a value for $action")
+            }
             settingsPage.update(saved)
             checkThat(texts(page()).contains(context.getString(R.string.audit_limit_summary,137)),
                 "Confirmed Settings values return after a successful read")
@@ -137,14 +137,14 @@ class AuditNavigationChecks(private val test:Instrumentation) {
     }
     private fun copyLabels() {
         main { call("entryActions",(field("home") as HistoryHome).adapter.getItem(0)) }
-        test.waitForIdleSync()
+        await("Copy-and-return actions load asynchronously") { (field("dialogs") as Set<*>).filterIsInstance<Dialog>().any { it.isShowing } }
         main {
             val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
             checkThat(texts(dialog.window!!.decorView).contains(context.getString(R.string.copy_return)),"Action sheet identifies copy-and-return")
             dialog.dismiss();AppSettings(context).returnAfterCopy=false
             call("entryActions",(field("home") as HistoryHome).adapter.getItem(0))
         }
-        test.waitForIdleSync()
+        await("Copy-and-stay actions load asynchronously") { (field("dialogs") as Set<*>).filterIsInstance<Dialog>().any { it.isShowing } }
         main {
             val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
             checkThat(texts(dialog.window!!.decorView).contains(context.getString(R.string.copy)) &&

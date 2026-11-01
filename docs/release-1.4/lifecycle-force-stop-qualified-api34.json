@@ -1,0 +1,13 @@
+{
+  "mode": "force-stop",
+  "serial": "emulator-5574",
+  "api": "34",
+  "before": {
+    "app.cliphistory.validation": 5842,
+    "app.cliphistory.validation:clipboard": 5938
+  },
+  "started_utc": "2026-10-08T16:31:39Z",
+  "no_capture_after_user_stop": true,
+  "after": {},
+  "elapsed_seconds": 3.828
+}

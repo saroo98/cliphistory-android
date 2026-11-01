@@ -1,0 +1,29 @@
+{
+  "fdroidserver_commit": "cdfdce835a8231996b02392bc79c1879e6bef501",
+  "input": "Isolated nonignored working-tree source; build output, signing material, and APKs excluded; not a committed release",
+  "file_count": 873,
+  "input_manifest_sha256": "87af24b1069315412ca37753e3e9cd7f292cdccb216e365756c28245c3fe3ef7",
+  "source_fatal_count": 0,
+  "source_errors": [],
+  "source_warnings": [],
+  "source_infos": [
+    [
+      "Removing gradlew at gradlew",
+      "gradlew"
+    ],
+    [
+      "Removing gradlew.bat at gradlew.bat",
+      "gradlew.bat"
+    ],
+    [
+      "Removing gradle-wrapper.jar at gradle\\wrapper\\gradle-wrapper.jar",
+      "gradle\\wrapper\\gradle-wrapper.jar"
+    ]
+  ],
+  "apk_sha256": "b9f95c4b4d9dcf6e29af23dea49bab1cc932b39f7e85cd93f2cc7719230040b5",
+  "apk_class_count": 1075,
+  "apk_problems": 0,
+  "scanner_signature_sources": [
+    "suss"
+  ]
+}

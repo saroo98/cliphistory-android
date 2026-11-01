@@ -1,0 +1,12 @@
+PASS Actual Shizuku connection for recovery failures
+FAIL after 0 assertions: java.lang.IllegalStateException: PASS Actual Shizuku connection for recovery failures
+
+	at app.cliphistory.ReleaseChecks.run(ReleaseChecks.kt:400)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:84)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2627)
+Caused by: java.lang.IllegalStateException: Notification reports failed durable Stop
+	at app.cliphistory.ReleaseChecks.until(ReleaseChecks.kt:46)
+	at app.cliphistory.ReleaseChecks.connectionFailures(ReleaseChecks.kt:361)
+	at app.cliphistory.ReleaseChecks.recoveryFailures(ReleaseChecks.kt:333)
+	at app.cliphistory.ReleaseChecks.run(ReleaseChecks.kt:399)
+	... 2 more

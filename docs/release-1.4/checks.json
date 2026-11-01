@@ -1,0 +1,234 @@
+{
+  "release": "1.4.0",
+  "version_code": 10,
+  "package": "app.cliphistory",
+  "source_baseline": "6009e25f548a5f1a45d6cf129d288056e76d5b8f",
+  "source_state": "Uncommitted local implementation. No tag, push, publication or new reproducibility qualification.",
+  "artifact": {
+    "path": "F:/Astra/Clipboardphoner/ClipHistory-1.4.0.apk",
+    "sha256": "654fa4060b6166eebadc7e9725dcfcebf56a458a5adf06c3b30af782e0b4239d",
+    "bytes": 2634671,
+    "signer_sha256": "ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82",
+    "signature_verified": true,
+    "alignment_16k_verified": true,
+    "non_debuggable": true,
+    "permissions_added": 0,
+    "production_dependencies_added": 0
+  },
+  "build": {
+    "jvm_tests": 65,
+    "jvm_failures": 0,
+    "jvm_errors": 0,
+    "lint_errors": 0,
+    "lint_warnings": 15
+  },
+  "source_guards": {
+    "passed": 74,
+    "total": 74,
+    "evidence": "source-audit-final.txt"
+  },
+  "final_code10_android_suites": {
+    "encryption": {
+      "assertions": 95,
+      "passed": true,
+      "version_code": 10,
+      "evidence": "encryption-code10-api34.txt"
+    },
+    "sensitive-live": {
+      "assertions": 38,
+      "passed": true,
+      "version_code": 10,
+      "evidence": "sensitive-live-code10-api34.txt"
+    },
+    "sensitive-ui": {
+      "assertions": 23,
+      "passed": true,
+      "version_code": 10,
+      "evidence": "sensitive-ui-code10-api34.txt"
+    },
+    "regression": {
+      "assertions": 12,
+      "passed": true,
+      "version_code": 10,
+      "evidence": "regression-code10-api34.txt"
+    },
+    "quick-errors": {
+      "assertions": 21,
+      "passed": true,
+      "version_code": 10,
+      "evidence": "quick-errors-code10-api34.txt"
+    },
+    "storage-threading": {
+      "assertions": 5,
+      "passed": true,
+      "version_code": 10,
+      "evidence": "storage-threading-code10-api34.txt"
+    },
+    "tile-performance": {
+      "assertions": 353,
+      "passed": true,
+      "version_code": 10,
+      "evidence": "tile-performance-code10-api34.txt"
+    },
+    "capacity": {
+      "assertions": 5,
+      "passed": true,
+      "version_code": 10,
+      "evidence": "capacity-code10-api34.txt"
+    }
+  },
+  "queue_timing_regression": {
+    "failed_before_fix": 3,
+    "sensitive_policy_tests_after_fix": 17,
+    "scope": "Deterministic delayed, expired, invalid-boot/elapsed event clocks. Real capture propagation is exercised by the final sensitive-live suite.",
+    "evidence": [
+      "queued-capture-before.txt",
+      "queued-capture-after.txt"
+    ]
+  },
+  "performance": {
+    "code10_native_warm_trials": 30,
+    "loaded_pre_draw_p95_ms": 243.710577,
+    "accessibility_p50_ms": 877,
+    "accessibility_p95_ms": 930,
+    "accessibility_max_ms": 935,
+    "cold_p50_ms": 657,
+    "cold_p95_ms": 752,
+    "capacity_uncached_ms": 687,
+    "capacity_cached_ms": 2,
+    "capacity_launch_ms": 616,
+    "capacity_next_page_ms": 67,
+    "capacity_full_text_ms": 57,
+    "capacity_encode_ms": 382,
+    "baseline_regression_gate_passed": true,
+    "baseline_loaded_p95_ms": 451.198502,
+    "baseline_cold_p95_ms": 2022,
+    "scope": "Emulator observations; host/VM variance. Not encryption-caused speedup or universal zero-lag guarantee."
+  },
+  "retained_code9_frame_review": {
+    "encoded_frames": 1167,
+    "app_frame_timeline_records": 128,
+    "app_deadline_missed_records": 20,
+    "max_app_frame_timeline_duration_ms": 74.57,
+    "reviewed_contacts": 12,
+    "all_decoded_frame_counts_match": true,
+    "scope": "Frame timeline covers the captured opening/closing windows. Encoded VFR frames are not every physical refresh. Accessibility dump time includes slow automation and is not tap-to-first-draw.",
+    "visual_findings": "All 12 show a populated, stable quick panel without an empty Main flash, layout jump, or immediate dismissal. SystemUI shade collapse, brief blur and dim transitions also occur in the baseline. Missed deadlines remain; zero jank is not claimed."
+  },
+  "retained_code9_idle_schedule": {
+    "openings": 12,
+    "passed": 12,
+    "requested_wait_seconds": 840,
+    "elapsed_seconds": 1019.828,
+    "not_repeated_on_code10": true,
+    "reason": "Final correction changes observation-time propagation and older-writer handoff. It does not change rendering or cryptographic format; code10 warm/cold/capacity and affected runtime checks are repeated."
+  },
+  "retained_code9_lifecycle_evidence": {
+    "legacy_live_upgrade_assertions": 160,
+    "clear_storage_no_resurrection": true,
+    "scope": "Owned emulator, including app/helper/server death, Recents removal, explicit stops, recovery preferences and reboot/pause. Not every OEM or actual phone reboot/clear-storage."
+  },
+  "encrypted_code9_to_code10_upgrade": {
+    "old_version_code": 9,
+    "new_version_code": 10,
+    "old_helper_pid": 16398,
+    "helper_after_install": 16398,
+    "new_helper_pid": 16871,
+    "helper_uid": 2000,
+    "owner_uid_preserved": true,
+    "wrapped_key_record_unchanged": true,
+    "exact_synthetic_payload_preserved": true,
+    "authenticated_offline_metadata": {
+      "generation": 7,
+      "count": 1,
+      "paused": false,
+      "limit": 100,
+      "duplicateMode": 0
+    },
+    "listening_after_upgrade": true,
+    "scope": "Owned emulator only; payload hash checked in test memory. No data clear/downgrade, personal phone or plaintext-key export."
+  },
+  "pixel_final_acceptance": {
+    "device": "Pixel 8 Pro",
+    "api": 37,
+    "version": "1.4.0",
+    "version_code": 10,
+    "same_signer": true,
+    "in_place_upgrade": true,
+    "history_count_preserved": 16,
+    "limit_preserved": 100,
+    "all_observed_original_settings_preserved": true,
+    "all_observed_code9_settings_preserved": true,
+    "settings": {
+      "Pause recording": false,
+      "Automatic recovery": true,
+      "Resume after reboot": true,
+      "Suggest background setup once": true,
+      "Quick Settings tile enabled": true,
+      "Return after copying": true,
+      "Capture sensitive text": false,
+      "Auto-delete sensitive text": true,
+      "Allow screenshots": true,
+      "Hide history in Recents": true
+    },
+    "encryption": {
+      "History encryption": "AES-256-GCM",
+      "Key protection": "StrongBox",
+      "Expiry clock": "Passed"
+    },
+    "recorder_state": "Listening",
+    "old_code9_helper": 29689,
+    "new_code10_helper": 1527,
+    "helper_uid": 2000,
+    "scope": "Whitelisted metadata only. No personal history text/screenshots/clipboard writes, stop, clear data, uninstall, downgrade or reboot. Exact payload and offline/failure/lifecycle checks use owned emulator fixtures."
+  },
+  "verification_limits": [
+    "Personal payload byte comparison and physical copy destinations are not inspected; exact payload/copy checks use synthetic emulator fixtures.",
+    "Real clipboard and process RAM contain plaintext during use. No secure RAM/flash erasure, anti-rollback or unhackable claim.",
+    "Synthetic fixture text appears intentionally in ignored private UI recordings. No personal payload or plaintext key export.",
+    "No exhaustive TalkBack audio traversal, battery-drain/kernel-wakeup measurement, multi-day soak or every-OEM certification.",
+    "No F-Droid publication/reference-signature reproduction for this working tree."
+  ],
+  "definition_of_done_evidence": {
+    "encrypted_storage_and_key_owner": [
+      "encryption-code10-api34.txt",
+      "apk-manifest-final.txt",
+      "SECURITY.md"
+    ],
+    "migration_and_failure_preservation": [
+      "encryption-code10-api34.txt",
+      "live-upgrade-api34.txt",
+      "encrypted-helper-upgrade-code10.json"
+    ],
+    "sensitive_defaults_policy_and_expiry": [
+      "sensitive-live-code10-api34.txt",
+      "sensitive-ui-code10-api34.txt",
+      "queued-capture-after.txt"
+    ],
+    "native_workflow_and_copy": [
+      "regression-code10-api34.txt",
+      "quick-errors-code10-api34.txt",
+      "tile-performance-code10-api34.txt"
+    ],
+    "lifecycle": [
+      "lifecycle-app-death-qualified-api34.json",
+      "lifecycle-boot-qualified-api34.json",
+      "lifecycle-clear-storage-api34.json"
+    ],
+    "performance_and_frames": [
+      "cold-code10-api34.json",
+      "capacity-code10-api34.txt",
+      "tile-performance-code10-api34.txt",
+      "frame-review-api34.json"
+    ],
+    "same_signer_phone_and_delivery": [
+      "apk-signature-final.txt",
+      "pixel-code10-acceptance.json",
+      "pixel-install-code10.txt"
+    ],
+    "scope_and_review": [
+      "RELEASE.md",
+      "IMPLEMENTATION_STATUS.md"
+    ]
+  }
+}

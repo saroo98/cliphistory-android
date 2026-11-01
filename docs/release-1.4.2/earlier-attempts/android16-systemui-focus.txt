@@ -1,0 +1,2 @@
+  mCurrentFocus=Window{a5973ec u0 Application Not Responding: com.android.systemui}
+  mFocusedApp=ActivityRecord{186079489 u0 app.cliphistory.validation.test/app.cliphistory.SyntheticClipboardActivity t557}

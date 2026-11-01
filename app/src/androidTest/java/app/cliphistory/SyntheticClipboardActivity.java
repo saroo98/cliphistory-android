@@ -21,7 +21,8 @@ public class SyntheticClipboardActivity extends Activity {
         super.onCreate(state);
         getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         message=new TextView(this);message.setText("ClipHistory synthetic clipboard test");message.setTextSize(22f);setContentView(message);
-        registerReceiver(writer,new IntentFilter(ACTION),Context.RECEIVER_EXPORTED);
+        if(Build.VERSION.SDK_INT>=33)registerReceiver(writer,new IntentFilter(ACTION),Context.RECEIVER_EXPORTED);
+        else registerReceiver(writer,new IntentFilter(ACTION));
     }
     public void onDestroy() { unregisterReceiver(writer);super.onDestroy(); }
     public void onNewIntent(Intent event) { super.onNewIntent(event);setIntent(event);copied=false;write(); }
@@ -50,5 +51,6 @@ public class SyntheticClipboardActivity extends Activity {
             PersistableBundle extras=new PersistableBundle();extras.putBoolean("android.content.extra.IS_SENSITIVE",true);clip.getDescription().setExtras(extras);
         }
         getSystemService(ClipboardManager.class).setPrimaryClip(clip);
+        message.setText("Synthetic text copied");
     }
 }

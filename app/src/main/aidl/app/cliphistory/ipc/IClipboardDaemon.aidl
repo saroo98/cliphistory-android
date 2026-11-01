@@ -20,5 +20,7 @@ interface IClipboardDaemon {
     Bundle setDuplicateMode(int mode) = 13;
     Bundle undoDelete(long token) = 14;
     Bundle dismissUndo(long token) = 15;
+    Bundle setSensitivePolicy(boolean captureSensitive, boolean autoDelete, int durationMinutes) = 16;
+    Bundle attachEncrypted(in ParcelFileDescriptor first, in ParcelFileDescriptor second, IBinder shizukuServer, in byte[] dataKey, in byte[] storageIdentity, int bootCount) = 17;
     void destroy() = 16777114;
 }

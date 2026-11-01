@@ -1,0 +1,1 @@
+Add Android 11–13 support, encrypted history and optional sensitive-text expiry. Fix duplicate clipboard events, recovery notifications, encrypted history initialization on some devices, and Shizuku startup diagnostics during retries.

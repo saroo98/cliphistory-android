@@ -1,0 +1,71 @@
+PASS Offline report preserves the recorder startup failure
+PASS Offline report preserves the startup issue code
+PASS Startup timeout has specific guidance rather than generic offline status
+PASS Missing self-test renders Not run
+PASS Missing self-test report retains NOT_RUN
+PASS Missing duplicate policy renders Not confirmed
+PASS Missing duplicate policy report does not invent a preference
+PASS Initial known duplicate policy 0 remains accurate
+PASS Updated known duplicate policy 0 remains accurate
+PASS Report preserves known duplicate policy 0
+PASS Initial known duplicate policy 1 remains accurate
+PASS Updated known duplicate policy 1 remains accurate
+PASS Report preserves known duplicate policy 1
+PASS Failed offline update clears the previous duplicate policy
+PASS Initial PASS uses readable self-test text
+PASS Updated PASS uses readable self-test text
+PASS Copied report preserves raw PASS code
+PASS Initial WAITING uses readable self-test text
+PASS Updated WAITING uses readable self-test text
+PASS Copied report preserves raw WAITING code
+PASS Initial NOT_RUN uses readable self-test text
+PASS Updated NOT_RUN uses readable self-test text
+PASS Copied report preserves raw NOT_RUN code
+PASS Initial STORAGE_FAILED uses readable self-test text
+PASS Updated STORAGE_FAILED uses readable self-test text
+PASS Copied report preserves raw STORAGE_FAILED code
+PASS Initial NO_CALLBACK_RECEIVED uses readable self-test text
+PASS Updated NO_CALLBACK_RECEIVED uses readable self-test text
+PASS Copied report preserves raw NO_CALLBACK_RECEIVED code
+PASS Unknown diagnostic code remains available on screen and in report
+PASS Disconnect replaces stale self-test result
+PASS Offline report identifies unavailable self-test
+PASS Copied report retains both raw issue messages
+PASS Copied report retains raw API signature
+PASS Copied report retains privacy and test boundary text
+PASS Offline report preserves the recorder startup failure
+PASS Offline report preserves the startup issue code
+PASS Startup timeout has specific guidance rather than generic offline status
+PASS Missing self-test renders Not run
+PASS Missing self-test report retains NOT_RUN
+PASS Missing duplicate policy renders Not confirmed
+PASS Missing duplicate policy report does not invent a preference
+PASS Initial known duplicate policy 0 remains accurate
+PASS Updated known duplicate policy 0 remains accurate
+PASS Report preserves known duplicate policy 0
+PASS Initial known duplicate policy 1 remains accurate
+PASS Updated known duplicate policy 1 remains accurate
+PASS Report preserves known duplicate policy 1
+PASS Failed offline update clears the previous duplicate policy
+PASS Initial PASS uses readable self-test text
+PASS Updated PASS uses readable self-test text
+PASS Copied report preserves raw PASS code
+PASS Initial WAITING uses readable self-test text
+PASS Updated WAITING uses readable self-test text
+PASS Copied report preserves raw WAITING code
+PASS Initial NOT_RUN uses readable self-test text
+PASS Updated NOT_RUN uses readable self-test text
+PASS Copied report preserves raw NOT_RUN code
+PASS Initial STORAGE_FAILED uses readable self-test text
+PASS Updated STORAGE_FAILED uses readable self-test text
+PASS Copied report preserves raw STORAGE_FAILED code
+PASS Initial NO_CALLBACK_RECEIVED uses readable self-test text
+PASS Updated NO_CALLBACK_RECEIVED uses readable self-test text
+PASS Copied report preserves raw NO_CALLBACK_RECEIVED code
+PASS Unknown diagnostic code remains available on screen and in report
+PASS Disconnect replaces stale self-test result
+PASS Offline report identifies unavailable self-test
+PASS Copied report retains both raw issue messages
+PASS Copied report retains raw API signature
+PASS Copied report retains privacy and test boundary text
+PASS 35 diagnostic presentation/report assertions, API 31. Synthetic validation only.

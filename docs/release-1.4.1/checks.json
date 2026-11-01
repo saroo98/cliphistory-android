@@ -1,0 +1,56 @@
+{
+  "candidate": "1.4.1",
+  "code": 11,
+  "signed_apk_sha256": "be2cf0e62d86f85593b78093ecc5ee58b0bb2e61425cb52d4404bfcf357a67be",
+  "matrices": {
+    "34": {
+      "suites": 18,
+      "passed": true,
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys",
+      "evidence": "matrix-api34/checks.json"
+    },
+    "35": {
+      "suites": 18,
+      "passed": true,
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:15/AE3A.240806.043/12960925:userdebug/dev-keys",
+      "evidence": "matrix-api35/checks.json"
+    },
+    "36": {
+      "suites": 18,
+      "passed": true,
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+      "evidence": "matrix-api36/checks.json"
+    },
+    "37": {
+      "suites": 18,
+      "passed": true,
+      "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:17/CE2A.260420.051.A3/16571990:userdebug/dev-keys",
+      "evidence": "matrix-api37/checks.json"
+    }
+  },
+  "unit": {
+    "tests": 72,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint_errors": 0,
+  "lint_warnings": 15,
+  "source_checks": "74/74",
+  "legacy_upgrade_passed": true,
+  "encrypted_upgrade_key_and_state_preserved": true,
+  "signed_production_upgrade_passed": true,
+  "physical_phone_used": false,
+  "new_publication_performed": false,
+  "new_linux_recipe_and_reproducibility_verified": false,
+  "exact_hyperos_failure_fixed_and_verified": false,
+  "remaining_gates": [
+    "Freeze and publish exact source/reference with owner authorization",
+    "Fresh Linux/F-Droid recipe and signature comparison",
+    "New maintainer CI/review/catalogue publication",
+    "Affected HyperOS firmware reproduction/retest"
+  ],
+  "final_diff_check_passed": true,
+  "publication_guide": "docs/F_DROID_ANDROID_GUIDE.md",
+  "candidate_delivered": true
+}

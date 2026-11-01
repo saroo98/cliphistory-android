@@ -1,0 +1,1777 @@
+[
+  {
+    "tap_ns": 437952745000,
+    "loaded_predraw_ns": 438170689300,
+    "loading_ms": 217.9443,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 1,
+    "accessibility_available_ms": 874,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 441007723000,
+    "loaded_predraw_ns": 441217620900,
+    "loading_ms": 209.8979,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 2,
+    "accessibility_available_ms": 869,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 444307038000,
+    "loaded_predraw_ns": 444471813200,
+    "loading_ms": 164.7752,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 3,
+    "accessibility_available_ms": 871,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 447506275200,
+    "loaded_predraw_ns": 447697216500,
+    "loading_ms": 190.9413,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 4,
+    "accessibility_available_ms": 891,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 451060139300,
+    "loaded_predraw_ns": 451346036000,
+    "loading_ms": 285.8967,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 5,
+    "accessibility_available_ms": 825,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 454376744800,
+    "loaded_predraw_ns": 454588047000,
+    "loading_ms": 211.3022,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 6,
+    "accessibility_available_ms": 856,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 457394335500,
+    "loaded_predraw_ns": 457531496700,
+    "loading_ms": 137.1612,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 7,
+    "accessibility_available_ms": 852,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 460511053700,
+    "loaded_predraw_ns": 460667059100,
+    "loading_ms": 156.0054,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 8,
+    "accessibility_available_ms": 848,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 463665763500,
+    "loaded_predraw_ns": 463803210600,
+    "loading_ms": 137.4471,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 9,
+    "accessibility_available_ms": 851,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 466799051800,
+    "loaded_predraw_ns": 466930001400,
+    "loading_ms": 130.9496,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 10,
+    "accessibility_available_ms": 841,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 469973761600,
+    "loaded_predraw_ns": 470112899700,
+    "loading_ms": 139.1381,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 11,
+    "accessibility_available_ms": 844,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 473118332100,
+    "loaded_predraw_ns": 473264547300,
+    "loading_ms": 146.2152,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 12,
+    "accessibility_available_ms": 838,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 476220783900,
+    "loaded_predraw_ns": 476357616600,
+    "loading_ms": 136.8327,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 13,
+    "accessibility_available_ms": 836,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 479377584600,
+    "loaded_predraw_ns": 479515688000,
+    "loading_ms": 138.1034,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 14,
+    "accessibility_available_ms": 869,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 482325905800,
+    "loaded_predraw_ns": 482531427900,
+    "loading_ms": 205.5221,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 15,
+    "accessibility_available_ms": 858,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 485557742500,
+    "loaded_predraw_ns": 485713265600,
+    "loading_ms": 155.5231,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 16,
+    "accessibility_available_ms": 852,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 488709605400,
+    "loaded_predraw_ns": 488856169100,
+    "loading_ms": 146.5637,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 17,
+    "accessibility_available_ms": 871,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 492033982300,
+    "loaded_predraw_ns": 492217334100,
+    "loading_ms": 183.3518,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 18,
+    "accessibility_available_ms": 848,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 494962874100,
+    "loaded_predraw_ns": 495114478500,
+    "loading_ms": 151.6044,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 19,
+    "accessibility_available_ms": 861,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 498315729700,
+    "loaded_predraw_ns": 498526513200,
+    "loading_ms": 210.7835,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 20,
+    "accessibility_available_ms": 975,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 501906211200,
+    "loaded_predraw_ns": 502266371000,
+    "loading_ms": 360.1598,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 21,
+    "accessibility_available_ms": 995,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 505029303800,
+    "loaded_predraw_ns": 505162315500,
+    "loading_ms": 133.0117,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 22,
+    "accessibility_available_ms": 860,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 508358430300,
+    "loaded_predraw_ns": 508567956700,
+    "loading_ms": 209.5264,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 23,
+    "accessibility_available_ms": 898,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 511515999400,
+    "loaded_predraw_ns": 511751720800,
+    "loading_ms": 235.7214,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 24,
+    "accessibility_available_ms": 860,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 514810384000,
+    "loaded_predraw_ns": 515062805100,
+    "loading_ms": 252.4211,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 25,
+    "accessibility_available_ms": 870,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 517798776500,
+    "loaded_predraw_ns": 517948429400,
+    "loading_ms": 149.6529,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 26,
+    "accessibility_available_ms": 877,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 521143062500,
+    "loaded_predraw_ns": 521281400000,
+    "loading_ms": 138.3375,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 27,
+    "accessibility_available_ms": 844,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 524065729900,
+    "loaded_predraw_ns": 524224074500,
+    "loading_ms": 158.3446,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 28,
+    "accessibility_available_ms": 842,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 527230485500,
+    "loaded_predraw_ns": 527513160800,
+    "loading_ms": 282.6753,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 29,
+    "accessibility_available_ms": 980,
+    "bounds": "[132,1036][1212,2035]"
+  },
+  {
+    "tap_ns": 530619545000,
+    "loaded_predraw_ns": 530749122000,
+    "loading_ms": 129.577,
+    "layouts": [
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": false
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      },
+      {
+        "width": 1080,
+        "height": 999,
+        "ready": true
+      }
+    ],
+    "scope": "First observed loaded app pre-draw; excludes SystemUI\/accessibility delay and compositor presentation",
+    "trial": 30,
+    "accessibility_available_ms": 859,
+    "bounds": "[132,1036][1212,2035]"
+  }
+]

@@ -1,0 +1,8 @@
+Tapped Recording paused
+Tapped Run connection test
+Tapped Run test
+{"package": "app.cliphistory", "connectionProbe": "PASS", "ordinaryCapturePaused": true, "historyFixtureAdded": false}
+PASS Original clipboard restored after production probe
+PRODUCTION_PAUSE {"before":true,"after":false}
+
+PASS Production pause acknowledged without reading or deleting history.

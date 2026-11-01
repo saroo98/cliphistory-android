@@ -4,14 +4,17 @@ const val DEFAULT_LIMIT = 100
 const val MIN_LIMIT = 20
 const val MAX_LIMIT = 500
 const val MAX_TEXT_BYTES = 65_536
-const val MAX_SNAPSHOT_BYTES = MAX_LIMIT * (MAX_TEXT_BYTES + 32) + 1024
+const val MAX_SNAPSHOT_BYTES = MAX_LIMIT * (MAX_TEXT_BYTES + 40) + 1024
 
-data class Entry(val id: Long, val timestamp: Long, val text: String)
+data class Entry(val id: Long, val timestamp: Long, val text: String,
+    val sensitive: Boolean = false, val expiry: Expiry? = null)
 data class Snapshot(
     val generation: Long = 0, val limit: Int = DEFAULT_LIMIT,
     val nextId: Long = 1, val paused: Boolean = false,
     val entries: List<Entry> = emptyList(),
-    val duplicateMode: DuplicateMode = DuplicateMode.UNIQUE_TEXT
+    val duplicateMode: DuplicateMode = DuplicateMode.UNIQUE_TEXT,
+    val captureSensitive: Boolean = false, val autoDeleteSensitive: Boolean = true,
+    val sensitiveMinutes: Int = 5
 )
 
 enum class DuplicateMode(val value: Int) {

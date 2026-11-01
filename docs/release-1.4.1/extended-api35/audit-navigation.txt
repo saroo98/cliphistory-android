@@ -1,0 +1,54 @@
+PASS: 53 audit navigation assertions. Owned synthetic offline history; no Shizuku runtime claim.
+PASS Synthetic offline history loads
+PASS Control enabled: More options
+PASS Overflow contains only five durable actions
+PASS Control enabled: Settings
+PASS Settings opens from overflow
+PASS Settings displays stored history capacity
+PASS Settings distinguishes System appearance
+PASS Offline Settings explains disabled recorder controls
+PASS Pause remains unavailable offline
+PASS Recovery follows separate recorder controls
+PASS Unreadable history does not invent a value for LIMIT
+PASS Unreadable history does not invent a value for DUPLICATES
+PASS Unreadable history does not invent a value for SENSITIVE_DURATION
+PASS Confirmed Settings values return after a successful read
+PASS Settings scroll reaches About
+PASS Control enabled: Setup and reboot guide
+PASS Settings guide opens
+PASS Guide scroll reaches licenses
+PASS Control enabled: Open-source licenses
+PASS Licenses opens from guide
+PASS Licenses is scrollable
+PASS History survives recreation
+PASS Licenses page and scroll survive recreation
+PASS Control enabled: Back
+PASS Toolbar Back restores guide scroll
+PASS System Back restores Settings and scroll
+PASS Control enabled: Setup and reboot guide
+PASS Guide reopens from restored Settings
+PASS Guide has a scroll position to restore
+PASS History survives recreation
+PASS Guide page and scroll survive recreation
+PASS Control enabled: Back
+PASS Toolbar Back restores originating Settings after recreation
+PASS Control enabled: Back
+PASS Settings Back returns Home
+PASS Control enabled: More options
+PASS Overflow contains only five durable actions
+PASS Control enabled: Help & privacy
+PASS Home guide opens
+PASS Home guide Back returns Home
+PASS Copy-and-return actions load asynchronously
+PASS Action sheet identifies copy-and-return
+PASS Copy-and-stay actions load asynchronously
+PASS Action sheet identifies copy-and-stay
+PASS Control enabled: Copy
+PASS Copy-and-stay confirms success
+PASS Copy-and-stay retains Activity
+PASS Action-sheet copy preserves exact complete text
+PASS Explicit tile destination returns Settings to History
+PASS History destination is consumed
+PASS History survives recreation
+PASS Later recreation preserves Settings after consumed tile destination
+PASS Control enabled: Back

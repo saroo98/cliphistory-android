@@ -15,20 +15,20 @@ interface RandomAccess : java.io.Closeable {
  * Android permits shell to read/write an app-provided FD, not change its attributes.
  * Obsolete tail bytes are overwritten with zeros after a smaller snapshot is written.
  */
-class FramedSlot(private val file: RandomAccess) : Slot {
+class FramedSlot(private val file: RandomAccess, private val maxBytes: Int = MAX_SNAPSHOT_BYTES) : Slot {
     override fun read(): ByteArray {
         val size = file.size()
         if (size == 0L) return byteArrayOf()
-        if (size < 4L || size > MAX_SNAPSHOT_BYTES + 4L) throw StoreException("FRAME_SIZE_INVALID")
+        if (size < 4L || size > maxBytes + 4L) throw StoreException("FRAME_SIZE_INVALID")
         val header = ByteArray(4); readFully(0, header)
         val length = ByteBuffer.wrap(header).int
-        if (length !in 1..MAX_SNAPSHOT_BYTES || length.toLong() + 4 > size) throw StoreException("FRAME_LENGTH_INVALID")
+        if (length !in 1..maxBytes || length.toLong() + 4 > size) throw StoreException("FRAME_LENGTH_INVALID")
         return ByteArray(length).also { readFully(4, it) }
     }
     override fun writeAndSync(bytes: ByteArray) {
-        if (bytes.isEmpty() || bytes.size > MAX_SNAPSHOT_BYTES) throw StoreException("FRAME_PAYLOAD_INVALID")
+        if (bytes.isEmpty() || bytes.size > maxBytes) throw StoreException("FRAME_PAYLOAD_INVALID")
         val oldSize = file.size()
-        if (oldSize > MAX_SNAPSHOT_BYTES + 4L) throw StoreException("FRAME_SIZE_INVALID")
+        if (oldSize > maxBytes + 4L) throw StoreException("FRAME_SIZE_INVALID")
         // Invalidate the target while writing. The other slot remains available.
         writeFully(0, ByteArray(4))
         writeFully(4, bytes)

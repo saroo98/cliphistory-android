@@ -1,0 +1,15 @@
+{
+  "mode": "helper-death-off",
+  "serial": "emulator-5574",
+  "api": "34",
+  "before": {
+    "app.cliphistory.validation": 2468,
+    "app.cliphistory.validation:clipboard": 2791
+  },
+  "started_utc": "2026-10-08T16:41:04Z",
+  "disabled_recovery_did_not_restart": true,
+  "after": {
+    "app.cliphistory.validation": 2468
+  },
+  "elapsed_seconds": 23.031
+}

@@ -1,0 +1,5 @@
+PASS The independent recorder captured the expected synthetic payload
+PASS 1 encryption assertions (stored-assert). No clipboard writes.
+PASS Authenticated offline metadata is readable
+STORED_STATUS {"generation":7,"count":1,"paused":false,"limit":100,"duplicateMode":0}
+PASS 1 encryption assertions (stored-status). No clipboard writes.

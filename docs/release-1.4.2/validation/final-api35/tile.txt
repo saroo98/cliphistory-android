@@ -1,0 +1,152 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Quick tile keeps the underlying activity resumed; no task launch animation
+PASS Tile service cleanup leaves its independently attached dialog open
+PASS Single tap dismisses quick copy
+PASS Underlying application remains foreground after copying
+PASS Native quick copy preserves exact full text and whitespace
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Tile can reopen one panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Close dismisses floating panel
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Panel reopens before outside dismissal
+PASS Shade collapsed before outside dismissal
+PASS Outside tap dismisses the native quick dialog
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Panel reopens before system Back
+PASS Shade collapsed before system Back
+PASS System Back dismisses the native quick dialog
+PASS Settings remains open before full-history tile
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Published tile reflects the new History mode
+PASS Full-history tile returns existing Settings to History
+PASS Full-history mode does not open a floating panel
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Published tile reflects the restored Quick copy mode
+PASS Changing back to Quick copy opens the floating panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Actual QS dialog exposes storage-read recovery
+PASS Shade collapsed before native error recovery
+PASS Native error Open app accepts activation
+PASS Native error Open app uses its valid QS token before dismissing
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Disabled native tile cannot open quick copy
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Re-enabled tile opens quick copy
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+Accessibility flags before window retrieval: 65554
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Quick tile keeps the underlying activity resumed; no task launch animation
+PASS Tile service cleanup leaves its independently attached dialog open
+PASS Single tap dismisses quick copy
+PASS Underlying application remains foreground after copying
+PASS Native quick copy preserves exact full text and whitespace
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Tile can reopen one panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Close dismisses floating panel
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Panel reopens before outside dismissal
+PASS Shade collapsed before outside dismissal
+PASS Outside tap dismisses the native quick dialog
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Panel reopens before system Back
+PASS Shade collapsed before system Back
+PASS System Back dismisses the native quick dialog
+PASS Settings remains open before full-history tile
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Published tile reflects the new History mode
+PASS Full-history tile returns existing Settings to History
+PASS Full-history mode does not open a floating panel
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Published tile reflects the restored Quick copy mode
+PASS Changing back to Quick copy opens the floating panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Actual QS dialog exposes storage-read recovery
+PASS Shade collapsed before native error recovery
+PASS Native error Open app accepts activation
+PASS Native error Open app uses its valid QS token before dismissing
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Disabled native tile cannot open quick copy
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Re-enabled tile opens quick copy
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS 75 feature assertions (tile), API 35. Synthetic validation only.

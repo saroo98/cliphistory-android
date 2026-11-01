@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="app.cliphistory.SensitivePolicyTest" tests="24" skipped="0" failures="0" errors="0" timestamp="2026-10-31T21:54:50.860Z" hostname="local-test-host" time="0.01">
+  <properties/>
+  <testcase name="queuedCaptureKeepsItsOriginalMonotonicDeadline" classname="app.cliphistory.SensitivePolicyTest" time="0.002"/>
+  <testcase name="delayedUnmarkedRecopyCannotDowngradeAnExpiredSensitiveMatch" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="shortenedDeadlineIsVisibleWhileItsRecoveryMirrorIsWriting" classname="app.cliphistory.SensitivePolicyTest" time="0.001"/>
+  <testcase name="shorterPolicyCanShortenButLongerPolicyCannotExtendActiveDeadline" classname="app.cliphistory.SensitivePolicyTest" time="0.001"/>
+  <testcase name="defaultsExcludeSensitiveAndKeepNormalWorkflow" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="metadataRoundTripAndTimerBounds" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="newlyMarkedConsecutiveDuplicatesAreAllPromoted" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="committedSensitivityIsVisibleWhileItsRecoveryMirrorIsWriting" classname="app.cliphistory.SensitivePolicyTest" time="0.001"/>
+  <testcase name="recopyAndUnmarkedCopyKeepEarliestDeadlineAndClassification" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="expiryPurgesUndoAndHasNoRestoration" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="restartPreservesDeadlineRebootAndUnknownBootWithholdTimedData" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="wallClockChangesDoNotExtendDeadline" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="invalidQueuedCaptureClockIsRejectedWithoutWriting" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="delayedUnmarkedRecopyCannotDowngradeExpiredSensitiveUndo" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="markingRecapturedTextAlsoPromotesPendingUndo" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="confirmedIndefinitePolicyDoesNotReuseAQueuedDeadline" classname="app.cliphistory.SensitivePolicyTest" time="0.001"/>
+  <testcase name="exactDeadlineHidesAllReadPathsAndCleansBothSlots" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="observationAfterExpiryDoesNotInheritAnExpiredClassification" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="failedMirrorHidesExpiredDataAndRetriesBothDurableCopies" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="disableCapturePurgesSensitiveEntriesAndUndoWithoutTouchingNormal" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="normalCapacityEvictionRemovesSensitiveTextFromBothRecoverySlots" classname="app.cliphistory.SensitivePolicyTest" time="0.002"/>
+  <testcase name="queueDelayCannotSaveAnAlreadyExpiredSensitiveEvent" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="autoDeleteTransitionsDoNotResurrectExpiredEntries" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <testcase name="queuedObservationKeepsSensitivityAfterAnotherCaptureExpiresTheMatch" classname="app.cliphistory.SensitivePolicyTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,4 +1,20 @@
-# Current build: ClipHistory 1.3.4
+# Current local candidate: ClipHistory 1.4.4
+
+The 1 November 2026 candidate is **1.4.4/code 14**, minimum API 30. Current checks, signed APK details, device findings and remaining limits are recorded in [1.4.4 qualification](docs/release-1.4.4/RELEASE.md). The candidate must be rebuilt from the release commit before submission. See the [reusable F-Droid guide](docs/F_DROID_ANDROID_GUIDE.md).
+
+## Historical local 1.4.1 qualification
+
+The earlier review follow-up and Android 14–17 evidence are retained in [1.4.1 qualification](docs/release-1.4.1/RELEASE.md). Those results do not automatically qualify the 1.4.4 binary.
+
+## Historical local 1.4.0 qualification
+
+Local 1.4.0/code 10 adds authenticated encryption for all stored history, optional source-marked sensitive capture, and configurable expiry without changing the ordinary native workflow. Fresh results and explicit limits are in [the 1.4 qualification report](docs/release-1.4/RELEASE.md); progress is recorded in [implementation status](docs/release-1.4/IMPLEMENTATION_STATUS.md).
+
+The final JVM gate passes 65 tests, release lint has zero errors, and source checks pass 74/74. Code-10 Android encryption/migration (95), sensitive live (38), UI/expiry/retry (23), regression (12), quick errors (21), storage threading (5), native tile (353) and capacity (5) checks pass. Three queue-delay regressions failed before the correction and pass afterward. The earlier legacy-helper upgrade passes 160 assertions; a live encrypted code-9 → code-10 upgrade preserves its key/payload/metadata. All twelve retained code-9 idle openings pass and 1,167 encoded frames were reviewed, with missed deadlines disclosed. Code-10 warm/cold measurements pass the baseline regression gate. The final signed Pixel upgrade retains the 16-entry count and observed settings; production diagnostics report AES-256-GCM, StrongBox and a passed expiry clock. Detailed results and coverage limits are in the report and [checks.json](docs/release-1.4/checks.json).
+
+No 1.4 commit, tag, public release, remote recipe update or reproducibility qualification has been performed. The following publication and older-version results are historical records, not new checks or qualification of 1.4.
+
+# Historical ClipHistory 1.3.4 qualification
 
 The approved logo is integrated throughout Android and the release/store materials. Fresh native checks and visual evidence are in [the branding report](docs/release-1.3.4/BRANDING.md). Frozen-source qualification and current external status are in [F-Droid publication](docs/F_DROID_PUBLICATION.md); exact results are in [checks.json](docs/release-1.3.4/checks.json).
 

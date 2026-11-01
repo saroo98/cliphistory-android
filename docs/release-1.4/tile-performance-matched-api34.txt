@@ -1,0 +1,91 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Quick tile keeps the underlying activity resumed; no task launch animation
+PASS Tile service cleanup leaves its independently attached dialog open
+PASS Actual OS capture follows quick-panel privacy
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Repeated tile click collapses shade
+PASS Re-tap keeps exactly one attached quick panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Initial performance panel dismissed
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 1: app loaded pre-draw=492.553211 ms; accessibility availability=1208 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 1
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 2: app loaded pre-draw=897.127201 ms; accessibility availability=1739 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 2
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 3: app loaded pre-draw=672.230364 ms; accessibility availability=1655 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 3
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 4: app loaded pre-draw=641.589313 ms; accessibility availability=1214 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 4
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Correct quick-copy tile visible
+PASS Quick-copy tile bounds settled
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 5: app loaded pre-draw=389.847355 ms; accessibility availability=1179 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 5
+PASS Previous SystemUI shade collapse complete
+FAIL after 0 assertions: java.lang.IllegalStateException: System tile state ready for interaction
+	at app.cliphistory.FeatureChecks.await(FeatureChecks.kt:34)
+	at app.cliphistory.FeatureChecks.tile$expand(FeatureChecks.kt:258)
+	at app.cliphistory.FeatureChecks.tile$expand$default(FeatureChecks.kt:248)
+	at app.cliphistory.FeatureChecks.tile(FeatureChecks.kt:381)
+	at app.cliphistory.FeatureChecks.run(FeatureChecks.kt:844)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:82)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2402)

@@ -1,0 +1,43 @@
+{
+  "serial": "emulator-5588",
+  "avd": "ClipHistory13_API34",
+  "api": 34,
+  "theme": "light",
+  "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:14/UE1A.230829.050/12077443:userdebug/dev-keys",
+  "release": "14",
+  "apk_sha256": "0fe754a8450d90db014e2278fafce336121abe2f4efe653be3d7dbfb0116c09b",
+  "test_apk_sha256": "32e22563a17e57444dad9afd29ac1869d1dbe52f1888146f22b52d93bc22088b",
+  "suites": [
+    {
+      "suite": "tile",
+      "passed": true,
+      "summary": "PASS 75 feature assertions (tile), API 34. Synthetic validation only.",
+      "seconds": 27.438
+    },
+    {
+      "suite": "tile-performance",
+      "passed": true,
+      "summary": "PASS 353 feature assertions (tile-performance), API 34. Synthetic validation only.",
+      "seconds": 90.265
+    },
+    {
+      "suite": "capacity",
+      "passed": true,
+      "summary": "PASS 5 release assertions (capacity). Synthetic data only.",
+      "seconds": 3.063
+    },
+    {
+      "suite": "layout",
+      "passed": true,
+      "summary": "PASS 11 release assertions (layout). Synthetic data only.",
+      "seconds": 4.265
+    },
+    {
+      "suite": "audit-navigation",
+      "passed": false,
+      "error": "Acceptance suite failed or never completed; inspect its saved log",
+      "seconds": 1.407
+    }
+  ],
+  "shizuku_package": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c"
+}

@@ -1,0 +1,4 @@
+2026-10-31 13:03:09,598 WARNING: apksigner not found! Cannot sign or verify modern APKs
+2026-10-31 13:03:09,610 WARNING: unsafe permissions on 'config.yml' (should be 0600)!
+2026-10-31 13:03:09,610 INFO: Scanning APK with dexdump for known non-free classes.
+2026-10-31 13:03:11,473 INFO: Scanning APK for extra signing blocks.

@@ -20,6 +20,7 @@ def main():
     p.add_argument('--adb',required=True)
     p.add_argument('--serial',required=True)
     p.add_argument('--output',type=Path,required=True)
+    p.add_argument('--expected-version',required=True,help='Exact isolated validation version being measured')
     p.add_argument('--smoke',action='store_true',help='Two immediate trials; never substitutes for the timed test')
     args=p.parse_args();package='app.cliphistory.validation'
     def adb(*parts,binary=False):
@@ -29,7 +30,7 @@ def main():
         if r.returncode:raise RuntimeError(r.stderr.decode(errors='replace'))
         return r.stdout if binary else r.stdout.decode(errors='replace').replace('\r\n','\n').strip()
     info=adb('shell','dumpsys','package',package)
-    if 'DEBUGGABLE' not in info or 'versionName=1.3.0-validation' not in info:
+    if not args.expected_version.endswith('-validation') or 'DEBUGGABLE' not in info or ('versionName='+args.expected_version+'\n') not in info:
         raise RuntimeError('Requires this task\'s isolated debuggable validation APK')
     if any(line.strip().endswith(package+':clipboard') for line in adb('shell','ps','-A','-o','NAME').splitlines()):
         raise RuntimeError('Stop the validation recorder before an offline synthetic check')
@@ -73,7 +74,7 @@ def main():
         root,n=await_tree('More options')
         if find(root,'Synthetic newest text') is None:raise RuntimeError('Expected synthetic history is not visible')
         tap(n);tap(await_tree('Settings')[1])
-        for _ in range(6):
+        for _ in range(18):
             root=tree();n=find(root,'Allow screenshots')
             if n is not None:
                 original=n.get('checked')=='true'
@@ -82,7 +83,11 @@ def main():
             scroll=next((n for n in root.iter('node') if n.get('scrollable')=='true' and n.get('package')==package),None)
             if scroll is None:raise RuntimeError('Settings scroll view unavailable')
             x1,y1,x2,y2=bounds(scroll)
-            adb('shell','input','swipe',str((x1+x2)//2),str(y2-120),str((x1+x2)//2),str(y1+120),'450')
+            # Overlapping half-page steps avoid flinging past a control between
+            # dumps as the native Settings page grows or text is enlarged.
+            height=y2-y1
+            adb('shell','input','swipe',str((x1+x2)//2),str(y1+int(height*.75)),
+                str((x1+x2)//2),str(y1+int(height*.35)),'650')
         raise RuntimeError('Screenshot control not reached')
     original=capture_setting(True)
     producer=package+'.test/app.cliphistory.SyntheticClipboardActivity'

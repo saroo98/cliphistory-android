@@ -1,0 +1,62 @@
+PASS Actual Shizuku connection
+PASS Shell listener and durable private storage, API 33
+PASS Set validation history limit
+PASS Clear only synthetic validation history
+PASS Select exact unique-text policy
+PASS Arm live callback test
+PASS Real self-test passes without saving nonce
+Producer package: app.cliphistory.validation.test, target: app.cliphistory.validation
+PASS Synthetic producer is foreground
+PASS Another app captures while history is backgrounded
+PASS Consecutive duplicates skipped
+PASS Pause prevents capture
+PASS Marked sensitive payload skipped
+PASS Oversized payload skipped
+PASS Full Unicode and whitespace preserved
+PASS Live missing entry distinguished from error
+PASS Actual A/B/A/B produces exactly B,A
+PASS Recopy invalidates the old ID without returning another text
+PASS Stale deletion reports missing rather than success
+PASS Consecutive-only policy acknowledged
+PASS Consecutive-only mode preserves four nonconsecutive copies
+PASS Mirrored offline history agrees after policy cleanup
+PASS Sustained fifty-copy session retains limit without queue drops
+PASS History returns after background capture
+PASS Foreground for clipboard restoration
+FAIL after 0 assertions: java.lang.IllegalStateException: PASS Actual Shizuku connection
+PASS Shell listener and durable private storage, API 33
+PASS Set validation history limit
+PASS Clear only synthetic validation history
+PASS Select exact unique-text policy
+PASS Arm live callback test
+PASS Real self-test passes without saving nonce
+PASS Synthetic producer is foreground
+PASS Another app captures while history is backgrounded
+PASS Consecutive duplicates skipped
+PASS Pause prevents capture
+PASS Marked sensitive payload skipped
+Oversize counters: saved=1, count=1, oversized=1, unsupported=0
+PASS Oversized payload skipped
+PASS Full Unicode and whitespace preserved
+PASS Live missing entry distinguished from error
+Synthetic A/B/A/B observed count=2, texts=[Synthetic duplicate B, Synthetic duplicate A]
+PASS Actual A/B/A/B produces exactly B,A
+PASS Recopy invalidates the old ID without returning another text
+PASS Stale deletion reports missing rather than success
+PASS Consecutive-only policy acknowledged
+PASS Consecutive-only mode preserves four nonconsecutive copies
+PASS Mirrored offline history agrees after policy cleanup
+PASS Sustained fifty-copy session retains limit without queue drops
+Fifty-copy session: 1899 ms
+PASS History returns after background capture
+PASS Foreground for clipboard restoration
+
+	at app.cliphistory.ReleaseChecks.run(ReleaseChecks.kt:371)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:83)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2361)
+Caused by: java.lang.IllegalStateException: Notification reports failed durable Stop
+	at app.cliphistory.ReleaseChecks.until(ReleaseChecks.kt:46)
+	at app.cliphistory.ReleaseChecks.connectionFailures(ReleaseChecks.kt:333)
+	at app.cliphistory.ReleaseChecks.live(ReleaseChecks.kt:312)
+	at app.cliphistory.ReleaseChecks.run(ReleaseChecks.kt:370)
+	... 2 more

@@ -1,6 +1,10 @@
 # F-Droid publication status
 
-ClipHistory **1.3.4/code 8**, `app.cliphistory`, MIT, Android 14+. The upstream owner requests inclusion. Qualification ran on **2026-10-02**. Local preparation passed; the latest release still needs maintainer CI and inclusion review.
+**1 November compatibility follow-up:** the local candidate was 1.4.4/code 14; its [qualification](release-1.4.4/RELEASE.md) supersedes the earlier local-candidate notes below. At the time of those checks, the submitted 1.3.4 pipeline had passed all nine jobs and the merge request remained open. Check the merge request for its current status.
+
+**31 October historical follow-up:** the existing submission records and local F-Droid recipes targeted 1.3.4/code 8. At that time, the local encrypted-history update was 1.4.2/code 12; see its [qualification](release-1.4.2/RELEASE.md) and the [reusable publication guide](F_DROID_ANDROID_GUIDE.md). The records below qualify the earlier public version only.
+
+ClipHistory **1.3.4/code 8**, `app.cliphistory`, MIT, Android 14+. The upstream owner requested inclusion. Qualification ran on **2026-10-02**. Local preparation passed; maintainer CI and inclusion review were still pending at that time.
 
 ## Immutable release
 
@@ -34,7 +38,7 @@ Actual logs and the machine-readable result are in [release-1.3.4](release-1.3.4
 
 The 14 Android-lint warnings remain disclosed and unsuppressed: one AGP advisory, one durable preference-commit advisory, one plural candidate, four private-API calls and seven unused strings. Build logs also retain the reflective clipboard interoperability diagnostic, deprecated window soft-input flag and SDK-tools XML-format advisory. Private clipboard APIs remain a compatibility limit. Broader native UI evidence is in [HTML_UI_PORT.md](HTML_UI_PORT.md); historical checks do not qualify a new binary automatically.
 
-## Current external submission
+## Historical external submission notes from 2 October
 
 [MR !50917](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917) is open. It adds only `metadata/app.cliphistory.yml` from public, unprotected `xizirsaro/fdroiddata:app.cliphistory`; no conflict is reported. The latest-only recipe is committed as `550696372b43e4dedb641c2a8cc618125ae1d235`, pins the immutable 1.3.4 source, and has SHA-256 `5cfd6bbbe65555721ee2013fa15d4880c3d79e84841983fb49ed13b3b74decf6`. The downloaded submitted file matches the qualified local file byte for byte, LF without BOM. Preserve the canonical space after `Binaries:` and its indented continuation URL.
 

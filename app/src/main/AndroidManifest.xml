@@ -13,6 +13,7 @@
     </queries>
     <application
         android:name=".ClipApplication"
+        android:appComponentFactory="app.cliphistory.ClipAppComponentFactory"
         android:label="${appLabel}"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher"

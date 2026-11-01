@@ -1,0 +1,20 @@
+{
+  "old_version": "1.4.1-validation",
+  "new_version": "1.4.2-validation",
+  "new_version_code": 12,
+  "old_helper_pid": 4183,
+  "helper_pid_after_install": 4183,
+  "new_helper_pid": 4575,
+  "helper_uid": 2000,
+  "app_uid_preserved": true,
+  "exact_committed_state_preserved": true,
+  "automatic_recovery_enabled_before_upgrade": true,
+  "both_slots_authenticated": true,
+  "private_modes": "0600",
+  "count": 3,
+  "limit": 137,
+  "paused": false,
+  "duplicate_mode": 0,
+  "wrapped_key_preserved": true,
+  "sensitive_timed_and_indefinite_preserved": true
+}

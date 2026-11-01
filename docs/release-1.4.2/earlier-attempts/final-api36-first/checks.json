@@ -1,0 +1,27 @@
+{
+  "serial": "emulator-5590",
+  "avd": "ClipHistory13_API36",
+  "api": 36,
+  "theme": "light",
+  "tile_page_limit": 4,
+  "sdk_full": "36.0",
+  "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+  "release": "16",
+  "apk_sha256": "f51febdee89de0cf7167a4ba4916348282f42635952bba5d70d06c99f66e304f",
+  "test_apk_sha256": "2bcc1edb16977e9da9d55d7a8a014dfa225f406b93fb71f9278c88052f2a8929",
+  "suites": [
+    {
+      "suite": "boot-identity",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (boot-identity), API 36. Synthetic validation only.",
+      "seconds": 13.781
+    },
+    {
+      "suite": "live",
+      "passed": false,
+      "error": "Acceptance suite failed or never completed; inspect its saved log",
+      "seconds": 20.719
+    }
+  ],
+  "shizuku_package": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c"
+}

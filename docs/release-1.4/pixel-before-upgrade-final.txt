@@ -1,0 +1,2 @@
+PRODUCTION_METADATA {"count":16,"limit":100,"recorderState":"Listening","visibleSettings":{"Pause recording":false,"Automatic recovery":true,"Resume after reboot":true,"Suggest background setup once":true,"Quick Settings tile enabled":true,"Return after copying":true,"Allow screenshots":true,"Hide history in Recents":true},"visibleEncryption":{}}
+PASS Production observation exported only count, limit, recorder state and known settings. No clipboard writes or history text.

@@ -1,0 +1,57 @@
+{
+  "serial": "emulator-5592",
+  "avd": "ClipHistory13_API37",
+  "api": 37,
+  "theme": "light",
+  "tile_page_limit": 4,
+  "sdk_full": "37.0",
+  "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:17/CE2A.260420.051.A3/16571990:userdebug/dev-keys",
+  "release": "17",
+  "apk_sha256": "f51febdee89de0cf7167a4ba4916348282f42635952bba5d70d06c99f66e304f",
+  "test_apk_sha256": "2bcc1edb16977e9da9d55d7a8a014dfa225f406b93fb71f9278c88052f2a8929",
+  "suites": [
+    {
+      "suite": "boot-identity",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (boot-identity), API 37. Synthetic validation only.",
+      "seconds": 2.312
+    },
+    {
+      "suite": "live",
+      "passed": true,
+      "summary": "PASS 33 release assertions (live). Synthetic data only.",
+      "seconds": 13.829
+    },
+    {
+      "suite": "sensitive-live",
+      "passed": true,
+      "summary": "PASS 40 sensitive assertions (sensitive-live). Synthetic emulator only.",
+      "seconds": 66.843
+    },
+    {
+      "suite": "encryption",
+      "passed": true,
+      "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+      "seconds": 2.11
+    },
+    {
+      "suite": "sensitive-ui",
+      "passed": true,
+      "summary": "PASS 23 sensitive assertions (sensitive-ui). Synthetic emulator only.",
+      "seconds": 30.968
+    },
+    {
+      "suite": "regression",
+      "passed": true,
+      "summary": "PASS 12 release assertions (regression). Synthetic data only.",
+      "seconds": 4.469
+    },
+    {
+      "suite": "settings",
+      "passed": false,
+      "error": "Acceptance suite failed or never completed; inspect its saved log",
+      "seconds": 3.344
+    }
+  ],
+  "shizuku_package": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c"
+}

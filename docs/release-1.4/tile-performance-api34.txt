@@ -1,0 +1,612 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Quick tile keeps the underlying activity resumed; no task launch animation
+PASS Tile service cleanup leaves its independently attached dialog open
+PASS Actual OS capture follows quick-panel privacy
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Repeated tile click collapses shade
+PASS Re-tap keeps exactly one attached quick panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Initial performance panel dismissed
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 1: app loaded pre-draw=184.494231 ms; accessibility availability=992 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 1
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 2: app loaded pre-draw=249.130764 ms; accessibility availability=925 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 2
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 3: app loaded pre-draw=170.273565 ms; accessibility availability=893 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 3
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 4: app loaded pre-draw=334.688797 ms; accessibility availability=1007 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 4
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 5: app loaded pre-draw=255.991939 ms; accessibility availability=920 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 5
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 6: app loaded pre-draw=291.45989 ms; accessibility availability=980 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 6
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 7: app loaded pre-draw=259.245845 ms; accessibility availability=954 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 7
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 8: app loaded pre-draw=198.992533 ms; accessibility availability=913 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 8
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 9: app loaded pre-draw=239.327658 ms; accessibility availability=1049 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 9
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 10: app loaded pre-draw=235.79091 ms; accessibility availability=1004 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 10
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 11: app loaded pre-draw=223.424254 ms; accessibility availability=932 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 11
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 12: app loaded pre-draw=264.117735 ms; accessibility availability=1036 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 12
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 13: app loaded pre-draw=529.385383 ms; accessibility availability=990 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 13
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 14: app loaded pre-draw=217.07399 ms; accessibility availability=973 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 14
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 15: app loaded pre-draw=293.366744 ms; accessibility availability=943 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 15
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 16: app loaded pre-draw=253.803406 ms; accessibility availability=978 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 16
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 17: app loaded pre-draw=217.36657 ms; accessibility availability=875 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 17
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 18: app loaded pre-draw=251.73141 ms; accessibility availability=952 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 18
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 19: app loaded pre-draw=255.381191 ms; accessibility availability=940 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 19
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 20: app loaded pre-draw=246.33181 ms; accessibility availability=973 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 20
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 21: app loaded pre-draw=186.976571 ms; accessibility availability=934 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 21
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 22: app loaded pre-draw=202.681874 ms; accessibility availability=900 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 22
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 23: app loaded pre-draw=262.028157 ms; accessibility availability=925 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 23
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 24: app loaded pre-draw=187.285677 ms; accessibility availability=1004 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 24
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 25: app loaded pre-draw=247.442502 ms; accessibility availability=952 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 25
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 26: app loaded pre-draw=206.991295 ms; accessibility availability=977 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 26
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 27: app loaded pre-draw=229.756045 ms; accessibility availability=908 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 27
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 28: app loaded pre-draw=249.021662 ms; accessibility availability=923 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 28
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 29: app loaded pre-draw=248.295984 ms; accessibility availability=1003 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 29
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+Trial 30: app loaded pre-draw=211.266584 ms; accessibility availability=924 ms
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 30
+Actual SystemUI tile invocation (statusbar command) to accessibility availability, 30 warm openings: p50=952 ms, p95=1036 ms, max=1049 ms
+Actual loaded dialog pre-draw p95=334.688797 ms; accessibility timeouts=0/30
+PASS Warm latest-three loaded pre-draw meets p95 <= 500 ms
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS System tile presents newest synthetic entry
+PASS Floating panel shows three entries
+PASS System dialog heading present
+PASS Quick tile keeps the underlying activity resumed; no task launch animation
+PASS Tile service cleanup leaves its independently attached dialog open
+PASS Actual OS capture follows quick-panel privacy
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Repeated tile click collapses shade
+PASS Re-tap keeps exactly one attached quick panel
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Initial performance panel dismissed
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 1
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 2
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 3
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 4
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 5
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 6
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 7
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 8
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 9
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 10
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 11
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 12
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 13
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 14
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 15
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 16
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 17
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 18
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 19
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 20
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 21
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 22
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 23
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 24
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 25
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 26
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 27
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 28
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 29
+PASS Previous SystemUI shade collapse complete
+PASS System tile state ready for interaction
+PASS Newest entries are visibly attached in the native dialog
+PASS Loaded native dialog bounds stay stable
+PASS Loading keeps the native dialog window size stable
+PASS Shade collapsed before closing panel
+PASS Panel Close bounds settled
+PASS Close removes actual dialog window
+PASS Performance panel dismissed 30
+Actual SystemUI tile invocation (statusbar command) to accessibility availability, 30 warm openings: p50=952 ms, p95=1036 ms, max=1049 ms
+PASS Warm latest-three loaded pre-draw meets p95 <= 500 ms
+PASS 289 feature assertions (tile-performance), API 34. Synthetic validation only.

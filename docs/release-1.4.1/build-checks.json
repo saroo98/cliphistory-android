@@ -1,0 +1,58 @@
+{
+  "unit": {
+    "tests": 72,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": [
+    {
+      "severity": "Warning",
+      "id": "ApplySharedPref",
+      "count": 1
+    },
+    {
+      "severity": "Warning",
+      "id": "PrivateApi",
+      "count": 4
+    },
+    {
+      "severity": "Warning",
+      "id": "AndroidGradlePluginVersion",
+      "count": 1
+    },
+    {
+      "severity": "Warning",
+      "id": "PluralsCandidate",
+      "count": 1
+    },
+    {
+      "severity": "Warning",
+      "id": "ObsoleteSdkInt",
+      "count": 1
+    },
+    {
+      "severity": "Warning",
+      "id": "UnusedResources",
+      "count": 7
+    }
+  ],
+  "artifacts": {
+    "validation-code11.apk": {
+      "sha256": "0fe754a8450d90db014e2278fafce336121abe2f4efe653be3d7dbfb0116c09b",
+      "size": 3410353
+    },
+    "validation-test-code11.apk": {
+      "sha256": "b974c33f4d139503ebf0e18fab10d07c7cd456fbde6f05933c2ff01847e30dd5",
+      "size": 1067714
+    },
+    "release-unsigned-code11.apk": {
+      "sha256": "7dfa169e354933d242f8acb5a364705bd0f408f44b647c7ecf9fcd9b00d8afb9",
+      "size": 2637903
+    },
+    "ClipHistory-1.4.1.apk": {
+      "sha256": "be2cf0e62d86f85593b78093ecc5ee58b0bb2e61425cb52d4404bfcf357a67be",
+      "size": 2648382
+    }
+  }
+}

@@ -1,0 +1,3 @@
+PASS Authenticated offline metadata is readable
+STORED_STATUS {"generation":4,"count":1,"paused":false,"limit":100,"duplicateMode":0}
+PASS 1 encryption assertions (stored-status). No clipboard writes.

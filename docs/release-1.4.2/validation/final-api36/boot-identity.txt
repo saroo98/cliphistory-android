@@ -1,0 +1,20 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Isolated boot-identity helper starts
+PASS Unavailable boot identity permits ordinary recording without claiming a timed clock
+PASS App supplies a verified boot identity
+PASS The same leased helper recovers when boot identity becomes available
+PASS A conflicting known boot identity remains rejected
+PASS A known clock cannot be downgraded to unknown
+PASS Rejected identity changes leave the correct attachment usable
+Accessibility flags before window retrieval: 65554
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Isolated boot-identity helper starts
+PASS Unavailable boot identity permits ordinary recording without claiming a timed clock
+PASS App supplies a verified boot identity
+PASS The same leased helper recovers when boot identity becomes available
+PASS A conflicting known boot identity remains rejected
+PASS A known clock cannot be downgraded to unknown
+PASS Rejected identity changes leave the correct attachment usable
+PASS 9 feature assertions (boot-identity), API 36. Synthetic validation only.

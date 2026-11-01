@@ -2,7 +2,7 @@
 
 ## Verification boundary
 
-Current release evidence is in `VERIFICATION.md`. Windows and Linux source builds and isolated physical-device checks are recorded separately. Device coverage does not guarantee compatibility across all Android manufacturers or future OS updates.
+Current candidate evidence is in [1.4.4 qualification](docs/release-1.4.4/RELEASE.md) and `VERIFICATION.md`. Windows, Linux and device results are recorded separately for each version. Earlier Linux or physical-device results do not qualify this candidate. Device coverage does not guarantee compatibility across all Android manufacturers or future OS updates. The [F-Droid guide](docs/F_DROID_ANDROID_GUIDE.md) lists the remaining independent-build and publication gates.
 
 ## Pinned app toolchain
 
@@ -14,7 +14,7 @@ Current release evidence is in `VERIFICATION.md`. Windows and Linux source build
 | Gradle runtime JDK | 17 or a supported newer JDK; bootstrap fallback is Temurin 17 |
 | Kotlin | AGP 9's built-in Kotlin support; no separate Kotlin Android plugin |
 | Android compile / target | API 37 / API 37 |
-| Android minimum | API 34 |
+| Android minimum | API 30 (Android 11) |
 | Android Build Tools | 36.0.0, AGP 9.1.1's documented default/minimum |
 | Shizuku API and provider | 13.1.5 |
 | JUnit | 4.13.2, test-only |
@@ -81,3 +81,5 @@ adb install -r app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk
 ```
 
 This creates `app.cliphistory.validation`, visibly labelled ClipHistory validation, alongside the normal app. Start Shizuku and grant this separate app access. Never seed personal production history for tests. Modes `ui`, `regression`, `layout`, `capacity`, `live`, `settings`, `recovery`, `onboarding`, `tile` and `tile-performance` are described in `DEVICE_TESTS.md`. Build without `validationBuild` for the normal application. Test-APK code and fixture entry points are not included in the release.
+
+Version 1.4 also supplies `key-check` for new isolated Keystore files on the validation package, and emulator-only `encryption`, `sensitive-ui` and `sensitive-live` suites. See `DEVICE_TESTS.md`. Encrypted v3 history cannot be read by older APKs. Upgrade in place with the existing signer; do not downgrade, uninstall or clear data when migration needs attention.

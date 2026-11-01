@@ -1,0 +1,129 @@
+{
+  "serial": "emulator-5592",
+  "avd": "ClipHistory13_API37",
+  "api": 37,
+  "theme": "light",
+  "tile_page_limit": 4,
+  "sdk_full": "37.0",
+  "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:17/CE2A.260420.051.A3/16571990:userdebug/dev-keys",
+  "release": "17",
+  "apk_sha256": "f51febdee89de0cf7167a4ba4916348282f42635952bba5d70d06c99f66e304f",
+  "test_apk_sha256": "d0fec6f276390e10228df1fb7d5bbb9c21b831cf8dfd2e8aa5edb8d5a837c311",
+  "suites": [
+    {
+      "suite": "boot-identity",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (boot-identity), API 37. Synthetic validation only.",
+      "seconds": 2.016
+    },
+    {
+      "suite": "live",
+      "passed": true,
+      "summary": "PASS 33 release assertions (live). Synthetic data only.",
+      "seconds": 8.5
+    },
+    {
+      "suite": "sensitive-live",
+      "passed": true,
+      "summary": "PASS 40 sensitive assertions (sensitive-live). Synthetic emulator only.",
+      "seconds": 64.125
+    },
+    {
+      "suite": "encryption",
+      "passed": true,
+      "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+      "seconds": 2.14
+    },
+    {
+      "suite": "sensitive-ui",
+      "passed": true,
+      "summary": "PASS 23 sensitive assertions (sensitive-ui). Synthetic emulator only.",
+      "seconds": 30.657
+    },
+    {
+      "suite": "regression",
+      "passed": true,
+      "summary": "PASS 12 release assertions (regression). Synthetic data only.",
+      "seconds": 4.515
+    },
+    {
+      "suite": "settings",
+      "passed": true,
+      "summary": "PASS 21 feature assertions (settings), API 37. Synthetic validation only.",
+      "seconds": 3.688
+    },
+    {
+      "suite": "onboarding",
+      "passed": true,
+      "summary": "PASS 24 feature assertions (onboarding), API 37. Synthetic validation only.",
+      "seconds": 4.89
+    },
+    {
+      "suite": "audit-diagnostics",
+      "passed": true,
+      "summary": "PASS 35 diagnostic presentation/report assertions, API 37. Synthetic validation only.",
+      "seconds": 1.36
+    },
+    {
+      "suite": "html-port",
+      "passed": true,
+      "summary": "PASS 123 HTML port assertions (html-port), API 37. Owned disposable emulator fixtures only.",
+      "seconds": 7.531
+    },
+    {
+      "suite": "html-port-live",
+      "passed": true,
+      "summary": "PASS 50 HTML port assertions (html-port-live), API 37. Owned disposable emulator fixtures only.",
+      "seconds": 7.016
+    },
+    {
+      "suite": "privacy",
+      "passed": true,
+      "summary": "PASS 11 feature assertions (privacy), API 37. Synthetic validation only.",
+      "seconds": 3.906
+    },
+    {
+      "suite": "quick-errors",
+      "passed": true,
+      "summary": "PASS 24 feature assertions (quick-errors), API 37. Synthetic validation only.",
+      "seconds": 3.312
+    },
+    {
+      "suite": "command-errors",
+      "passed": true,
+      "summary": "PASS 21 feature assertions (command-errors), API 37. Synthetic validation only.",
+      "seconds": 2.782
+    },
+    {
+      "suite": "accessibility",
+      "passed": true,
+      "summary": "PASS 22 feature assertions (accessibility), API 37. Synthetic validation only.",
+      "seconds": 4.671
+    },
+    {
+      "suite": "customization",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (customization), API 37. Synthetic validation only.",
+      "seconds": 2.454
+    },
+    {
+      "suite": "recovery",
+      "passed": true,
+      "summary": "PASS 11 feature assertions (recovery), API 37. Synthetic validation only.",
+      "seconds": 2.328
+    },
+    {
+      "suite": "paused-connection",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (paused-connection), API 37. Synthetic validation only.",
+      "seconds": 1.922
+    },
+    {
+      "suite": "tile",
+      "passed": true,
+      "summary": "PASS 75 feature assertions (tile), API 37. Synthetic validation only.",
+      "seconds": 26.421
+    }
+  ],
+  "shizuku_package": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c"
+}

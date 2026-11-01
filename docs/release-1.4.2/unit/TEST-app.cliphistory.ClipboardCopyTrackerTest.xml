@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="app.cliphistory.ClipboardCopyTrackerTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-31T21:54:50.545Z" hostname="local-test-host" time="0.025">
+  <properties/>
+  <testcase name="repeatedNotificationForTheSameCopyIsIgnored" classname="app.cliphistory.ClipboardCopyTrackerTest" time="0.014"/>
+  <testcase name="spacesCaseAndUnicodeRemainExact" classname="app.cliphistory.ClipboardCopyTrackerTest" time="0.007"/>
+  <testcase name="absentTimestampsDoNotInventCopyIdentity" classname="app.cliphistory.ClipboardCopyTrackerTest" time="0.001"/>
+  <testcase name="copyingTheSameTextAgainIsANewCopy" classname="app.cliphistory.ClipboardCopyTrackerTest" time="0.0"/>
+  <testcase name="clockRollbackDoesNotBlockNewCopies" classname="app.cliphistory.ClipboardCopyTrackerTest" time="0.0"/>
+  <testcase name="differentTextInTheSameMillisecondIsNotLost" classname="app.cliphistory.ClipboardCopyTrackerTest" time="0.001"/>
+  <testcase name="sensitivityChangesAreNotHidden" classname="app.cliphistory.ClipboardCopyTrackerTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

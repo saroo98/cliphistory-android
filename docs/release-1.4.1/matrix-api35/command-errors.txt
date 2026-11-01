@@ -1,0 +1,43 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Command fixture recovery disabled
+PASS Actual paused Shizuku connection for rejected commands
+PASS Real shell recorder is connected and paused
+PASS Real daemon rejects invalid capacity before writing history
+PASS Actual operation-failure sheet exposes both recovery controls
+PASS Operation-failure sheet retains screenshot protection
+PASS Rejected command leaves generation, count and capacity unchanged
+PASS Actual operation-failure View diagnostics control accepts activation
+PASS Operation-failure Diagnostics opens its real page
+PASS Diagnostics preserves the actual rejected-command issue
+PASS System Back returns from operation Diagnostics
+PASS Real daemon rejects invalid capacity before writing history
+PASS Actual operation-failure sheet exposes both recovery controls
+PASS Operation-failure sheet retains screenshot protection
+PASS Rejected command leaves generation, count and capacity unchanged
+PASS Actual operation-failure Done control accepts activation
+PASS Done dismisses the actual failure sheet and keeps Main visible
+PASS Both rejected commands preserve the complete synthetic snapshot
+PASS Command fixture recorder stopped durably
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Command fixture recovery disabled
+PASS Actual paused Shizuku connection for rejected commands
+PASS Real shell recorder is connected and paused
+PASS Real daemon rejects invalid capacity before writing history
+PASS Actual operation-failure sheet exposes both recovery controls
+PASS Operation-failure sheet retains screenshot protection
+PASS Rejected command leaves generation, count and capacity unchanged
+PASS Actual operation-failure View diagnostics control accepts activation
+PASS Operation-failure Diagnostics opens its real page
+PASS Diagnostics preserves the actual rejected-command issue
+PASS System Back returns from operation Diagnostics
+PASS Real daemon rejects invalid capacity before writing history
+PASS Actual operation-failure sheet exposes both recovery controls
+PASS Operation-failure sheet retains screenshot protection
+PASS Rejected command leaves generation, count and capacity unchanged
+PASS Actual operation-failure Done control accepts activation
+PASS Done dismisses the actual failure sheet and keeps Main visible
+PASS Both rejected commands preserve the complete synthetic snapshot
+PASS Command fixture recorder stopped durably
+PASS 21 feature assertions (command-errors), API 35. Synthetic validation only.

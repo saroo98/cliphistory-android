@@ -18,6 +18,7 @@ import android.window.OnBackInvokedDispatcher
 import app.cliphistory.ClipApplication
 import app.cliphistory.R
 import app.cliphistory.client.DaemonClient
+import app.cliphistory.client.changeSensitivePolicy
 import app.cliphistory.core.*
 import app.cliphistory.ipc.IClipboardDaemon
 import java.text.DateFormat
@@ -43,6 +44,7 @@ class MainActivity:Activity() {
     private var page:View?=null
     private var pageKind=""
     private var previewId=-1L
+    private var previewScroll=-1
     private var navigation=0L
     private var restoredCount=40
     private var restoredAnchor:HistoryHome.Anchor?=null
@@ -63,12 +65,16 @@ class MainActivity:Activity() {
     private var snackbar:View?=null
     private var undoToken=0L
     private val dialogs=mutableSetOf<Dialog>()
+    private data class EntryView(val id:Long,val expiry:Expiry?)
+    private val entryDialogs=mutableMapOf<Dialog,EntryView>()
+    private var previewExpiry:Expiry?=null
+    private val expiryCheck=Runnable { clearExpiredViews();if(visible)refresh() }
     private var menu:PopupWindow?=null
     private var recorderContent:LinearLayout?=null
     private var recorderDialog:Dialog?=null
     private val changed:()->Unit={ if(visible){refresh();main.post { maybeShowPrompts() }} }
     private val searchChanged=Runnable { if(visible)refresh(reset=true) }
-    private val back=OnBackInvokedCallback { backPage() }
+    private val back=if(Build.VERSION.SDK_INT>=33)OnBackInvokedCallback { backPage() } else null
     private fun s(id:Int)=getString(id)
 
     override fun attachBaseContext(newBase:Context) { super.attachBaseContext(AppSettings.themedContext(newBase)) }
@@ -92,6 +98,7 @@ class MainActivity:Activity() {
         settingsFocus=state?.getString("settings_focus").orEmpty()
         reopenAppearance=state?.getBoolean("reopen_appearance",false)?:false
         restoredLicenseScroll=state?.getInt("licenses_scroll",0)?:0
+        previewScroll=state?.getInt("preview_scroll",-1)?:-1
         root=FrameLayout(this).apply { setBackgroundColor(ui.color(R.color.canvas)) }
         home=HistoryHome(ui,::showMenu,{ client.connect(true) },{ client.openShizuku() },::help,::recorder,
             { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview,::copyEntry,::entryActions)
@@ -139,6 +146,8 @@ class MainActivity:Activity() {
     }
     override fun onStart() {
         super.onStart();visible=true;applyPrivacy();client.addListener(changed);client.connect(false);refresh()
+        if(pageKind=="preview") { page?.visibility=View.INVISIBLE;preview(previewId) }
+        clearExpiredViews()
     }
     override fun onPostResume() {
         super.onPostResume();main.post {
@@ -162,10 +171,12 @@ class MainActivity:Activity() {
     override fun onStop() {
         visible=false;request++;navigation++;client.cancelPageReads();client.removeListener(changed);main.removeCallbacksAndMessages(null)
         removeNotice()
+        if(pageKind=="preview") { previewScroll=findScroll(page)?.scrollY?:previewScroll;eraseEntryText(page) }
         dialogs.toList().forEach { it.dismiss() };menu?.dismiss();super.onStop()
     }
     override fun onSaveInstanceState(out:Bundle) {
         out.putString("query",home.search.text.toString());out.putString("page",pageKind);out.putLong("preview",previewId)
+        if(pageKind=="preview")out.putInt("preview_scroll",if(visible)findScroll(page)?.scrollY?:previewScroll else previewScroll)
         out.putInt("loaded_count",maxOf(rows.size,restoredCount))
         out.putBoolean("pending_welcome",pendingWelcome)
         if(pageKind=="settings")out.putInt("settings_scroll",findScroll(page)?.scrollY?:0)
@@ -212,6 +223,7 @@ class MainActivity:Activity() {
                 "restore-preview"->{pageKind="";preview(previewId)}
                 "restore-diagnostics"->{pageKind="";diagnostics()}
             }
+            recheckEntryViews();scheduleVisibleExpiry()
             main.post { maybeShowPrompts() }
         }
         // Binder pages remain bounded to 40 items. Refresh all previously loaded pages
@@ -232,12 +244,51 @@ class MainActivity:Activity() {
         val origin=currentFocus
         dialogs.add(dialog);dialog.setOnDismissListener {
             dialogs.remove(dialog)
+            entryDialogs.remove(dialog);scheduleVisibleExpiry()
             if(recorderDialog===dialog){recorderDialog=null;recorderContent=null}
             if(visible) {
                 if(origin?.isAttachedToWindow==true && origin.isShown)origin.requestFocus()
                 else if(pageKind=="settings")page?.findViewWithTag<View>(settingsFocus)?.requestFocus()
             }
         };return dialog
+    }
+    private fun eraseEntryText(view:View?) {
+        if(view is TextView && view.tag in setOf("entry-text","preview-text")) { view.setTextIsSelectable(false);view.text="" }
+        if(view is ViewGroup)(0 until view.childCount).forEach { eraseEntryText(view.getChildAt(it)) }
+    }
+    private fun guardEntry(dialog:Dialog,id:Long,expiry:Expiry?) {
+        entryDialogs[dialog]=EntryView(id,expiry);scheduleVisibleExpiry()
+    }
+    private fun scheduleVisibleExpiry() {
+        main.removeCallbacks(expiryCheck)
+        if(!visible)return
+        val expiries=rows.mapNotNull { it.expiry }+entryDialogs.values.mapNotNull { it.expiry }+
+            listOfNotNull(previewExpiry.takeIf { pageKind=="preview" })
+        expiries.mapNotNull { client.expiryDelay(it) }.minOrNull()?.let { main.postDelayed(expiryCheck,it) }
+    }
+    private fun clearExpiredViews() {
+        val kept=rows.filterNot { client.expired(it.expiry) }
+        if(kept.size!=rows.size) { rows=kept;home.adapter.replace(rows,loadedQuery) }
+        entryDialogs.toMap().filterValues { client.expired(it.expiry) }.keys.forEach { dialog ->
+            eraseEntryText(dialog.window?.decorView);dialog.dismiss()
+        }
+        if(pageKind=="preview" && client.expired(previewExpiry)) { eraseEntryText(page);closePage();notifyUser(R.string.entry_gone) }
+        scheduleVisibleExpiry()
+    }
+    private fun recheckEntryViews() {
+        if(pageKind=="preview") {
+            val id=previewId
+            client.getText(id) { result ->
+                if(!visible || pageKind!="preview" || previewId!=id)return@getText
+                if(result.text==null) { eraseEntryText(page);closePage();notifyUser(if(result.issue.isEmpty())R.string.entry_gone else R.string.history_read_failed) }
+                else { previewExpiry=result.expiry;scheduleVisibleExpiry() }
+            }
+        }
+        entryDialogs.toMap().forEach { (dialog,entry) -> client.getText(entry.id) { result ->
+            if(!visible || !dialog.isShowing || entryDialogs[dialog]?.id!=entry.id)return@getText
+            if(result.text==null) { eraseEntryText(dialog.window?.decorView);dialog.dismiss() }
+            else { entryDialogs[dialog]=EntryView(entry.id,result.expiry);scheduleVisibleExpiry() }
+        } }
     }
     private fun sheet(title:Int,body:(LinearLayout,Dialog)->Unit)=track(ui.sheet(s(title),body))
     private fun message(title:Int,body:Int) { confirm(title,body,R.string.ok,false,showCancel=false) {} }
@@ -312,8 +363,8 @@ class MainActivity:Activity() {
             ?.getRecommendedTimeoutMillis(2200,AccessibilityManager.FLAG_CONTENT_TEXT)?.coerceAtLeast(2200)?.toLong()?:2200L
         main.postDelayed({if(snackbar===notice)removeNotice()},timeout)
     }
-    private fun putClipboard(label:String,text:String):Boolean=try {
-        getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipData.newPlainText(label,text));true
+    private fun putClipboard(label:String,text:String,sensitive:Boolean=false):Boolean=try {
+        getSystemService(ClipboardManager::class.java).setPrimaryClip(ClipboardPayload.text(label,text,sensitive));true
     } catch (_:Exception) {false}
     private fun copyText(label:String,text:String,onCopied:()->Unit) {
         if(putClipboard(label,text))onCopied() else showCopyFailure(label,text,onCopied)
@@ -345,8 +396,9 @@ class MainActivity:Activity() {
             if(result.issue.isNotEmpty()){operationIssue=result.issue;notifyUser(R.string.history_read_failed);refresh();return@getText}
             operationIssue=""
             val text=result.text
-            if(text==null){notifyUser(R.string.entry_gone);closePage();refresh();return@getText}
-            copyText(s(R.string.app_name),text) {
+            if(text==null || client.expired(result.expiry)){notifyUser(R.string.entry_gone);closePage();refresh();return@getText}
+            if(!putClipboard(s(R.string.app_name),text,result.sensitive)) { historyCopyFailure(id,result.expiry);return@getText }
+            run {
                 if(settings.returnAfterCopy)finish() else {
                     notifyUser(R.string.copied)
                     val index=rows.indexOfFirst { it.id==id }+home.list.headerViewsCount-home.list.firstVisiblePosition
@@ -356,6 +408,32 @@ class MainActivity:Activity() {
                 }
             }
         }
+    }
+    private fun historyCopyFailure(id:Long,expiry:Expiry?) {
+        val failed=sheet(R.string.copy_failed_title) { box,dialog ->
+            ui.paragraph(box,s(R.string.port_copy_retry_body))
+            box.addView(ui.button(s(R.string.port_retry),primary=true){dialog.dismiss();copyEntry(id)})
+            box.addView(ui.button(s(R.string.view_full)) {
+                dialog.dismiss()
+                client.getText(id) { result ->
+                    if(!visible)return@getText
+                    val text=result.text
+                    if(text==null || client.expired(result.expiry)) { notifyUser(R.string.entry_gone);refresh();return@getText }
+                    val full=sheet(R.string.port_full_text) { content,d ->
+                        content.addView(ui.text(text,17f).apply {
+                            tag="entry-text";setTextIsSelectable(true);isSaveEnabled=false
+                            ClipboardPayload.protectSelection(this,client,id){notifyUser(R.string.entry_gone);refresh()}
+                        })
+                        content.addView(ui.space(16))
+                        content.addView(ui.button(s(R.string.port_retry),primary=true){d.dismiss();copyEntry(id)})
+                        content.addView(ui.button(s(R.string.cancel)){d.dismiss()})
+                    }
+                    guardEntry(full,id,result.expiry)
+                }
+            })
+            box.addView(ui.button(s(R.string.cancel)){dialog.dismiss()})
+        }
+        guardEntry(failed,id,expiry)
     }
     private fun command(action:(IClipboardDaemon)->Bundle,after:((Bundle)->Unit)?=null) {
         commandFor(R.string.operation_failed,R.string.operation_body,action,after)
@@ -387,13 +465,20 @@ class MainActivity:Activity() {
     private fun delete(id:Long) { commandFor(R.string.port_delete_failed,R.string.port_delete_failed_body,{it.deleteEntry(id)}) { closePage();notifyUser(R.string.deleted) } }
     private fun entryActions(row:DaemonClient.Row) {
         hideKeyboard()
-        sheet(R.string.saved_text) { box,dialog ->
-            box.addView(ui.text(row.preview).apply { maxLines=2;ellipsize=TextUtils.TruncateAt.END })
+        val token=++navigation
+        client.getText(row.id) { result ->
+            if(!visible || token!=navigation)return@getText
+            val text=result.text
+            if(text==null || client.expired(result.expiry)) { notifyUser(R.string.entry_gone);refresh();return@getText }
+            val dialog=sheet(R.string.saved_text) { box,dialog ->
+            box.addView(ui.text(SearchPreview.snippet(text,home.search.text.toString())).apply { tag="entry-text";maxLines=2;ellipsize=TextUtils.TruncateAt.END })
             box.addView(ui.text(android.text.format.DateUtils.getRelativeTimeSpanString(row.time),13f,true));box.addView(ui.space(16))
             ui.actionRow(box,s(if(settings.returnAfterCopy)R.string.copy_return else R.string.copy),R.drawable.ic_copy){dialog.dismiss();copyEntry(row.id)}
             ui.actionRow(box,s(R.string.view_full),R.drawable.ic_eye){dialog.dismiss();preview(row.id)}
             ui.actionRow(box,s(R.string.delete),R.drawable.ic_delete,client.connected(),true){dialog.dismiss();delete(row.id)}
             if(!client.connected())ui.paragraph(box,s(R.string.connect_mutation))
+            }
+            guardEntry(dialog,row.id,result.expiry)
         }
     }
     private fun showPage(kind:String,view:View) {
@@ -401,8 +486,9 @@ class MainActivity:Activity() {
         if(pageKind=="help")helpScroll=findScroll(page)?.scrollY?:helpScroll
         if(kind!="diagnostics")diagnosticPage=null
         hideKeyboard();page?.let { root.removeView(it) }
-        if(page==null)onBackInvokedDispatcher.registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT,back)
+        if(page==null && Build.VERSION.SDK_INT>=33)onBackInvokedDispatcher.registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT,back!!)
         pageKind=kind;page=view;home.root.visibility=View.GONE;root.addView(view,FrameLayout.LayoutParams(-1,-1))
+        scheduleVisibleExpiry()
         snackbar?.let { notice ->
             (view.layoutParams as FrameLayout.LayoutParams).apply { bottomMargin=notice.height+ui.dp(16);view.layoutParams=this }
             notice.bringToFront()
@@ -411,10 +497,18 @@ class MainActivity:Activity() {
     private fun closePage() {
         navigation++
         if(pageKind=="help")helpScroll=findScroll(page)?.scrollY?:helpScroll
-        if(page==null){pageKind="";previewId=-1;return}
+        if(page==null){pageKind="";previewId=-1;previewScroll=-1;previewExpiry=null;return}
         page?.let { root.removeView(it) };page=null;pageKind="";previewId=-1;diagnosticPage=null
+        previewExpiry=null;previewScroll=-1;scheduleVisibleExpiry()
         helpFromSettings=false;helpSettingsScroll=0
-        onBackInvokedDispatcher.unregisterOnBackInvokedCallback(back);home.root.visibility=View.VISIBLE
+        if(Build.VERSION.SDK_INT>=33)onBackInvokedDispatcher.unregisterOnBackInvokedCallback(back!!)
+        home.root.visibility=View.VISIBLE
+    }
+    // API 30–32 use this fallback; API 33+ register the native predictive-back callback above.
+    @android.annotation.SuppressLint("GestureBackNavigation")
+    @Suppress("DEPRECATION")
+    override fun onBackPressed() {
+        if(Build.VERSION.SDK_INT<33 && page!=null)backPage() else super.onBackPressed()
     }
     private fun backPage() {
         when(pageKind) {
@@ -432,8 +526,10 @@ class MainActivity:Activity() {
             if(result.issue.isNotEmpty()){operationIssue=result.issue;notifyUser(R.string.history_read_failed);refresh();return@getText}
             operationIssue=""
             val text=result.text
-            if(text==null){notifyUser(R.string.entry_gone);return@getText}
-            previewId=id
+            if(text==null || client.expired(result.expiry)){if(pageKind=="preview")closePage();notifyUser(R.string.entry_gone);return@getText}
+            val restoreScroll=if(previewId==id)previewScroll else -1
+            previewId=id;previewScroll=-1
+            previewExpiry=result.expiry
             showPage("preview",pages.page(s(R.string.saved_text),::closePage) { content,footer ->
                 rows.firstOrNull { it.id==id }?.let { content.addView(ui.text(DateFormat.getDateTimeInstance(DateFormat.MEDIUM,DateFormat.SHORT).format(Date(it.time)),13f,true));content.addView(ui.space(20)) }
                 val query=home.search.text.toString()
@@ -444,12 +540,16 @@ class MainActivity:Activity() {
                     highlighted.setSpan(BackgroundColorSpan(ui.color(R.color.selected)),match,match+query.length,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                     match=text.indexOf(query,match+query.length,ignoreCase=true)
                 }
-                val full=ui.text(highlighted,17f).apply { tag="preview-text";setTextIsSelectable(true);isSaveEnabled=false }
+                val full=ui.text(highlighted,17f).apply {
+                    tag="preview-text";setTextIsSelectable(true);isSaveEnabled=false
+                    ClipboardPayload.protectSelection(this,client,id){notifyUser(R.string.entry_gone);refresh()}
+                }
                 content.addView(full)
                 full.post {
                     val scroll=findScroll(page)
                     scroll?.tag="preview-scroll"
-                    if(firstMatch>=0)full.layout?.let { layout ->
+                    if(restoreScroll>=0)scroll?.scrollTo(0,restoreScroll)
+                    else if(firstMatch>=0)full.layout?.let { layout ->
                         scroll?.scrollTo(0,(full.top+layout.getLineTop(layout.getLineForOffset(firstMatch))-ui.dp(20)).coerceAtLeast(0))
                     }
                 }
@@ -491,6 +591,7 @@ class MainActivity:Activity() {
                 DetailPages.DiagnosticAction.RETRY->refresh()
                 DetailPages.DiagnosticAction.CONNECT->client.connect(true)
                 DetailPages.DiagnosticAction.RESUME->command({it.setPaused(false)})
+                DetailPages.DiagnosticAction.HELP->help()
                 DetailPages.DiagnosticAction.TEST->connectionTest()
             }
         })
@@ -553,6 +654,7 @@ class MainActivity:Activity() {
         }
     }
     private fun addTile() {
+        if(Build.VERSION.SDK_INT<33){message(R.string.add_tile_menu,R.string.tile_manual_legacy);return}
         sheet(R.string.open_faster) { box,dialog ->
             ui.paragraph(box,s(R.string.tile_body))
             box.addView(ui.button(s(R.string.add_tile),primary=true) { dialog.dismiss();requestTile() })
@@ -561,6 +663,7 @@ class MainActivity:Activity() {
     }
     private fun requestTile() {
         if(!settings.tileEnabled){notifyUser(R.string.tile_disabled_notice);return}
+        if(Build.VERSION.SDK_INT<33){message(R.string.add_tile_menu,R.string.tile_manual_legacy);return}
         try {
             getSystemService(StatusBarManager::class.java).requestAddTileService(ComponentName(this,ClipboardTileService::class.java),s(R.string.tile_name),Icon.createWithResource(this,R.drawable.ic_cliphistory_system),mainExecutor) { result ->
                 if(visible)notifyUser(if(result==StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ADDED || result==StatusBarManager.TILE_ADD_REQUEST_RESULT_TILE_ALREADY_ADDED)R.string.tile_available else R.string.tile_manual)
@@ -596,6 +699,10 @@ class MainActivity:Activity() {
             when(action) {
                 SettingsPage.Action.LIMIT->limitDialog()
                 SettingsPage.Action.DUPLICATES->duplicateDialog()
+                SettingsPage.Action.SENSITIVE_DURATION->sensitiveDuration()
+                SettingsPage.Action.SENSITIVE_INDEFINITE->confirm(R.string.sensitive_indefinite_title,R.string.sensitive_indefinite_body,R.string.sensitive_indefinite_confirm) {
+                    command({it.changeSensitivePolicy(autoDelete=false)})
+                }
                 SettingsPage.Action.START->client.connect(true)
                 SettingsPage.Action.STOP->confirm(R.string.stop_recorder,R.string.stop_recorder_body,R.string.stop_recorder) {
                     client.stopRecording { result ->
@@ -615,6 +722,7 @@ class MainActivity:Activity() {
                 SettingsPage.Action.SUPPORT->support()
                 SettingsPage.Action.GUIDE->settingsHelp()
                 SettingsPage.Action.NOTIFICATIONS->requestRecoveryNotifications()
+                SettingsPage.Action.CLIPBOARD_ACCESS_NOTICES->clipboardAccessNotices()
                 SettingsPage.Action.SOURCE->openWebsite("https://github.com/saroo98/cliphistory-android")
                 SettingsPage.Action.LICENSES->showLicenses()
             }
@@ -627,6 +735,47 @@ class MainActivity:Activity() {
         created.view.post {
             created.view.findViewWithTag<View>(settingsFocus)?.requestFocus()
             findScroll(created.view)?.scrollTo(0,scroll)
+        }
+    }
+    private fun sensitiveDuration() {
+        if(!client.connected()){message(R.string.not_connected,R.string.connect_mutation);return}
+        val choices=listOf(1,5,15,30,60)
+        sheet(R.string.sensitive_delete_after) { box,dialog ->
+            ui.paragraph(box,s(R.string.sensitive_duration_body))
+            val radios=RadioGroup(this)
+            choices.forEach { minutes -> radios.addView(RadioButton(this).apply {
+                id=View.generateViewId();tag=minutes;text=resources.getQuantityString(R.plurals.sensitive_minutes,minutes,minutes)
+                textSize=16f;setTextColor(ui.ink);minimumHeight=ui.dp(52);isChecked=latest.getInt("sensitiveMinutes",5)==minutes
+            }) }
+            radios.setOnCheckedChangeListener { group,id ->
+                val minutes=group.findViewById<RadioButton>(id).tag as Int
+                dialog.dismiss();saveSensitiveDuration(minutes)
+            }
+            box.addView(radios)
+            ui.actionRow(box,s(R.string.sensitive_custom)){dialog.dismiss();customSensitiveDuration()}
+            box.addView(ui.button(s(R.string.done)){dialog.dismiss()})
+        }
+    }
+    private fun saveSensitiveDuration(minutes:Int) {
+        command({it.changeSensitivePolicy(minutes=minutes)})
+    }
+    private fun customSensitiveDuration() {
+        sheet(R.string.sensitive_custom) { box,dialog ->
+            ui.paragraph(box,s(R.string.sensitive_custom_body))
+            val field=EditText(this).apply {
+                inputType=InputType.TYPE_CLASS_NUMBER;textSize=18f;setTextColor(ui.ink)
+                setText(java.text.NumberFormat.getIntegerInstance().apply { isGroupingUsed=false }.format(latest.getInt("sensitiveMinutes",5)));selectAll()
+                contentDescription=s(R.string.sensitive_minutes_label);filters=arrayOf(InputFilter.LengthFilter(4))
+                background=ui.shape(ui.color(R.color.surface),12,ui.muted);setPadding(ui.dp(16),ui.dp(12),ui.dp(16),ui.dp(12))
+            }
+            box.addView(field,LinearLayout.LayoutParams(-1,-2));box.addView(ui.space(12))
+            val actions=LinearLayout(this).apply { gravity=Gravity.END }
+            actions.addView(ui.button(s(R.string.cancel)){dialog.dismiss()})
+            actions.addView(ui.button(s(R.string.save),primary=true) {
+                val minutes=field.text.toString().toIntOrNull()
+                if(minutes==null || minutes !in 1..1440) { field.error=s(R.string.sensitive_duration_invalid);field.requestFocus();return@button }
+                dialog.dismiss();saveSensitiveDuration(minutes)
+            });box.addView(actions)
         }
     }
     private fun duplicateDialog() {
@@ -680,8 +829,18 @@ class MainActivity:Activity() {
     private fun tileMode()=choiceSheet(R.string.html_port_tile_opens,listOf(R.string.quick_copy,R.string.open_full_history),if(settings.tileMode=="quick")0 else 1) { settings.tileMode=if(it==0)"quick" else "history" }
     private fun motionChoice()=choiceSheet(R.string.html_port_motion_preference,listOf(R.string.motion_system,R.string.html_port_motion_reduced),if(settings.motion)0 else 1) { settings.motion=it==0 }
     private fun welcomeFrequency()=choiceSheet(R.string.html_port_welcome_frequency,listOf(R.string.welcome_once,R.string.welcome_each,R.string.welcome_off),listOf("once","each","never").indexOf(settings.welcome)) { settings.welcome=listOf("once","each","never")[it] }
+    private fun clipboardAccessNotices() {
+        sheet(R.string.clipboard_access_notices) { box,dialog ->
+            ui.paragraph(box,s(R.string.clipboard_access_notices_body))
+            box.addView(ui.button(s(R.string.open_android_privacy),primary=true) {
+                try { startActivity(Intent(android.provider.Settings.ACTION_PRIVACY_SETTINGS));dialog.dismiss() }
+                catch (_:Exception) { dialog.dismiss();notifyUser(R.string.clipboard_access_open_failed) }
+            })
+            box.addView(ui.button(s(R.string.cancel)){dialog.dismiss()})
+        }
+    }
     private fun requestRecoveryNotifications() {
-        if(checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)!=android.content.pm.PackageManager.PERMISSION_GRANTED)
+        if(Build.VERSION.SDK_INT>=33 && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)!=android.content.pm.PackageManager.PERMISSION_GRANTED)
             requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),72)
         else {
             val intent=Intent(android.provider.Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(android.provider.Settings.EXTRA_APP_PACKAGE,packageName)

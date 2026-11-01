@@ -1,0 +1,20 @@
+{
+  "mode": "idle",
+  "serial": "emulator-5574",
+  "api": "34",
+  "before": {
+    "app.cliphistory.validation": 4450,
+    "app.cliphistory.validation:clipboard": 5075
+  },
+  "started_utc": "2026-10-08T16:30:11Z",
+  "helper_stat_before": "5075 (main) S 1 5052 5052 0 -1 4194304 18623 0 0 0 11 50 0 0 20 0 16 0 23178 13600796672 35173 18446744073709551615 108504168982784 108504168987024 140737121822656 0 0 0 4612 0 1073775864 0 0 0 17 3 0 0 0 0 0 108504168991120 108504168992384 108504197353472 140737121824294 140737121824574 140737121824574 140737121828832 0",
+  "memory_before": "\n                       Pss(KB)                        Rss(KB)\n                        ------                         ------\n           Java Heap:     8176                          26576\n         Native Heap:    14656                          15976\n                Code:      540                          81064\n               Stack:      856                            864\n            Graphics:        0                              0\n       Private Other:     2120\n              System:     6061\n             Unknown:                                    5700\n \n           TOTAL PSS:    32409            TOTAL RSS:   130180       TOTAL SWAP PSS:      179\n \n Objects\n               Views:      132         ViewRootImpl:        2\n         AppContexts:       10           Activities:        2\n              Assets:       18        AssetManagers:        0\n       Local Binders:       25        Proxy Binders:       51\n       Parcel memory:        5         Parcel count:       23\n    Death Recipients:        6             WebViews:        0\n \n SQL\n         MEMORY_USED:        0\n  PAGECACHE_OVERFLOW:        0          MALLOC_SIZE:        0",
+  "helper_stat_after": "5075 (main) S 1 5052 5052 0 -1 4194304 18623 0 0 0 11 50 0 0 20 0 16 0 23178 13600796672 35173 18446744073709551615 108504168982784 108504168987024 140737121822656 0 0 0 4612 0 1073775864 0 0 0 17 3 0 0 0 0 0 108504168991120 108504168992384 108504197353472 140737121824294 140737121824574 140737121824574 140737121828832 0",
+  "memory_after": "\n                       Pss(KB)                        Rss(KB)\n                        ------                         ------\n           Java Heap:     8596                          31884\n         Native Heap:    14572                          15896\n                Code:      548                          81224\n               Stack:      856                            864\n            Graphics:        0                              0\n       Private Other:     6708\n              System:     6049\n             Unknown:                                    5608\n \n           TOTAL PSS:    37329            TOTAL RSS:   135476       TOTAL SWAP PSS:       86\n \n Objects\n               Views:       66         ViewRootImpl:        1\n         AppContexts:        7           Activities:        1\n              Assets:       18        AssetManagers:        0\n       Local Binders:       25        Proxy Binders:       45\n       Parcel memory:        6         Parcel count:       25\n    Death Recipients:        3             WebViews:        0\n \n SQL\n         MEMORY_USED:        0\n  PAGECACHE_OVERFLOW:        0          MALLOC_SIZE:        0",
+  "wakeup_sources": "Not measured by this driver; do not infer zero wakeups",
+  "after": {
+    "app.cliphistory.validation": 4450,
+    "app.cliphistory.validation:clipboard": 5075
+  },
+  "elapsed_seconds": 60.563
+}

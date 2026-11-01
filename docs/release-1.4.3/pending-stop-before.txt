@@ -1,0 +1,15 @@
+PASS Actual Shizuku connection for pending Stop
+PASS Recovery supervisor is running
+PASS Stop request is pending
+FAIL after 0 assertions: java.lang.IllegalStateException: PASS Actual Shizuku connection for pending Stop
+PASS Recovery supervisor is running
+PASS Stop request is pending
+
+	at app.cliphistory.ReleaseChecks.run(ReleaseChecks.kt:435)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:84)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2627)
+Caused by: java.lang.IllegalStateException: Recovery supervisor remains active while Stop is pending
+	at app.cliphistory.ReleaseChecks.checkThat(ReleaseChecks.kt:38)
+	at app.cliphistory.ReleaseChecks.recoveryPendingStop(ReleaseChecks.kt:362)
+	at app.cliphistory.ReleaseChecks.run(ReleaseChecks.kt:434)
+	... 2 more

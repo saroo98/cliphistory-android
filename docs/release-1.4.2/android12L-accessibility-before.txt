@@ -1,0 +1,12 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Real quick panel shows synthetic storage-read error
+PASS Error panel releases absent entries and exposes two recovery actions
+PASS Quick error recovery actions retain their visible gaps
+FAIL after 0 assertions: java.lang.IllegalStateException: Quick error exposes both accessible recovery actions
+	at app.cliphistory.FeatureChecks.await(FeatureChecks.kt:34)
+	at app.cliphistory.FeatureChecks.quickErrors$openError(FeatureChecks.kt:809)
+	at app.cliphistory.FeatureChecks.quickErrors(FeatureChecks.kt:817)
+	at app.cliphistory.FeatureChecks.run(FeatureChecks.kt:932)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:82)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2278)

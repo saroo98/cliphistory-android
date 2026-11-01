@@ -1,0 +1,18 @@
+{
+  "api": 35,
+  "serial": "emulator-5592",
+  "old_apk_sha256": "654fa4060b6166eebadc7e9725dcfcebf56a458a5adf06c3b30af782e0b4239d",
+  "new_apk_sha256": "be2cf0e62d86f85593b78093ecc5ee58b0bb2e61425cb52d4404bfcf357a67be",
+  "old_version": "1.4.0",
+  "new_version": "1.4.1",
+  "code": 11,
+  "non_debuggable": true,
+  "uid_preserved": true,
+  "old_helper_pid": 9519,
+  "new_helper_pid": 9723,
+  "helper_uid": 2000,
+  "saved_text_preserved": true,
+  "post_upgrade_background_capture": true,
+  "copy_back_sha256_verified": true,
+  "production_id": "app.cliphistory"
+}

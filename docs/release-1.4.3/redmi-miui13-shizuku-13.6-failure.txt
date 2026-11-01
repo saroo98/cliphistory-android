@@ -1,0 +1,11 @@
+11-01 16:18:32.538 I/ShizukuServiceStarter(13905): starting service app.cliphistory/app.cliphistory.daemon.ClipboardUserService...
+11-01 16:18:32.660 W/ShizukuServiceStarter(13905): unable to start service app.cliphistory/app.cliphistory.daemon.ClipboardUserService...
+11-01 16:18:32.660 W/ShizukuServiceStarter(13905): java.lang.reflect.InvocationTargetException
+11-01 16:18:32.660 W/ShizukuServiceStarter(13905): 	at java.lang.reflect.Method.invoke(Native Method)
+11-01 16:18:32.660 W/ShizukuServiceStarter(13905): 	at rikka.shizuku.Vr.a(SourceFile:209)
+11-01 16:18:32.660 W/ShizukuServiceStarter(13905): 	at moe.shizuku.starter.ServiceStarter.main(SourceFile:14)
+11-01 16:18:32.660 W/ShizukuServiceStarter(13905): 	at com.android.internal.os.RuntimeInit.nativeFinishInit(Native Method)
+11-01 16:18:32.660 W/ShizukuServiceStarter(13905): 	at com.android.internal.os.RuntimeInit.main(RuntimeInit.java:427)
+11-01 16:18:32.660 W/ShizukuServiceStarter(13905): Caused by: java.lang.NullPointerException: Attempt to invoke virtual method 'boolean java.lang.String.equals(java.lang.Object)' on a null object reference
+11-01 16:18:32.660 W/ShizukuServiceStarter(13905): 	at android.app.LoadedApk.makeApplication(LoadedApk.java:1266)
+11-01 16:18:32.660 W/ShizukuServiceStarter(13905): 	... 5 more

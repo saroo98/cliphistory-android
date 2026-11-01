@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="app.cliphistory.HistoryUndoTest" tests="16" skipped="0" failures="0" errors="0" timestamp="2026-10-31T21:54:50.669Z" hostname="local-test-host" time="0.011">
+  <properties/>
+  <testcase name="failedFirstUndoWriteKeepsPendingAndAllowsSingleSuccessfulRetry" classname="app.cliphistory.HistoryUndoTest" time="0.004"/>
+  <testcase name="secondSuccessfulDeleteReplacesPreviousPendingEntry" classname="app.cliphistory.HistoryUndoTest" time="0.0"/>
+  <testcase name="fullUniqueHistoryAlreadyContainingDeletedTextStillConsumesUndo" classname="app.cliphistory.HistoryUndoTest" time="0.001"/>
+  <testcase name="restoresBetweenOriginalIdsAndKeepsInterveningCaptures" classname="app.cliphistory.HistoryUndoTest" time="0.0"/>
+  <testcase name="clearInvalidatesUndoAndPauseSettingsDoNot" classname="app.cliphistory.HistoryUndoTest" time="0.001"/>
+  <testcase name="uniqueConflictUsesExactTextWithoutWhitespaceOrUnicodeNormalization" classname="app.cliphistory.HistoryUndoTest" time="0.0"/>
+  <testcase name="mismatchedMissingAndDismissedTokensCannotMutateOrConsumeCurrentUndo" classname="app.cliphistory.HistoryUndoTest" time="0.0"/>
+  <testcase name="fullHistoryRefusesWithoutEvictionAndKeepsUndoForLaterCapacity" classname="app.cliphistory.HistoryUndoTest" time="0.001"/>
+  <testcase name="failedClearWritesKeepUndoOnlyUntilHistoryIsDurablyCleared" classname="app.cliphistory.HistoryUndoTest" time="0.0"/>
+  <testcase name="restoresExactUnicodeWhitespaceIdentityTimestampAndOrder" classname="app.cliphistory.HistoryUndoTest" time="0.001"/>
+  <testcase name="consecutiveModeMayRestoreRepeatedTextWithOriginalId" classname="app.cliphistory.HistoryUndoTest" time="0.0"/>
+  <testcase name="failedUndoMirrorConsumesTokenAfterDurableRestoreAndCannotRestoreTwice" classname="app.cliphistory.HistoryUndoTest" time="0.0"/>
+  <testcase name="reopeningOrReplacingRepositoryDropsRamOnlyUndo" classname="app.cliphistory.HistoryUndoTest" time="0.0"/>
+  <testcase name="uniqueRecaptureConsumesUndoWithoutDuplicateOrWrite" classname="app.cliphistory.HistoryUndoTest" time="0.0"/>
+  <testcase name="failedFirstDeleteWriteKeepsStateAndPreviousUndo" classname="app.cliphistory.HistoryUndoTest" time="0.001"/>
+  <testcase name="failedDeleteMirrorStillReplacesUndoForActualDurableDeletion" classname="app.cliphistory.HistoryUndoTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

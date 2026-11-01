@@ -100,9 +100,8 @@ class HtmlPortChecks(private val test:Instrumentation,private val arguments:Bund
         check(theme in listOf("light","dark")) { "HTML port capture theme must be light or dark" }
         stopRecorderForFixture(test)
         if(::activity.isInitialized)main { activity.finish() }
-        val (a,b)=PrivateHistory.openForDaemon(context)
         val snapshot=Snapshot(1,limit,(entries.maxOfOrNull { it.id }?:0)+1,paused,entries)
-        listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot -> slot.writeAndSync(SnapshotCodec.encode(snapshot)) } }
+        writeFixturePayload(test,SnapshotCodec.encode(snapshot))
         PrivateHistory.invalidate()
         AppSettings(context).apply {
             appearance=theme;welcome="never";backgroundSuggestion=false;allowScreenshots=false
@@ -115,9 +114,10 @@ class HtmlPortChecks(private val test:Instrumentation,private val arguments:Bund
         seed();main { call("showSettings") }
         main {
             val switches=views(page()).filterIsInstance<Switch>()
-            val expected=listOf(R.string.pause_recording,R.string.automatic_recovery,R.string.resume_after_boot,R.string.background_suggestion,
-                R.string.tile_enabled,R.string.return_after_copy,R.string.allow_screenshots,R.string.hide_recents).map { context.getString(it) }
-            checkThat(switches.map { it.text.toString() }==expected,"Settings contains exactly the eight existing native Switch labels")
+            val expected=(listOf(R.string.pause_recording,R.string.automatic_recovery,R.string.resume_after_boot,R.string.background_suggestion,
+                R.string.tile_enabled,R.string.return_after_copy,R.string.capture_sensitive,R.string.auto_delete_sensitive,R.string.allow_screenshots)+
+                if(android.os.Build.VERSION.SDK_INT>=33)listOf(R.string.hide_recents) else emptyList()).map { context.getString(it) }
+            checkThat(switches.map { it.text.toString() }==expected,"Settings exposes the native controls supported by this Android version")
             checkThat(views(page()).none { it is RadioButton },"Choice preferences are rows in Settings")
             checkThat(!switches.first().isEnabled && !tagged("DUPLICATES").isEnabled && !tagged("LIMIT").isEnabled,"Offline recorder mutations remain disabled")
             checkThat(tagged("START").visibility==View.VISIBLE && tagged("STOP").visibility==View.GONE,"Offline Settings shows only the Connect or Start recorder action")
@@ -290,6 +290,12 @@ class HtmlPortChecks(private val test:Instrumentation,private val arguments:Bund
         }
         await("Full text opens and scrolls to the late match") { field("pageKind")=="preview" && scroll().scrollY>0 }
         capture("full-text-late-match")
+        var previewPosition=0
+        main { previewPosition=scroll().scrollY }
+        test.uiAutomation.executeShellCommand("input keyevent KEYCODE_HOME").use { android.os.ParcelFileDescriptor.AutoCloseInputStream(it).readBytes() }
+        await("Backgrounding clears retained preview text") { field("visible")==false && views(page()).filterIsInstance<TextView>().single { it.tag=="preview-text" }.text.isEmpty() }
+        test.uiAutomation.executeShellCommand("am start -W -n ${context.packageName}/app.cliphistory.ui.MainActivity").use { android.os.ParcelFileDescriptor.AutoCloseInputStream(it).readBytes() }
+        await("Resuming rechecks the preview and preserves its scroll") { field("visible")==true && field("pageKind")=="preview" && scroll().scrollY==previewPosition && views(page()).filterIsInstance<TextView>().any { it.tag=="preview-text" && it.text.toString()==lateText } }
         main {
             val full=views(page()).filterIsInstance<TextView>().single { it.tag=="preview-text" }
             val spanned=full.text as? Spanned?:error("Full text has no match spans")

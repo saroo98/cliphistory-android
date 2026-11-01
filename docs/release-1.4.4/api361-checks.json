@@ -1,0 +1,51 @@
+{
+  "serial": "emulator-5570",
+  "avd": "ClipHistoryExpanded_API361_20261031",
+  "api": 36,
+  "theme": "light",
+  "tile_page_limit": 4,
+  "sdk_full": "36.1",
+  "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE4B.251210.005/14574095:userdebug/dev-keys",
+  "release": "16",
+  "apk_sha256": "0a8b3fb2bbfce36da764a61ef95ab48dfe794544d9c9437ca2346f2b27dc0da6",
+  "test_apk_sha256": "5eaa4309c6c30b7c07dad38e987865e99f007eff2f8ff3409d7f3d4b52044e1c",
+  "suites": [
+    {
+      "suite": "paused-connection",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (paused-connection), API 36. Synthetic validation only.",
+      "seconds": 4.353
+    },
+    {
+      "suite": "live",
+      "passed": true,
+      "summary": "PASS 34 release assertions (live). Synthetic data only.",
+      "seconds": 14.307
+    },
+    {
+      "suite": "sensitive-live",
+      "passed": true,
+      "summary": "PASS 40 sensitive assertions (sensitive-live). Synthetic emulator only.",
+      "seconds": 66.913
+    },
+    {
+      "suite": "recovery-failures",
+      "passed": true,
+      "summary": "PASS 11 release assertions (recovery-failures). Synthetic data only.",
+      "seconds": 1.966
+    },
+    {
+      "suite": "tile",
+      "passed": true,
+      "summary": "PASS 75 feature assertions (tile), API 36. Synthetic validation only.",
+      "seconds": 25.811
+    },
+    {
+      "suite": "helper-failure",
+      "passed": true,
+      "summary": "PASS 10 feature assertions (helper-failure), API 36. Synthetic validation only.",
+      "seconds": 32.44
+    }
+  ],
+  "shizuku_package": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c"
+}

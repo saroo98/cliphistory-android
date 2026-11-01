@@ -1,0 +1,23 @@
+[
+  {
+    "opening": 1,
+    "entryButtons": 3,
+    "stayedOpen": true,
+    "shadeVisible": false,
+    "closeWorked": true
+  },
+  {
+    "opening": 2,
+    "entryButtons": 3,
+    "stayedOpen": true,
+    "shadeVisible": false,
+    "closeWorked": true
+  },
+  {
+    "opening": 3,
+    "entryButtons": 3,
+    "stayedOpen": true,
+    "shadeVisible": false,
+    "closeWorked": true
+  }
+]

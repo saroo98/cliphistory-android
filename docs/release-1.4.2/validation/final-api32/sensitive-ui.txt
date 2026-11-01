@@ -1,0 +1,52 @@
+PASS History loads 3 available entries
+PASS light offline sensitive controls show saved state and are disabled
+PASS light offline duration mutation is disabled
+PASS light screenshot preference still works
+PASS History loads 3 available entries
+PASS dark offline sensitive controls show saved state and are disabled
+PASS dark offline duration mutation is disabled
+PASS dark screenshot preference still works
+PASS History loads 3 available entries
+PASS Sensitive full text opens without an authentication step
+PASS Expired full text closes and disappears from history
+PASS Expired text is inaccessible offline
+PASS History loads 3 available entries
+PASS Quick panel loads unexpired sensitive preview
+PASS Quick panel refreshes while held across expiry
+PASS History loads 3 available entries
+PASS Retry fixture remains unexpired after launch
+PASS History copy retry is visible
+PASS Copy retry disappears at the entry deadline
+PASS History loads 3 available entries
+PASS Quick panel is loaded before retry fixture
+PASS Quick copy retry is visible before expiry
+PASS Quick retry is withheld at expiry
+PASS History loads 3 available entries
+PASS light offline sensitive controls show saved state and are disabled
+PASS light offline duration mutation is disabled
+PASS light screenshot preference still works
+PASS History loads 3 available entries
+PASS dark offline sensitive controls show saved state and are disabled
+PASS dark offline duration mutation is disabled
+PASS dark screenshot preference still works
+Fixture remaining milliseconds after launch: 7308
+PASS History loads 3 available entries
+PASS Sensitive full text opens without an authentication step
+PASS Expired full text closes and disappears from history
+PASS Expired text is inaccessible offline
+Fixture remaining milliseconds after launch: 7022
+PASS History loads 3 available entries
+PASS Quick panel loads unexpired sensitive preview
+PASS Quick panel refreshes while held across expiry
+Fixture remaining milliseconds after launch: 5151
+PASS History loads 3 available entries
+History retry fixture remaining milliseconds: 5145
+PASS Retry fixture remains unexpired after launch
+PASS History copy retry is visible
+PASS Copy retry disappears at the entry deadline
+Fixture remaining milliseconds after launch: 5172
+PASS History loads 3 available entries
+PASS Quick panel is loaded before retry fixture
+PASS Quick copy retry is visible before expiry
+PASS Quick retry is withheld at expiry
+PASS 23 sensitive assertions (sensitive-ui). Synthetic emulator only.

@@ -1,0 +1,55 @@
+{
+  "serial": "emulator-5594",
+  "avd": "ClipHistory13_API37",
+  "api": 37,
+  "theme": "light",
+  "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:17/CE2A.260420.051.A3/16571990:userdebug/dev-keys",
+  "release": "17",
+  "apk_sha256": "0fe754a8450d90db014e2278fafce336121abe2f4efe653be3d7dbfb0116c09b",
+  "test_apk_sha256": "b974c33f4d139503ebf0e18fab10d07c7cd456fbde6f05933c2ff01847e30dd5",
+  "suites": [
+    {
+      "suite": "tile",
+      "passed": true,
+      "summary": "PASS 75 feature assertions (tile), API 37. Synthetic validation only.",
+      "seconds": 29.859
+    },
+    {
+      "suite": "tile-performance",
+      "passed": true,
+      "summary": "PASS 353 feature assertions (tile-performance), API 37. Synthetic validation only.",
+      "seconds": 104.61
+    },
+    {
+      "suite": "capacity",
+      "passed": true,
+      "summary": "PASS 5 release assertions (capacity). Synthetic data only.",
+      "seconds": 7.171
+    },
+    {
+      "suite": "layout",
+      "passed": true,
+      "summary": "PASS 11 release assertions (layout). Synthetic data only.",
+      "seconds": 5.141
+    },
+    {
+      "suite": "audit-navigation",
+      "passed": true,
+      "summary": "PASS: 53 audit navigation assertions. Owned synthetic offline history; no Shizuku runtime claim.",
+      "seconds": 3.625
+    },
+    {
+      "suite": "helper-failure",
+      "passed": true,
+      "summary": "PASS 6 feature assertions (helper-failure), API 37. Synthetic validation only.",
+      "seconds": 32.531
+    },
+    {
+      "suite": "storage-threading",
+      "passed": true,
+      "summary": "PASS 5 release assertions (storage-threading). Synthetic data only.",
+      "seconds": 2.203
+    }
+  ],
+  "shizuku_package": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c"
+}

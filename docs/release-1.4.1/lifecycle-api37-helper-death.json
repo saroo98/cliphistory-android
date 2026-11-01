@@ -1,0 +1,19 @@
+{
+  "mode": "helper-death",
+  "serial": "emulator-5594",
+  "api": "37",
+  "before": {
+    "app.cliphistory.validation:clipboard": 9151,
+    "app.cliphistory.validation": 9354
+  },
+  "started_utc": "2026-10-31T13:10:13Z",
+  "listener_ready_before_copy": true,
+  "synthetic_event_verified": true,
+  "captured_after_recovery": true,
+  "recovered": true,
+  "after": {
+    "app.cliphistory.validation": 9354,
+    "app.cliphistory.validation:clipboard": 9514
+  },
+  "elapsed_seconds": 11.281
+}

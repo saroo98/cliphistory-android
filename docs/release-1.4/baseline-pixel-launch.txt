@@ -1,0 +1,51 @@
+Trial 1
+Status: ok
+LaunchState: WARM
+Activity: app.cliphistory/.ui.MainActivity
+TotalTime: 121
+WaitTime: 124
+Trial 2
+Status: ok
+LaunchState: UNKNOWN (0)
+Activity: app.cliphistory/.ui.MainActivity
+WaitTime: 216
+Trial 3
+Status: ok
+LaunchState: UNKNOWN (0)
+Activity: app.cliphistory/.ui.MainActivity
+WaitTime: 14
+Trial 4
+Status: ok
+LaunchState: UNKNOWN (0)
+Activity: app.cliphistory/.ui.MainActivity
+WaitTime: 18
+Trial 5
+Status: ok
+LaunchState: UNKNOWN (0)
+Activity: app.cliphistory/.ui.MainActivity
+WaitTime: 18
+Trial 6
+Status: ok
+LaunchState: UNKNOWN (0)
+Activity: app.cliphistory/.ui.MainActivity
+WaitTime: 19
+Trial 7
+Status: ok
+LaunchState: UNKNOWN (0)
+Activity: app.cliphistory/.ui.MainActivity
+WaitTime: 18
+Trial 8
+Status: ok
+LaunchState: UNKNOWN (0)
+Activity: app.cliphistory/.ui.MainActivity
+WaitTime: 20
+Trial 9
+Status: ok
+LaunchState: UNKNOWN (0)
+Activity: app.cliphistory/.ui.MainActivity
+WaitTime: 18
+Trial 10
+Status: ok
+LaunchState: UNKNOWN (0)
+Activity: app.cliphistory/.ui.MainActivity
+WaitTime: 17

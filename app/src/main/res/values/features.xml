@@ -36,10 +36,16 @@
     <string name="quick_copy_body">The floating panel shows the newest three saved texts. Tap once to copy the complete text and close the panel. It does not paste or open another app.</string>
     <string name="open_full_history">Open full history</string>
     <string name="privacy">Privacy</string>
+    <string name="clipboard_access_notices">Clipboard access notices</string>
+    <string name="clipboard_access_notices_summary">Controlled by Android for all apps</string>
+    <string name="clipboard_access_notices_body">Android may say “Shell pasted from your clipboard” when ClipHistory records. To hide this message, find “Show clipboard access” in Android privacy settings and turn it off. This hides clipboard access warnings for all apps. Settings vary by phone.</string>
+    <string name="open_android_privacy">Open Android privacy settings</string>
+    <string name="clipboard_access_open_failed">Open your phone settings and search for Show clipboard access.</string>
     <string name="allow_screenshots">Allow screenshots</string>
     <string name="allow_screenshots_body">Allows screenshots and screen recording of app windows. Keep this off if your saved text is private.</string>
     <string name="hide_recents">Hide history in Recents</string>
-    <string name="privacy_mandatory">Sensitive clipboard flags, private storage, and integrity checks always stay enabled.</string>
+    <string name="recents_legacy">Recents previews are hidden while screenshots are blocked. Android 13 or newer is required to control them separately.</string>
+    <string name="privacy_mandatory">History is always encrypted on this device. Text is readable while you use the app and when copied to Android’s clipboard.</string>
     <string name="motion_system">Follow system</string>
     <string name="about">About</string>
     <string name="welcome_once">First time only</string>

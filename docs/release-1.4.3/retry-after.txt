@@ -1,0 +1,22 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Automatic recovery is enabled for the retry fixture
+PASS A helper launch failure never claims a connection
+PASS Actual failed helper startup reaches the copied diagnostic report
+PASS Actual startup failure shows specific recovery guidance
+PASS Startup failure setup action opens the native guide
+PASS Automatic recovery starts another connection attempt
+PASS Retry keeps the previous helper startup failure in diagnostics
+PASS Diagnostics explains the startup failure during an automatic retry
+Accessibility flags before window retrieval: 65554
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Automatic recovery is enabled for the retry fixture
+PASS A helper launch failure never claims a connection
+PASS Actual failed helper startup reaches the copied diagnostic report
+PASS Actual startup failure shows specific recovery guidance
+PASS Startup failure setup action opens the native guide
+PASS Automatic recovery starts another connection attempt
+PASS Retry keeps the previous helper startup failure in diagnostics
+PASS Diagnostics explains the startup failure during an automatic retry
+PASS 10 feature assertions (helper-failure), API 30. Synthetic validation only.

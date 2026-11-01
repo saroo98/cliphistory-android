@@ -55,8 +55,7 @@ class ReleaseChecks(private val test:Instrumentation) {
         val bytes=SnapshotCodec.encode(Snapshot(1,if(count>100)500 else 100,count+1L,false,entries,
             if(length>0)DuplicateMode.CONSECUTIVE_ONLY else DuplicateMode.UNIQUE_TEXT))
         log.append("Encode ${bytes.size} bytes: ${SystemClock.elapsedRealtime()-start} ms\n")
-        val (a,b)=PrivateHistory.openForDaemon(context)
-        listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot -> slot.writeAndSync(bytes) } }
+        writeFixturePayload(test,bytes)
         AppSettings(context).apply { appearance="light";returnAfterCopy=false;welcome="never";backgroundSuggestion=false;allowScreenshots=false }
     }
     private fun launch(expected:Int=40) {
@@ -128,6 +127,39 @@ class ReleaseChecks(private val test:Instrumentation) {
         start=SystemClock.elapsedRealtime();main { call("preview",499L) };until("Full maximum length text opens") { field("pageKind")=="preview" }
         log.append("Full text: ${SystemClock.elapsedRealtime()-start} ms; heap limit ${Runtime.getRuntime().maxMemory()/1048576} MiB\n")
         main { activity.finish() };test.waitForIdleSync();seed(73)
+    }
+    private fun storageThreading() {
+        requireDisposableEmulator(test)
+        seed(73)
+        val violations=java.util.concurrent.CopyOnWriteArrayList<String>()
+        var original:StrictMode.ThreadPolicy?=null
+        main {
+            original=StrictMode.getThreadPolicy()
+            StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder(original!!).detectDiskReads().detectDiskWrites()
+                .penaltyListener(java.util.concurrent.Executor { it.run() }) { violation ->
+                    val relevant=violation.stackTrace.any { frame ->
+                        frame.className.startsWith("app.cliphistory.client.PrivateHistory") ||
+                        frame.className.startsWith("app.cliphistory.client.HistoryKeys") ||
+                        frame.className.startsWith("app.cliphistory.core.EncryptedSlot") ||
+                        frame.className.startsWith("android.security.keystore")
+                    }
+                    if(relevant)violations.add(violation.javaClass.simpleName)
+                }.build())
+        }
+        try {
+            PrivateHistory.invalidate();HistoryKeys.invalidate()
+            launch()
+            main { home().search.setText("clip 71") }
+            until("StrictMode search completes") { home().adapter.count==1 }
+            main { call("preview",71L) }
+            until("StrictMode full-text read completes") { field("pageKind")=="preview" }
+            main { call("copyEntry",71L) }
+            until("StrictMode copy completes") { texts().contains("Copied") }
+            test.waitForIdleSync();SystemClock.sleep(300)
+            checkThat(violations.isEmpty(),"StrictMode detects no main-thread history-file or Keystore disk work")
+        } finally {
+            main { StrictMode.setThreadPolicy(original!!);if(::activity.isInitialized)activity.finish() }
+        }
     }
     private fun layout() {
         seed(73);launch()
@@ -233,15 +265,21 @@ class ReleaseChecks(private val test:Instrumentation) {
             fun captured(text:String) {
                 val beforeSaved=status().getLong("saved")
                 produce(text)
+                fun acknowledged():Boolean {
+                    if(status().getLong("saved")<=beforeSaved)return false
+                    val id=service.page("",0,1).getLongArray("ids")?.firstOrNull() ?: return false
+                    return service.entry(id).getString("text")==text
+                }
                 val end=SystemClock.elapsedRealtime()+8000
-                while(SystemClock.elapsedRealtime()<end && status().getLong("saved")==beforeSaved)SystemClock.sleep(30)
-                check(status().getLong("saved")>beforeSaved) { "Synthetic distinct capture not acknowledged" }
+                while(SystemClock.elapsedRealtime()<end && !acknowledged())SystemClock.sleep(30)
+                check(acknowledged()) { "Expected synthetic text was not durably captured" }
             }
             val a="Synthetic duplicate A";val b="Synthetic duplicate B"
             captured(a)
             val oldId=service.page("",0,3).getLongArray("ids")!!.first()
             captured(b);captured(a);captured(b)
             val unique=service.page("",0,3)
+            log.append("Synthetic A/B/A/B observed count=${status().getInt("count")}, texts=${unique.getLongArray("ids")!!.map { service.entry(it).getString("text") }}\n")
             checkThat(status().getInt("count")==2 && unique.getLongArray("ids")!!.map { service.entry(it).getString("text") }==listOf(b,a),"Actual A/B/A/B produces exactly B,A")
             checkThat(service.entry(oldId).getString("text")==null,"Recopy invalidates the old ID without returning another text")
             val staleDelete=service.deleteEntry(oldId)
@@ -271,11 +309,77 @@ class ReleaseChecks(private val test:Instrumentation) {
             }
             service.clearHistory();service.setLimit(DEFAULT_LIMIT);service.setPaused(false)
         }
+        enableRecovery(client)
         connectionFailures(client,service)
+    }
+    private fun enableRecovery(client:DaemonClient) {
+        // This fixture checks the supervisor notification, so it must enable
+        // the optional supervisor regardless of the previous test's settings.
+        val recoveryEnabled=CountDownLatch(1)
+        var recoverySaved=false
+        main { client.updateRecovery(automatic=true) { recoverySaved=it;recoveryEnabled.countDown() } }
+        check(recoveryEnabled.await(8,TimeUnit.SECONDS) && recoverySaved && client.recoveryAllowed()) {
+            "Could not enable automatic recovery for notification fixture"
+        }
+    }
+    private fun recoveryFailures() {
+        requireDisposableEmulator(test)
+        activity=test.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as MainActivity
+        val client=(activity.application as ClipApplication).daemon
+        main { client.connect(true) }
+        until("Actual Shizuku connection for recovery failures") { client.connected() }
+        val service=DaemonClient::class.java.getDeclaredField("remote").apply { isAccessible=true }.get(client) as IClipboardDaemon
+        enableRecovery(client)
+        connectionFailures(client,service)
+    }
+    private fun recoveryPendingStop() {
+        requireDisposableEmulator(test)
+        activity=test.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)) as MainActivity
+        val client=(activity.application as ClipApplication).daemon
+        main { client.connect(true) }
+        until("Actual Shizuku connection for pending Stop") { client.connected() }
+        enableRecovery(client)
+        if(Build.VERSION.SDK_INT>=33)test.uiAutomation.grantRuntimePermission(context.packageName,android.Manifest.permission.POST_NOTIFICATIONS)
+        val active=DaemonClient::class.java.getDeclaredField("recoveryActive").apply { isAccessible=true }
+        val pending=DaemonClient::class.java.getDeclaredField("pendingStop").apply { isAccessible=true }
+        val worker=DaemonClient::class.java.getDeclaredField("io").apply { isAccessible=true }.get(client) as java.util.concurrent.ExecutorService
+        val observer=DaemonClient::class.java.getDeclaredField("observer").apply { isAccessible=true }.get(client) as app.cliphistory.ipc.IHistoryObserver
+        fun state(field:java.lang.reflect.Field):Boolean {
+            if(Looper.myLooper()==Looper.getMainLooper())return field.getBoolean(client)
+            var value=false;main { value=field.getBoolean(client) };return value
+        }
+        until("Recovery supervisor is running") { state(active) }
+        val directory=File(context.applicationInfo.dataDir,"shared_prefs")
+        val prefsFile=File(directory,"recorder_recovery.xml")
+        val blocked=CountDownLatch(1);val release=CountDownLatch(1)
+        try {
+            check(directory.setWritable(false,false) && prefsFile.setWritable(false,false))
+            worker.execute { blocked.countDown();release.await(30,TimeUnit.SECONDS) }
+            check(blocked.await(8,TimeUnit.SECONDS))
+            main { context.startService(Intent(context,RecordingRecoveryService::class.java).setAction(RecordingRecoveryService.STOP)) }
+            until("Stop request is pending") { state(pending) }
+            observer.onChanged() // A clipboard change can notify the supervisor while Stop is pending.
+            SystemClock.sleep(500)
+            checkThat(state(active),"Recovery supervisor remains active while Stop is pending")
+            release.countDown()
+            until("Failed Stop finishes") { !state(pending) }
+            until("Failed Stop leaves its notification visible") {
+                context.getSystemService(NotificationManager::class.java).activeNotifications.any {
+                    it.notification.extras.getCharSequence(Notification.EXTRA_TEXT)?.toString()==context.getString(R.string.recovery_stop_failed)
+                }
+            }
+            checkThat(state(active) && client.connected() && !client.preferences.options().explicitlyStopped,
+                "Failed Stop keeps the recorder and recovery supervisor active")
+        } finally {
+            release.countDown()
+            val end=SystemClock.elapsedRealtime()+12_000
+            while(state(pending) && SystemClock.elapsedRealtime()<end)SystemClock.sleep(50)
+            check(directory.setWritable(true,false) && prefsFile.setWritable(true,false))
+        }
     }
     private fun connectionFailures(client:DaemonClient,service:IClipboardDaemon) {
         check(Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk")) { "Persistence/permission failure fixtures require a disposable emulator" }
-        test.uiAutomation.grantRuntimePermission(context.packageName,android.Manifest.permission.POST_NOTIFICATIONS)
+        if(Build.VERSION.SDK_INT>=33)test.uiAutomation.grantRuntimePermission(context.packageName,android.Manifest.permission.POST_NOTIFICATIONS)
         val directory=File(context.applicationInfo.dataDir,"shared_prefs")
         val prefsFile=File(directory,"recorder_recovery.xml")
         val preferences=context.getSharedPreferences("recorder_recovery",Context.MODE_PRIVATE)
@@ -288,9 +392,16 @@ class ReleaseChecks(private val test:Instrumentation) {
             }
         }
         // The notification Stop action must retain supervision and report a failed
-        // durable write, rather than quietly abandoning an active shell recorder.
-        writable(false)
+        // durable write, even if Android cannot supply a boot identity.
+        val bootField=DaemonClient::class.java.getDeclaredField("boot").apply { isAccessible=true }
+        var previousBoot:Int?=null
+        main {
+            previousBoot=bootField.get(client) as? Int
+            bootField.set(client,null)
+            check(client.recoveryAllowed()) { "Unknown-boot fixture must begin with recovery enabled" }
+        }
         try {
+            writable(false)
             main { context.startService(Intent(context,RecordingRecoveryService::class.java).setAction(RecordingRecoveryService.STOP)) }
             until("Notification reports failed durable Stop") {
                 context.getSystemService(NotificationManager::class.java).activeNotifications.any {
@@ -298,7 +409,8 @@ class ReleaseChecks(private val test:Instrumentation) {
                 }
             }
             checkThat(!client.preferences.options().explicitlyStopped && client.connected(),"Failed notification Stop retains recording state and supervision")
-        } finally { writable(true) }
+            checkThat(client.recoveryAllowed(),"Failed Stop retains recovery when boot identity is unavailable")
+        } finally { writable(true);main { bootField.set(client,previousBoot) } }
 
         val connection=DaemonClient::class.java.getDeclaredField("connection").apply { isAccessible=true }.get(client) as ServiceConnection
         val remote=DaemonClient::class.java.getDeclaredField("remote").apply { isAccessible=true }
@@ -319,8 +431,8 @@ class ReleaseChecks(private val test:Instrumentation) {
         val restarted=remote.get(client) as IClipboardDaemon
         checkThat(!restarted.status().getBoolean("paused"),"Explicit Start resumes a deliberately stopped recorder")
         check(preferences.edit().putBoolean("setup_completed",false).commit())
-        writable(false)
         try {
+            writable(false)
             main { connection.onServiceConnected(ComponentName(context,app.cliphistory.daemon.ClipboardUserService::class.java),restarted.asBinder()) }
             until("Failed first-setup persistence removes attached helper") { !client.connected() && helperAbsent() }
             checkThat(!client.preferences.options().setupCompleted && PrivateHistory.readOffline(context).paused,
@@ -329,7 +441,7 @@ class ReleaseChecks(private val test:Instrumentation) {
         check(preferences.edit().putBoolean("setup_completed",true).commit())
     }
     fun run(suite:String):String {
-        try { when(suite) { "regression"->regression();"capacity"->capacity();"layout"->layout();"live"->live();else->error("Unknown suite") } }
+        try { when(suite) { "regression"->regression();"capacity"->capacity();"storage-threading"->storageThreading();"layout"->layout();"live"->live();"recovery-failures"->recoveryFailures();"recovery-pending"->recoveryPendingStop();else->error("Unknown suite") } }
         catch(t:Throwable) { throw IllegalStateException(log.toString(),t) }
         return log.append("PASS $checks release assertions ($suite). Synthetic data only.\n").toString()
     }

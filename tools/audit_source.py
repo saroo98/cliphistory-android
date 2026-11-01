@@ -48,7 +48,7 @@ for xml in sorted(MAIN.rglob("*.xml")):
     ET.parse(xml)
 check("all source XML parses", True)
 
-sources = list((MAIN / "java").rglob("*.kt"))
+sources = list((MAIN / "java").rglob("*.kt")) + list((MAIN / "java").rglob("*.java"))
 source = "\n".join(p.read_text(encoding="utf-8") for p in sources)
 check("no unfinished production implementation markers", not re.search(r"\bTODO\s*\(|NotImplementedError|IMPLEMENT_ME|FIXME", source))
 check("no runtime network client imports", not re.search(r"import\s+(java\.net|okhttp|io\.ktor|retrofit|com\.google\.firebase)\b", source))
@@ -64,12 +64,13 @@ check("normal app uses private no-backup files", "noBackupFilesDir" in text("app
 check("shell does not truncate or chmod private files", not re.search(r"ftruncate|Os\.chmod|setLength\(", "\n".join(p.read_text(encoding="utf-8") for p in (MAIN / "java/app/cliphistory/daemon").glob("*.kt"))))
 bridge = text("app/src/main/java/app/cliphistory/daemon/PlatformClipboardBridge.kt")
 check("system callback UID and identity are checked", "getCallingUid() != 1000" in bridge and "clearCallingIdentity" in bridge and "restoreCallingIdentity" in bridge)
-check("sensitive flag handled before text extraction", bridge.index("if (sensitive)") < bridge.index("val raw"))
+check("sensitive opt-in checked before text extraction", bridge.index("if (sensitive && !captureSensitive())") < bridge.index("val raw"))
 check("clipboard source is not coerced through content providers", "coerceToText(" not in bridge and "getItemAt(0).text" in bridge)
 daemon = text("app/src/main/java/app/cliphistory/daemon/ClipboardUserService.kt")
 aidl = text("app/src/main/aidl/app/cliphistory/ipc/IClipboardDaemon.aidl")
 methods = re.findall(r"\b(?:Bundle|String|void)\s+(\w+)\([^;]*?\)\s*=\s*\d+\s*;", aidl)
-check("all AIDL entrypoints implemented", all(re.search(r"override fun " + name + r"\(", daemon) for name in methods) and len(methods) == 17)
+check("all AIDL entrypoints implemented", all(re.search(r"override fun " + name + r"\(", daemon) for name in methods) and len(methods) == 19 and
+      {"attachEncrypted", "setSensitivePolicy"}.issubset(methods))
 for name in methods:
     if name == "destroy":
         continue
@@ -83,6 +84,7 @@ check("Shizuku destroy transaction matches documented constant", "destroy() = 16
 check("helper watches Shizuku server rather than UI lifetime", "IBinder shizukuServer" in aidl and "server.linkToDeath" in daemon and "leaseAlive=false" in daemon)
 check("replacement/unlinked private data is handled", "attachedFileIds!=incomingIds" in daemon and "st_nlink" in text("app/src/main/java/app/cliphistory/daemon/FdAccess.kt"))
 check("daemon uses bounded queue", "ArrayBlockingQueue<Runnable>(256)" in daemon)
+check("cancelled expiry deadlines are removed immediately", "ScheduledThreadPoolExecutor(1)" in daemon and "removeOnCancelPolicy=true" in daemon)
 check("owner stop gates clipboard reads and serial commits", "if(!canRead())return" in bridge and
       "if(!ownerStop.check())" in daemon and "FLAG_STOPPED" in text("app/src/main/java/app/cliphistory/daemon/OwnerStopGuard.kt") and
       "REASON_USER_REQUESTED" in text("app/src/main/java/app/cliphistory/daemon/OwnerStopGuard.kt"))

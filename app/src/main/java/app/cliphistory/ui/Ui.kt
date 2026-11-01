@@ -28,7 +28,7 @@ class Ui(val activity: Activity) {
     }
     fun ripple(fill:Int,radius:Int=14)=RippleDrawable(ColorStateList.valueOf(color(R.color.selected)),shape(fill,radius),null)
     fun column()=LinearLayout(activity).apply { orientation=LinearLayout.VERTICAL }
-    fun text(value:CharSequence,size:Float=16f,secondary:Boolean=false)=TextView(activity).apply {
+    fun text(value:CharSequence,size:Float=16f,secondary:Boolean=false)=ClipboardPayload.CopyText(activity).apply {
         text=value;textSize=size;setTextColor(if(secondary)muted else ink)
         setLineSpacing(dp(3).toFloat(),1f)
     }

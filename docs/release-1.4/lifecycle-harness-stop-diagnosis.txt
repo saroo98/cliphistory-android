@@ -1,0 +1,18 @@
+Before instrumentation
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <int name="activated_boot" value="11" />
+    <boolean name="explicit_stop" value="false" />
+    <boolean name="setup_completed" value="true" />
+    <long name="explicit_start_time" value="1791475925271" />
+    <long name="acknowledged_exit" value="1791475679769" />
+</map>
+After instrumentation and ordinary reopening
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <int name="activated_boot" value="11" />
+    <boolean name="explicit_stop" value="true" />
+    <boolean name="setup_completed" value="true" />
+    <long name="explicit_start_time" value="1791475925271" />
+    <long name="acknowledged_exit" value="1791475952014" />
+</map>

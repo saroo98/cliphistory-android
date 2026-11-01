@@ -1,0 +1,7 @@
+{
+  "jvm_tests": 65,
+  "jvm_failures": 0,
+  "jvm_errors": 0,
+  "lint_errors": 0,
+  "lint_warnings": 15
+}

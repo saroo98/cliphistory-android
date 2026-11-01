@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-31",
+  "device": {
+    "manufacturer": "Google",
+    "model": "Pixel 8 Pro",
+    "android": "17",
+    "api": 37,
+    "fingerprint": "google/husky_beta/husky:17/CP41.260831.019/16596456:user/release-keys",
+    "securityPatch": "2026-10-05",
+    "shizuku": "13.7.0-thedjchi",
+    "shizukuMode": "shell UID 2000"
+  },
+  "release": {
+    "package": "app.cliphistory",
+    "versionBefore": "1.4.0",
+    "versionAfter": "1.4.1",
+    "versionCodeAfter": 11,
+    "updateInPlace": true,
+    "sha256": "be2cf0e62d86f85593b78093ecc5ee58b0bb2e61425cb52d4404bfcf357a67be",
+    "installedApkMatchesCandidate": true,
+    "certificateSha256": "ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82"
+  },
+  "originalClipboardRestored": true,
+  "validationShizukuPermissionRestoredToOff": true,
+  "temporaryHelperAbsentAtFinalProcessCheck": true,
+  "phoneAssertions": {
+    "phone-core": 7,
+    "key-check": 9,
+    "phone-live": 18
+  },
+  "productionProbe": {
+    "package": "app.cliphistory",
+    "connectionProbe": "PASS",
+    "ordinaryCapturePaused": true,
+    "historyFixtureAdded": false
+  },
+  "productionTile": [
+    {
+      "opening": 1,
+      "entryButtons": 3,
+      "stayedOpen": true,
+      "shadeVisible": false,
+      "closeWorked": true
+    },
+    {
+      "opening": 2,
+      "entryButtons": 3,
+      "stayedOpen": true,
+      "shadeVisible": false,
+      "closeWorked": true
+    },
+    {
+      "opening": 3,
+      "entryButtons": 3,
+      "stayedOpen": true,
+      "shadeVisible": false,
+      "closeWorked": true
+    }
+  ],
+  "freshHostChecks": {
+    "unit": {
+      "tests": 72,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "lint": {
+      "Error": 0,
+      "Fatal": 0,
+      "Warning": 15
+    },
+    "sourceChecklistPassed": 74,
+    "sourceChecklistTotal": 74,
+    "signatureVerified": true,
+    "alignment16KiBVerified": true,
+    "fdroidReadmetaExit": 0,
+    "fdroidCanonicalFormatExit": 0,
+    "fdroidLintExit": 0,
+    "fdroidApkScannerExit": 0
+  },
+  "guide": {
+    "filename": "F_DROID_ANDROID_GUIDE.md",
+    "sha256": "91a971e9f942782464be1912d76716b5178d4366c313564578a8b5fb3b268478",
+    "appRelevantRequirementsComparedToLiveOfficialDocumentation": true
+  },
+  "publication": {
+    "remoteSourceHead": "6009e25f548a5f1a45d6cf129d288056e76d5b8f",
+    "publishedV141TagFound": false,
+    "submittedVersion": "1.3.4",
+    "submittedCode": 8,
+    "submittedSource": "97c1e996e2619a5cf6f86f7f70614576d795b8c3",
+    "newVersionIndependentReproductionVerified": false,
+    "newVersionMaintainerCiVerified": false,
+    "hyperOsFailureFixedAndVerified": false
+  },
+  "scope": "Focused physical-device regression verification; no universal firmware, exhaustive native-control, per-frame timing or long-term battery claim. No publication, remote write or commit.",
+  "personalStateComparison": {
+    "historyCountMatched": true,
+    "historyLimitMatched": true,
+    "visibleSettingsMatched": true,
+    "visibleEncryptionMatched": true
+  }
+}

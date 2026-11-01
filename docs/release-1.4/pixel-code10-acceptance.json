@@ -1,0 +1,34 @@
+{
+  "device": "Pixel 8 Pro",
+  "api": 37,
+  "version": "1.4.0",
+  "version_code": 10,
+  "same_signer": true,
+  "in_place_upgrade": true,
+  "history_count_preserved": 16,
+  "limit_preserved": 100,
+  "all_observed_original_settings_preserved": true,
+  "all_observed_code9_settings_preserved": true,
+  "settings": {
+    "Pause recording": false,
+    "Automatic recovery": true,
+    "Resume after reboot": true,
+    "Suggest background setup once": true,
+    "Quick Settings tile enabled": true,
+    "Return after copying": true,
+    "Capture sensitive text": false,
+    "Auto-delete sensitive text": true,
+    "Allow screenshots": true,
+    "Hide history in Recents": true
+  },
+  "encryption": {
+    "History encryption": "AES-256-GCM",
+    "Key protection": "StrongBox",
+    "Expiry clock": "Passed"
+  },
+  "recorder_state": "Listening",
+  "old_code9_helper": 29689,
+  "new_code10_helper": 1527,
+  "helper_uid": 2000,
+  "scope": "Whitelisted metadata only. No personal history text/screenshots/clipboard writes, stop, clear data, uninstall, downgrade or reboot. Exact payload and offline/failure/lifecycle checks use owned emulator fixtures."
+}

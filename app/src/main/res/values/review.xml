@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recorder_connection">Recorder connection</string>
+    <string name="connection_issue">Connection issue</string>
+    <string name="shizuku_version">Shizuku version</string>
+    <string name="helper_start_failed">Recorder did not start</string>
+    <string name="helper_start_failed_message">Shizuku did not start the recorder helper. Restart Shizuku and reconnect. If this repeats, see Setup help and copy the diagnostic report.</string>
+    <string name="helper_start_failed_body">Shizuku did not return a recorder connection. Restart Shizuku and reconnect. Some phone software has a Shizuku startup issue. Setup help explains what to check.</string>
+    <string name="help_helper_start">Shizuku runs, but recording will not connect</string>
+    <string name="help_helper_start_body">Restart Shizuku, return here and reconnect. Then run the Connection test. If the recorder still will not start, copy the Diagnostics report and include your phone model, Android version and Shizuku version when reporting it. Some manufacturer builds can stop Shizuku 13.6.0 from starting its helper before ClipHistory runs. A timeout alone does not identify the cause. Check the official compatibility report for updates. Clearing saved history or granting unrelated permissions does not repair this startup problem.</string>
+    <string name="shizuku_compatibility_reports">Shizuku compatibility report</string>
+</resources>

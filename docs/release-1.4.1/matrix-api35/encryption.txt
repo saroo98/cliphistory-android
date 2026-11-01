@@ -1,0 +1,103 @@
+PASS Keystore wrapping survives cache invalidation
+PASS Migration phase is durably complete
+PASS Slot 0 has the encrypted envelope
+PASS Slot 0 authenticates and preserves exact state
+PASS Slot 1 has the encrypted envelope
+PASS Slot 1 authenticates and preserves exact state
+PASS The stored key record does not contain its plaintext data key
+Observed Keystore security level: Software
+PASS A modified wrapped key fails closed
+PASS A failed key load does not replace the damaged record
+PASS Migration establishes exclusive ownership, legacy v1 / interruption 0
+PASS Migration preserves the newest history and settings
+PASS Migration phase is durably complete
+PASS Slot 0 has the encrypted envelope
+PASS Slot 0 has no text canary
+PASS Slot 0 has no text canary
+PASS Slot 0 authenticates and preserves exact state
+PASS Slot 1 has the encrypted envelope
+PASS Slot 1 has no text canary
+PASS Slot 1 has no text canary
+PASS Slot 1 authenticates and preserves exact state
+PASS The stored key record does not contain its plaintext data key
+Observed Keystore security level: Software
+PASS Completed migration rejects a newer injected plaintext snapshot
+PASS Migration establishes exclusive ownership, legacy v1 / interruption 1
+PASS Migration preserves the newest history and settings
+PASS Migration phase is durably complete
+PASS Slot 0 has the encrypted envelope
+PASS Slot 0 has no text canary
+PASS Slot 0 has no text canary
+PASS Slot 0 authenticates and preserves exact state
+PASS Slot 1 has the encrypted envelope
+PASS Slot 1 has no text canary
+PASS Slot 1 has no text canary
+PASS Slot 1 authenticates and preserves exact state
+PASS The stored key record does not contain its plaintext data key
+Observed Keystore security level: Software
+PASS Completed migration rejects a newer injected plaintext snapshot
+PASS Migration establishes exclusive ownership, legacy v1 / interruption 2
+PASS Migration preserves the newest history and settings
+PASS Migration phase is durably complete
+PASS Slot 0 has the encrypted envelope
+PASS Slot 0 has no text canary
+PASS Slot 0 has no text canary
+PASS Slot 0 authenticates and preserves exact state
+PASS Slot 1 has the encrypted envelope
+PASS Slot 1 has no text canary
+PASS Slot 1 has no text canary
+PASS Slot 1 authenticates and preserves exact state
+PASS The stored key record does not contain its plaintext data key
+Observed Keystore security level: Software
+PASS Completed migration rejects a newer injected plaintext snapshot
+PASS Migration establishes exclusive ownership, legacy v2 / interruption 0
+PASS Migration preserves the newest history and settings
+PASS Migration phase is durably complete
+PASS Slot 0 has the encrypted envelope
+PASS Slot 0 has no text canary
+PASS Slot 0 has no text canary
+PASS Slot 0 authenticates and preserves exact state
+PASS Slot 1 has the encrypted envelope
+PASS Slot 1 has no text canary
+PASS Slot 1 has no text canary
+PASS Slot 1 authenticates and preserves exact state
+PASS The stored key record does not contain its plaintext data key
+Observed Keystore security level: Software
+PASS Completed migration rejects a newer injected plaintext snapshot
+PASS Migration establishes exclusive ownership, legacy v2 / interruption 1
+PASS Migration preserves the newest history and settings
+PASS Migration phase is durably complete
+PASS Slot 0 has the encrypted envelope
+PASS Slot 0 has no text canary
+PASS Slot 0 has no text canary
+PASS Slot 0 authenticates and preserves exact state
+PASS Slot 1 has the encrypted envelope
+PASS Slot 1 has no text canary
+PASS Slot 1 has no text canary
+PASS Slot 1 authenticates and preserves exact state
+PASS The stored key record does not contain its plaintext data key
+Observed Keystore security level: Software
+PASS Completed migration rejects a newer injected plaintext snapshot
+PASS Migration establishes exclusive ownership, legacy v2 / interruption 2
+PASS Migration preserves the newest history and settings
+PASS Migration phase is durably complete
+PASS Slot 0 has the encrypted envelope
+PASS Slot 0 has no text canary
+PASS Slot 0 has no text canary
+PASS Slot 0 authenticates and preserves exact state
+PASS Slot 1 has the encrypted envelope
+PASS Slot 1 has no text canary
+PASS Slot 1 has no text canary
+PASS Slot 1 authenticates and preserves exact state
+PASS The stored key record does not contain its plaintext data key
+Observed Keystore security level: Software
+PASS Completed migration rejects a newer injected plaintext snapshot
+PASS Ciphertext without its key does not create a replacement key
+PASS Missing-key failure preserves evidence
+PASS Offline initial read includes unexpired text
+PASS Cached offline access rechecks expiry without file changes
+PASS One empty slot recovers from the authenticated copy
+PASS A completed store with both slots empty fails closed
+PASS A completed store with both slots missing fails closed
+PASS Missing snapshots do not replace the wrapped key
+PASS 95 encryption assertions (encryption). No clipboard writes.

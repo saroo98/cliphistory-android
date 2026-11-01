@@ -1,0 +1,19 @@
+{
+  "mode": "server-death",
+  "serial": "emulator-5574",
+  "api": "34",
+  "before": {
+    "app.cliphistory.validation": 4450,
+    "app.cliphistory.validation:clipboard": 4901
+  },
+  "started_utc": "2026-10-08T16:26:59Z",
+  "server_lease_terminated_helper": true,
+  "listener_ready_before_copy": true,
+  "captured_after_recovery": true,
+  "capture_resumed_after_server_restart": true,
+  "after": {
+    "app.cliphistory.validation": 4450,
+    "app.cliphistory.validation:clipboard": 5075
+  },
+  "elapsed_seconds": 8.36
+}

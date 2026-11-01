@@ -1,0 +1,7 @@
+Starting: Intent { act=app.cliphistory.OPEN_HISTORY cmp=app.cliphistory/.ui.MainActivity }
+Status: ok
+LaunchState: WARM
+Activity: app.cliphistory/.ui.MainActivity
+TotalTime: 119
+WaitTime: 133
+Complete

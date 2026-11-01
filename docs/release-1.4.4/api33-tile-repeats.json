@@ -1,0 +1,20 @@
+{
+  "api": 33,
+  "repetitions": 10,
+  "passed": 10,
+  "assertions_each": 75,
+  "apk_sha256": "0a8b3fb2bbfce36da764a61ef95ab48dfe794544d9c9437ca2346f2b27dc0da6",
+  "test_apk_sha256": "5eaa4309c6c30b7c07dad38e987865e99f007eff2f8ff3409d7f3d4b52044e1c",
+  "durations_seconds": [
+    29.203,
+    26.956,
+    26.219,
+    26.466,
+    27.665,
+    26.038,
+    26.743,
+    25.357,
+    25.046,
+    25.235
+  ]
+}

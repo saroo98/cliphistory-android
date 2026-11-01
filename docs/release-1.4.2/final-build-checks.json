@@ -1,0 +1,38 @@
+{
+  "version": "1.4.2",
+  "code": 12,
+  "min_sdk": 30,
+  "target_sdk": 37,
+  "compile_sdk": 37,
+  "unit_tests": {
+    "tests": 79,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 18
+  },
+  "source_checks": "74/74",
+  "signing_certificate_sha256": "ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82",
+  "production_source_hashes_verified": true,
+  "artifacts": {
+    "ClipHistory-1.4.2-final.apk": {
+      "bytes": 2664567,
+      "sha256": "ca2df31c8f6e09af9f46bff78c6c8eb0307c93acab6a180d465703e177776cec"
+    },
+    "final-validation.apk": {
+      "bytes": 3593121,
+      "sha256": "f51febdee89de0cf7167a4ba4916348282f42635952bba5d70d06c99f66e304f"
+    },
+    "final-test.apk": {
+      "bytes": 1211418,
+      "sha256": "2bcc1edb16977e9da9d55d7a8a014dfa225f406b93fb71f9278c88052f2a8929"
+    },
+    "final-api37-test.apk": {
+      "bytes": 1213246,
+      "sha256": "d0fec6f276390e10228df1fb7d5bbb9c21b831cf8dfd2e8aa5edb8d5a837c311"
+    }
+  }
+}

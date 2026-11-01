@@ -49,6 +49,15 @@ class AuditDiagnosticChecks(private val test:Instrumentation) {
         val activity=host?:test.startActivitySync(Intent(test.targetContext,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK))
         try { main {
             val pages=DetailPages(Ui(activity))
+            val failedStartup=Bundle().apply {
+                putString("connectionMessage","Synthetic helper did not start")
+                putString("connectionIssue","HELPER_START_TIMEOUT")
+            }
+            val startupReport=pages.report(failedStartup,true)
+            checkThat(startupReport.contains("Recorder connection: Synthetic helper did not start\n"),"Offline report preserves the recorder startup failure")
+            checkThat(startupReport.contains("Connection issue: HELPER_START_TIMEOUT\n"),"Offline report preserves the startup issue code")
+            val failedPage=pages.diagnostics(failedStartup,true,{}, {},{})
+            checkThat(views(failedPage.view).filterIsInstance<TextView>().any { it.text.toString()=="Recorder did not start" },"Startup timeout has specific guidance rather than generic offline status")
             val key=activity.getString(R.string.connection_test)
             val initial=pages.diagnostics(fixture(),false,{}, {})
             checkThat(value(initial.view,key)==activity.getString(R.string.audit_test_not_run),"Missing self-test renders Not run")

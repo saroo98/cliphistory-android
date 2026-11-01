@@ -1,0 +1,11 @@
+Cold trial 1: first draw 1308 ms; history visible
+Cold trial 2: first draw 1478 ms; history visible
+Cold trial 3: first draw 1393 ms; history visible
+Cold trial 4: first draw 1366 ms; history visible
+Cold trial 5: first draw 1393 ms; history visible
+Cold trial 6: first draw 1380 ms; history visible
+Cold trial 7: first draw 1314 ms; history visible
+Cold trial 8: first draw 1300 ms; history visible
+Cold trial 9: first draw 996 ms; history visible
+Cold trial 10: first draw 1263 ms; history visible
+PASS 10 cold launches: p50=1314 ms, p95=1478 ms

@@ -1,0 +1,22 @@
+{
+  "mode": "clear-storage",
+  "serial": "emulator-5586",
+  "api": "34",
+  "before": {
+    "app.cliphistory.validation": 8306,
+    "app.cliphistory.validation:clipboard": 15350
+  },
+  "started_utc": "2026-10-08T17:47:13Z",
+  "listener_ready_before_copy": true,
+  "synthetic_event_verified": true,
+  "captured_after_recovery": true,
+  "helper_survived_storage_clear": true,
+  "fresh_store_empty": true,
+  "new_key_record": true,
+  "no_previous_history_resurrected": true,
+  "after": {
+    "app.cliphistory.validation": 15720,
+    "app.cliphistory.validation:clipboard": 15813
+  },
+  "elapsed_seconds": 31.484
+}

@@ -1,0 +1,121 @@
+{
+  "serial": "emulator-5586",
+  "avd": "ClipHistory13_API36",
+  "api": 36,
+  "theme": "light",
+  "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:16/BE2A.250530.026.F3/13894323:userdebug/dev-keys",
+  "release": "16",
+  "apk_sha256": "0fe754a8450d90db014e2278fafce336121abe2f4efe653be3d7dbfb0116c09b",
+  "test_apk_sha256": "32e22563a17e57444dad9afd29ac1869d1dbe52f1888146f22b52d93bc22088b",
+  "suites": [
+    {
+      "suite": "boot-identity",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (boot-identity), API 36. Synthetic validation only.",
+      "seconds": 2.203
+    },
+    {
+      "suite": "live",
+      "passed": true,
+      "summary": "PASS 33 release assertions (live). Synthetic data only.",
+      "seconds": 10.328
+    },
+    {
+      "suite": "sensitive-live",
+      "passed": true,
+      "summary": "PASS 40 sensitive assertions (sensitive-live). Synthetic emulator only.",
+      "seconds": 67.219
+    },
+    {
+      "suite": "encryption",
+      "passed": true,
+      "summary": "PASS 95 encryption assertions (encryption). No clipboard writes.",
+      "seconds": 2.234
+    },
+    {
+      "suite": "sensitive-ui",
+      "passed": true,
+      "summary": "PASS 23 sensitive assertions (sensitive-ui). Synthetic emulator only.",
+      "seconds": 30.781
+    },
+    {
+      "suite": "regression",
+      "passed": true,
+      "summary": "PASS 12 release assertions (regression). Synthetic data only.",
+      "seconds": 5.188
+    },
+    {
+      "suite": "settings",
+      "passed": true,
+      "summary": "PASS 21 feature assertions (settings), API 36. Synthetic validation only.",
+      "seconds": 5.047
+    },
+    {
+      "suite": "onboarding",
+      "passed": true,
+      "summary": "PASS 24 feature assertions (onboarding), API 36. Synthetic validation only.",
+      "seconds": 6.171
+    },
+    {
+      "suite": "audit-diagnostics",
+      "passed": true,
+      "summary": "PASS 35 diagnostic presentation/report assertions, API 36. Synthetic validation only.",
+      "seconds": 1.782
+    },
+    {
+      "suite": "html-port",
+      "passed": true,
+      "summary": "PASS 123 HTML port assertions (html-port), API 36. Owned disposable emulator fixtures only.",
+      "seconds": 10.031
+    },
+    {
+      "suite": "html-port-live",
+      "passed": true,
+      "summary": "PASS 50 HTML port assertions (html-port-live), API 36. Owned disposable emulator fixtures only.",
+      "seconds": 9.047
+    },
+    {
+      "suite": "privacy",
+      "passed": true,
+      "summary": "PASS 11 feature assertions (privacy), API 36. Synthetic validation only.",
+      "seconds": 4.781
+    },
+    {
+      "suite": "quick-errors",
+      "passed": true,
+      "summary": "PASS 21 feature assertions (quick-errors), API 36. Synthetic validation only.",
+      "seconds": 4.203
+    },
+    {
+      "suite": "command-errors",
+      "passed": true,
+      "summary": "PASS 21 feature assertions (command-errors), API 36. Synthetic validation only.",
+      "seconds": 3.266
+    },
+    {
+      "suite": "accessibility",
+      "passed": true,
+      "summary": "PASS 22 feature assertions (accessibility), API 36. Synthetic validation only.",
+      "seconds": 5.125
+    },
+    {
+      "suite": "customization",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (customization), API 36. Synthetic validation only.",
+      "seconds": 3.64
+    },
+    {
+      "suite": "recovery",
+      "passed": true,
+      "summary": "PASS 11 feature assertions (recovery), API 36. Synthetic validation only.",
+      "seconds": 2.579
+    },
+    {
+      "suite": "paused-connection",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (paused-connection), API 36. Synthetic validation only.",
+      "seconds": 2.89
+    }
+  ],
+  "shizuku_package": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c"
+}

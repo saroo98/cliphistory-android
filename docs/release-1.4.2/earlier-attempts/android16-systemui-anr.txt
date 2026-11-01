@@ -1,0 +1,23 @@
+10-31 22:14:02.007   664  1981 E ActivityManager: ANR in com.android.systemui
+10-31 22:14:02.007   664  1981 E ActivityManager: PID: 948
+10-31 22:14:02.007   664  1981 E ActivityManager: Reason: executing service com.android.systemui/.SystemUIService, waited 20027ms
+10-31 22:14:02.007   664  1981 E ActivityManager: ErrorId: 31375589-3538-4db0-b418-ea311f6604fc
+10-31 22:14:02.007   664  1981 E ActivityManager: Frozen: false
+10-31 22:14:02.007   664  1981 E ActivityManager: Load: 14.98 / 3.77 / 1.27
+10-31 22:14:02.007   664  1981 E ActivityManager: ----- Output from /proc/pressure/memory -----
+10-31 22:14:02.007   664  1981 E ActivityManager: some avg10=0.36 avg60=0.28 avg300=0.07 total=348340
+10-31 22:14:02.007   664  1981 E ActivityManager: full avg10=0.00 avg60=0.00 avg300=0.00 total=10076
+10-31 22:14:02.007   664  1981 E ActivityManager: ----- End output from /proc/pressure/memory -----
+10-31 22:14:02.007   664  1981 E ActivityManager: ----- Output from /proc/pressure/cpu -----
+10-31 22:14:02.007   664  1981 E ActivityManager: some avg10=89.31 avg60=50.56 avg300=14.36 total=48048440
+10-31 22:14:02.007   664  1981 E ActivityManager: full avg10=0.00 avg60=0.00 avg300=0.00 total=0
+10-31 22:14:02.007   664  1981 E ActivityManager: ----- End output from /proc/pressure/cpu -----
+10-31 22:14:02.007   664  1981 E ActivityManager: ----- Output from /proc/pressure/io -----
+10-31 22:14:02.007   664  1981 E ActivityManager: some avg10=15.08 avg60=8.40 avg300=2.52 total=8799412
+10-31 22:14:02.007   664  1981 E ActivityManager: full avg10=0.12 avg60=0.47 avg300=0.18 total=889831
+10-31 22:14:02.007   664  1981 E ActivityManager: ----- End output from /proc/pressure/io -----
+10-31 22:14:02.007   664  1981 E ActivityManager:
+10-31 22:14:02.007   664  1981 E ActivityManager: CPU usage from 31679ms to -29ms ago (2026-10-31 22:13:28.535 to 2026-10-31 22:14:00.243):
+10-31 22:14:02.007   664  1981 E ActivityManager:   30% 664/system_server: 16% user + 14% kernel / faults: 45665 minor 898 major
+10-31 22:14:02.007   664  1981 E ActivityManager:   29% 519/surfaceflinger: 1.9% user + 27% kernel / faults: 2400 minor
+10-31 22:14:02.007   664  1981 E ActivityManager:   12% 476/android.hardware.graphics.composer3-service.ranchu: 0.4% user + 12% kernel / faults: 15 minor

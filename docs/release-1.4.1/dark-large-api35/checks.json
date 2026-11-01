@@ -1,0 +1,37 @@
+{
+  "serial": "emulator-5592",
+  "avd": "ClipHistory13_API35",
+  "api": 35,
+  "theme": "dark",
+  "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:15/AE3A.240806.043/12960925:userdebug/dev-keys",
+  "release": "15",
+  "apk_sha256": "0fe754a8450d90db014e2278fafce336121abe2f4efe653be3d7dbfb0116c09b",
+  "test_apk_sha256": "b974c33f4d139503ebf0e18fab10d07c7cd456fbde6f05933c2ff01847e30dd5",
+  "suites": [
+    {
+      "suite": "html-port",
+      "passed": true,
+      "summary": "PASS 123 HTML port assertions (html-port), API 35. Owned disposable emulator fixtures only.",
+      "seconds": 9.187
+    },
+    {
+      "suite": "html-port-live",
+      "passed": true,
+      "summary": "PASS 50 HTML port assertions (html-port-live), API 35. Owned disposable emulator fixtures only.",
+      "seconds": 8.391
+    },
+    {
+      "suite": "quick-errors",
+      "passed": true,
+      "summary": "PASS 21 feature assertions (quick-errors), API 35. Synthetic validation only.",
+      "seconds": 4.265
+    },
+    {
+      "suite": "command-errors",
+      "passed": true,
+      "summary": "PASS 21 feature assertions (command-errors), API 35. Synthetic validation only.",
+      "seconds": 3.344
+    }
+  ],
+  "shizuku_package": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c"
+}

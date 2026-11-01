@@ -1,0 +1,375 @@
+{
+  "scope": "Every encoded video frame decoded. VFR screenrecord omits unchanged screen frames; frame timeline supplies compositor outcomes. Contact sheets require visual review.",
+  "trials": [
+    {
+      "trial": 1,
+      "decoded_video_frames": 111,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "Prediction Error",
+          "frames": "7",
+          "max_ms": "12.270000"
+        },
+        {
+          "jank_type": "Prediction Error, App Deadline Missed",
+          "frames": "1",
+          "max_ms": "45.890000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "2",
+          "max_ms": "11.850000"
+        }
+      ],
+      "contact_sheet": "trial-01-all-frames.jpg",
+      "ffprobe_frames": 111,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 2,
+      "decoded_video_frames": 93,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "Prediction Error, App Deadline Missed",
+          "frames": "1",
+          "max_ms": "38.490000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "10",
+          "max_ms": "12.870000"
+        }
+      ],
+      "contact_sheet": "trial-02-all-frames.jpg",
+      "ffprobe_frames": 93,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 3,
+      "decoded_video_frames": 78,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "Buffer Stuffing",
+          "frames": "2",
+          "max_ms": "11.720000"
+        },
+        {
+          "jank_type": "Prediction Error, App Deadline Missed, Buffer Stuffing",
+          "frames": "1",
+          "max_ms": "23.920000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "5",
+          "max_ms": "20.010000"
+        },
+        {
+          "jank_type": "SurfaceFlinger CPU Deadline Missed, App Deadline Missed",
+          "frames": "1",
+          "max_ms": "44.800000"
+        },
+        {
+          "jank_type": "SurfaceFlinger CPU Deadline Missed, Buffer Stuffing",
+          "frames": "1",
+          "max_ms": "9.990000"
+        }
+      ],
+      "contact_sheet": "trial-03-all-frames.jpg",
+      "ffprobe_frames": 78,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 4,
+      "decoded_video_frames": 101,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "Buffer Stuffing",
+          "frames": "2",
+          "max_ms": "10.240000"
+        },
+        {
+          "jank_type": "None",
+          "frames": "1",
+          "max_ms": "9.140000"
+        },
+        {
+          "jank_type": "Prediction Error, App Deadline Missed",
+          "frames": "2",
+          "max_ms": "42.930000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "5",
+          "max_ms": "20.600000"
+        }
+      ],
+      "contact_sheet": "trial-04-all-frames.jpg",
+      "ffprobe_frames": 101,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 5,
+      "decoded_video_frames": 107,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "Prediction Error, App Deadline Missed",
+          "frames": "1",
+          "max_ms": "29.710000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "10",
+          "max_ms": "18.820000"
+        }
+      ],
+      "contact_sheet": "trial-05-all-frames.jpg",
+      "ffprobe_frames": 107,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 6,
+      "decoded_video_frames": 103,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "App Deadline Missed",
+          "frames": "1",
+          "max_ms": "29.650000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "10",
+          "max_ms": "16.170000"
+        }
+      ],
+      "contact_sheet": "trial-06-all-frames.jpg",
+      "ffprobe_frames": 103,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 7,
+      "decoded_video_frames": 96,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "Buffer Stuffing",
+          "frames": "1",
+          "max_ms": "21.170000"
+        },
+        {
+          "jank_type": "Prediction Error",
+          "frames": "2",
+          "max_ms": "7.640000"
+        },
+        {
+          "jank_type": "Prediction Error, App Deadline Missed",
+          "frames": "2",
+          "max_ms": "74.570000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "4",
+          "max_ms": "18.680000"
+        },
+        {
+          "jank_type": "SurfaceFlinger Scheduling, Buffer Stuffing",
+          "frames": "2",
+          "max_ms": "28.080000"
+        }
+      ],
+      "contact_sheet": "trial-07-all-frames.jpg",
+      "ffprobe_frames": 96,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 8,
+      "decoded_video_frames": 98,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "App Deadline Missed",
+          "frames": "2",
+          "max_ms": "40.020000"
+        },
+        {
+          "jank_type": "Prediction Error, App Deadline Missed",
+          "frames": "1",
+          "max_ms": "18.550000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "7",
+          "max_ms": "23.660000"
+        },
+        {
+          "jank_type": "Unknown Jank",
+          "frames": "1",
+          "max_ms": "13.310000"
+        }
+      ],
+      "contact_sheet": "trial-08-all-frames.jpg",
+      "ffprobe_frames": 98,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 9,
+      "decoded_video_frames": 92,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "None",
+          "frames": "2",
+          "max_ms": "8.430000"
+        },
+        {
+          "jank_type": "Prediction Error",
+          "frames": "4",
+          "max_ms": "13.670000"
+        },
+        {
+          "jank_type": "Prediction Error, App Deadline Missed",
+          "frames": "2",
+          "max_ms": "61.390000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "2",
+          "max_ms": "13.620000"
+        },
+        {
+          "jank_type": "SurfaceFlinger CPU Deadline Missed",
+          "frames": "1",
+          "max_ms": "7.580000"
+        }
+      ],
+      "contact_sheet": "trial-09-all-frames.jpg",
+      "ffprobe_frames": 92,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 10,
+      "decoded_video_frames": 100,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "Buffer Stuffing",
+          "frames": "1",
+          "max_ms": "9.100000"
+        },
+        {
+          "jank_type": "Prediction Error, App Deadline Missed",
+          "frames": "1",
+          "max_ms": "54.950000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "9",
+          "max_ms": "14.060000"
+        }
+      ],
+      "contact_sheet": "trial-10-all-frames.jpg",
+      "ffprobe_frames": 100,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 11,
+      "decoded_video_frames": 99,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "App Deadline Missed, Buffer Stuffing",
+          "frames": "1",
+          "max_ms": "17.090000"
+        },
+        {
+          "jank_type": "Buffer Stuffing",
+          "frames": "1",
+          "max_ms": "18.030000"
+        },
+        {
+          "jank_type": "Prediction Error",
+          "frames": "4",
+          "max_ms": "12.070000"
+        },
+        {
+          "jank_type": "Prediction Error, App Deadline Missed",
+          "frames": "1",
+          "max_ms": "37.050000"
+        },
+        {
+          "jank_type": "SurfaceFlinger CPU Deadline Missed",
+          "frames": "2",
+          "max_ms": "8.940000"
+        },
+        {
+          "jank_type": "Unknown Jank",
+          "frames": "1",
+          "max_ms": "15.210000"
+        }
+      ],
+      "contact_sheet": "trial-11-all-frames.jpg",
+      "ffprobe_frames": 99,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    },
+    {
+      "trial": 12,
+      "decoded_video_frames": 89,
+      "observed_dialog_pid": 8306,
+      "app_frame_timeline": [
+        {
+          "jank_type": "Prediction Error, App Deadline Missed",
+          "frames": "1",
+          "max_ms": "74.120000"
+        },
+        {
+          "jank_type": "Prediction Error, App Deadline Missed, Buffer Stuffing",
+          "frames": "1",
+          "max_ms": "15.680000"
+        },
+        {
+          "jank_type": "Prediction Error, Buffer Stuffing",
+          "frames": "8",
+          "max_ms": "21.260000"
+        },
+        {
+          "jank_type": "SurfaceFlinger GPU Deadline Missed",
+          "frames": "1",
+          "max_ms": "11.290000"
+        }
+      ],
+      "contact_sheet": "trial-12-all-frames.jpg",
+      "ffprobe_frames": 89,
+      "decoded_count_matches": true,
+      "visually_reviewed": true
+    }
+  ],
+  "summary": {
+    "encoded_frames": 1167,
+    "app_frame_timeline_records": 128,
+    "app_deadline_missed_records": 20,
+    "max_app_frame_timeline_duration_ms": 74.57,
+    "reviewed_contacts": 12,
+    "all_decoded_frame_counts_match": true,
+    "scope": "Frame timeline covers the captured opening/closing windows. Encoded VFR frames are not every physical refresh. Accessibility dump time includes slow automation and is not tap-to-first-draw.",
+    "visual_findings": "All 12 show a populated, stable quick panel without an empty Main flash, layout jump, or immediate dismissal. SystemUI shade collapse, brief blur and dim transitions also occur in the baseline. Missed deadlines remain; zero jank is not claimed."
+  },
+  "version": "1.4.0-validation",
+  "version_code": 9,
+  "retained_evidence": true
+}

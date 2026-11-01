@@ -1,0 +1,216 @@
+{
+  "smoke": false,
+  "api": "34",
+  "elapsed_seconds": 1019.8279999999795,
+  "requested_idle_seconds": 840,
+  "trials": [
+    {
+      "trial": 1,
+      "wait_seconds": 60,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2578.0000000377186,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_1"
+    },
+    {
+      "trial": 2,
+      "wait_seconds": 60,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2625.0,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_2"
+    },
+    {
+      "trial": 3,
+      "wait_seconds": 60,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2687.000000034459,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_3"
+    },
+    {
+      "trial": 4,
+      "wait_seconds": 60,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2625.0,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_4"
+    },
+    {
+      "trial": 5,
+      "wait_seconds": 60,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2579.0000000270084,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_5"
+    },
+    {
+      "trial": 6,
+      "wait_seconds": 60,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2608.9999999967404,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_6"
+    },
+    {
+      "trial": 7,
+      "wait_seconds": 60,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2625.0,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_7"
+    },
+    {
+      "trial": 8,
+      "wait_seconds": 60,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2625.0,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_8"
+    },
+    {
+      "trial": 9,
+      "wait_seconds": 60,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2688.0000000237487,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_9"
+    },
+    {
+      "trial": 10,
+      "wait_seconds": 60,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2655.999999959022,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_10"
+    },
+    {
+      "trial": 11,
+      "wait_seconds": 120,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2733.9999999967404,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_11"
+    },
+    {
+      "trial": 12,
+      "wait_seconds": 120,
+      "native_tap": true,
+      "accessibility_dump_available_ms": 2688.0000000237487,
+      "panel_stable_for_video": true,
+      "closed_with_one_tap": true,
+      "panel_bounds": [
+        [
+          67,
+          803,
+          1012,
+          1669
+        ]
+      ],
+      "marker": "3bd20ec96e7d_trial_12"
+    }
+  ],
+  "privacy": "Raw videos/traces remain private local test evidence; no QS XML saved or published",
+  "version": "1.4.0-validation",
+  "version_code": 9,
+  "retained_evidence": true
+}

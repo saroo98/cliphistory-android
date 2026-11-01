@@ -4,6 +4,12 @@ import android.content.ClipData
 import android.os.*
 import android.os.Process
 import app.cliphistory.core.ClipboardArguments
+import app.cliphistory.core.ClipboardCopyTracker
+import app.cliphistory.core.HistoryClock
+import app.cliphistory.core.HistoryTime
+import app.cliphistory.core.Entry
+import app.cliphistory.core.Expiry
+import app.cliphistory.core.sensitiveMatch
 import app.cliphistory.core.MAX_TEXT_BYTES
 import app.cliphistory.core.StoreException
 import java.lang.reflect.Method
@@ -14,14 +20,18 @@ class PlatformClipboardBridge(
     private val userId: Int,
     private val onCopy: (CopiedText) -> Unit,
     private val canRead: () -> Boolean,
+    private val captureSensitive: () -> Boolean,
+    private val sensitiveEntries: () -> List<Entry>,
+    private val clock: HistoryClock,
     private val onFailure: (String) -> Unit
 ) : java.io.Closeable {
-    data class CopiedText(val text: String?, val sensitive: Boolean, val oversized: Boolean, val time: Long)
+    data class CopiedText(val text: String?, val sensitive: Boolean, val oversized: Boolean, val time: Long, val capturedAt: HistoryTime, val inheritedExpiry: Expiry? = null)
     private lateinit var clipboard: Any
     private lateinit var systemBinder: IBinder
     private lateinit var listener: Any
     private lateinit var readMethod: Method
     private lateinit var removeMethod: Method
+    private val copies=ClipboardCopyTracker()
     @Volatile var registered = false; private set
     var signature: String = "Not connected"; private set
     private val death = IBinder.DeathRecipient { registered = false; onFailure("SYSTEM_CLIPBOARD_DISCONNECTED") }
@@ -67,11 +77,12 @@ class PlatformClipboardBridge(
         signature = "read=" + readMethod.parameterTypes.joinToString(",") { it.simpleName } + "; listen=" + add.parameterTypes.joinToString(",") { it.simpleName }
         systemBinder.linkToDeath(death, 0)
         try {
-            invoke(add)
-            registered = true
             // Probe access without importing old clipboard text into the archive.
             check(canRead()) { "OWNER_STOPPED" }
-            invoke(readMethod)
+            // Remember it before subscribing: its pending classification is not a new copy.
+            rememberCurrentCopy(invoke(readMethod) as? ClipData)
+            invoke(add)
+            registered = true
         } catch (t: Throwable) {
             try { invoke(removeMethod) } catch (_: Throwable) {}
             registered = false
@@ -94,16 +105,33 @@ class PlatformClipboardBridge(
         try { return method.invoke(clipboard, *ClipboardArguments.resolve(method.parameterTypes.map { it.name }, listener, userId)) }
         finally { Binder.restoreCallingIdentity(identity) }
     }
+    private fun rememberCurrentCopy(clip:ClipData?) {
+        if(clip==null)return
+        val sensitive = clip.description.extras?.getBoolean("android.content.extra.IS_SENSITIVE", false) == true
+        if (sensitive && !captureSensitive())return
+        val raw = if (clip.itemCount == 1) clip.getItemAt(0).text else null
+        if(raw!=null && raw.length<=MAX_TEXT_BYTES)copies.isRepeat(clip.description.timestamp,raw.toString(),sensitive)
+    }
     private fun readImmediately() {
         try {
             if(!canRead())return
+            // Keep the classification snapshot throughout the Binder read. The
+            // worker may expire its copy while getPrimaryClip is in flight.
+            val retained=sensitiveEntries()
+            val capturedAt=clock.now()
+            val time=System.currentTimeMillis()
             val clip = invoke(readMethod) as? ClipData ?: return
             val sensitive = clip.description.extras?.getBoolean("android.content.extra.IS_SENSITIVE", false) == true
-            if (sensitive) { onCopy(CopiedText(null, true, false, System.currentTimeMillis())); return }
+            if (sensitive && !captureSensitive()) { onCopy(CopiedText(null, true, false, time,capturedAt)); return }
             // Do not coerce URIs, read providers, or resolve HTML/Intents.
             val raw = if (clip.itemCount == 1) clip.getItemAt(0).text else null
-            if (raw != null && raw.length > MAX_TEXT_BYTES) { onCopy(CopiedText(null, false, true, System.currentTimeMillis())); return }
-            onCopy(CopiedText(raw?.toString(), false, false, System.currentTimeMillis()))
+            if (raw != null && raw.length > MAX_TEXT_BYTES) { onCopy(CopiedText(null, sensitive, true, time,capturedAt)); return }
+            val text=raw?.toString()
+            // Source metadata can change without another copy. Track the source flag,
+            // not inherited expiry, so a late notification cannot restore deleted text.
+            if(text!=null && copies.isRepeat(clip.description.timestamp,text,sensitive))return
+            val inherited=text?.let { sensitiveMatch(retained,it,capturedAt) }
+            onCopy(CopiedText(text, sensitive || inherited!=null, false, time,capturedAt,inherited?.expiry))
         } catch (_: Throwable) { onFailure("CLIPBOARD_READ_FAILED") }
     }
     override fun close() {

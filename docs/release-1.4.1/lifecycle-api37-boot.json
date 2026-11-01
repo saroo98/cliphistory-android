@@ -1,0 +1,20 @@
+{
+  "mode": "boot",
+  "serial": "emulator-5594",
+  "api": "37",
+  "before": {
+    "app.cliphistory.validation": 9713,
+    "app.cliphistory.validation:clipboard": 9765
+  },
+  "started_utc": "2026-10-31T13:11:19Z",
+  "reconnected_after_shizuku_start": true,
+  "pause_preserved": false,
+  "listener_ready_before_copy": true,
+  "synthetic_event_verified": true,
+  "captured_after_recovery": true,
+  "after": {
+    "app.cliphistory.validation": 3047,
+    "app.cliphistory.validation:clipboard": 3115
+  },
+  "elapsed_seconds": 57.454
+}

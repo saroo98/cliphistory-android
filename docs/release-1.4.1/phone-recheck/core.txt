@@ -1,0 +1,8 @@
+PASS Committed sensitivity/deadline is available during recovery-copy I/O
+PASS Committed sensitivity/deadline is available during recovery-copy I/O
+PASS Committed sensitivity/deadline is available during recovery-copy I/O
+PASS A queued recopy is rejected after its inherited deadline
+PASS Expired queued text is absent from both recovery copies
+PASS A delayed unmarked recopy cannot downgrade expired sensitive Undo
+PASS Expired Undo cannot restore sensitive text
+PASS 7 phone verification assertions (phone-core). No production history access.

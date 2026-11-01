@@ -1,0 +1,46 @@
+PASS Actual Shizuku connection
+PASS Shell listener and durable private storage, API 35
+PASS Set validation history limit
+PASS Clear only synthetic validation history
+PASS Select exact unique-text policy
+PASS Arm live callback test
+PASS Real self-test passes without saving nonce
+Producer package: app.cliphistory.validation.test, target: app.cliphistory.validation
+PASS Synthetic producer is foreground
+PASS Another app captures while history is backgrounded
+PASS Consecutive duplicates skipped
+PASS Pause prevents capture
+PASS Marked sensitive payload skipped
+PASS Oversized payload skipped
+PASS Full Unicode and whitespace preserved
+PASS Live missing entry distinguished from error
+PASS Foreground for clipboard restoration
+FAIL after 0 assertions: java.lang.IllegalStateException: PASS Actual Shizuku connection
+PASS Shell listener and durable private storage, API 35
+PASS Set validation history limit
+PASS Clear only synthetic validation history
+PASS Select exact unique-text policy
+PASS Arm live callback test
+PASS Real self-test passes without saving nonce
+PASS Synthetic producer is foreground
+PASS Another app captures while history is backgrounded
+PASS Consecutive duplicates skipped
+PASS Pause prevents capture
+PASS Marked sensitive payload skipped
+Oversize counters: saved=1, count=1, oversized=1, unsupported=0
+PASS Oversized payload skipped
+PASS Full Unicode and whitespace preserved
+PASS Live missing entry distinguished from error
+Synthetic A/B/A/B observed count=3, texts=[Synthetic duplicate B, Synthetic duplicate A, Synthetic validation Unicode
+کوردی فارسی 中文 🙂
+  spaces  ]
+PASS Foreground for clipboard restoration
+
+	at app.cliphistory.ReleaseChecks.run(ReleaseChecks.kt:371)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:83)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2594)
+Caused by: java.lang.IllegalStateException: Actual A/B/A/B produces exactly B,A
+	at app.cliphistory.ReleaseChecks.checkThat(ReleaseChecks.kt:38)
+	at app.cliphistory.ReleaseChecks.live(ReleaseChecks.kt:283)
+	at app.cliphistory.ReleaseChecks.run(ReleaseChecks.kt:370)
+	... 2 more

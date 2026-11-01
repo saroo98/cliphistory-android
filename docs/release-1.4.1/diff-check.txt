@@ -1,0 +1,7 @@
+warning: in the working copy of '.gitignore', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'BUILDING.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'DEVICE_TESTS.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'START_HERE.md', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'app/src/androidTest/java/app/cliphistory/FeatureChecks.kt', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'app/src/androidTest/java/app/cliphistory/UiSmokeInstrumentation.kt', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'app/src/main/res/values/ui_strings.xml', CRLF will be replaced by LF the next time Git touches it

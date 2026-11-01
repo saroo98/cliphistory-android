@@ -3,16 +3,18 @@ package app.cliphistory.ui
 import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Build
 import android.view.Gravity
 import android.view.View
 import android.widget.*
 import app.cliphistory.BuildConfig
 import app.cliphistory.R
 import app.cliphistory.client.DaemonClient
+import app.cliphistory.client.changeSensitivePolicy
 import app.cliphistory.core.*
 
 class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val settings:AppSettings,private val client:DaemonClient) {
-    enum class Action { LIMIT, DUPLICATES, START, STOP, TILE_ADD, APPEARANCE, BATTERY, WELCOME, SUPPORT, GUIDE, NOTIFICATIONS, TILE_MODE, MOTION, WELCOME_FREQUENCY, SOURCE, LICENSES }
+    enum class Action { LIMIT, DUPLICATES, START, STOP, TILE_ADD, APPEARANCE, BATTERY, WELCOME, SUPPORT, GUIDE, NOTIFICATIONS, TILE_MODE, MOTION, WELCOME_FREQUENCY, SOURCE, LICENSES, SENSITIVE_INDEFINITE, SENSITIVE_DURATION, CLIPBOARD_ACCESS_NOTICES }
     data class Page(val view:View,val update:(Bundle)->Unit)
     private fun s(id:Int)=ui.activity.getString(id)
     fun create(status:Bundle,back:()->Unit,action:(Action)->Unit,localChanged:(String)->Unit):Page {
@@ -20,6 +22,10 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
         var updating=false
         var pauseSaving=false
         var recoverySaving=false
+        var sensitiveSaving=false
+        lateinit var sensitiveCapture:Switch
+        lateinit var sensitiveAuto:Switch
+        lateinit var sensitiveDuration:Ui.PreferenceRow
         lateinit var paused:Switch
         lateinit var automatic:Switch
         lateinit var afterBoot:Switch
@@ -38,6 +44,25 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
         lateinit var stop:View
 
         fun enabled(view:View,value:Boolean) { view.isEnabled=value;view.isFocusable=value }
+        fun sensitiveState() {
+            val known=latest.containsKey("captureSensitive")
+            val capture=latest.getBoolean("captureSensitive")
+            val auto=latest.getBoolean("autoDeleteSensitive",true)
+            updating=true;sensitiveCapture.isChecked=capture;sensitiveAuto.isChecked=auto;updating=false
+            val editable=client.connected() && known && !sensitiveSaving
+            enabled(sensitiveCapture,editable);enabled(sensitiveAuto,editable && capture)
+            enabled(sensitiveDuration.view,editable && capture && auto)
+            sensitiveDuration.summary.text=if(known)ui.activity.resources.getQuantityString(R.plurals.sensitive_minutes,
+                latest.getInt("sensitiveMinutes",5),latest.getInt("sensitiveMinutes",5)) else s(R.string.not_confirmed)
+        }
+        fun saveSensitive(capture:Boolean?=null,auto:Boolean?=null) {
+            sensitiveSaving=true;sensitiveState()
+            client.command({ it.changeSensitivePolicy(capture=capture,autoDelete=auto) }) { result ->
+                if(result.containsKey("captureSensitive"))latest=result
+                sensitiveSaving=false;sensitiveState()
+                localChanged(if(result.getBoolean("ok"))"" else result.getString("issue","PREFERENCES_NOT_SAVED").orEmpty())
+            }
+        }
         fun recoveryState() {
             val options=client.preferences.options()
             updating=true;automatic.isChecked=options.automatic;afterBoot.isChecked=options.afterBoot;updating=false
@@ -132,8 +157,18 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
             toggle(R.string.return_after_copy,settings.returnAfterCopy,R.string.return_body) { _,value -> settings.returnAfterCopy=value;localChanged("") }
 
             group(R.string.privacy)
+            sensitiveCapture=toggle(R.string.capture_sensitive,latest.getBoolean("captureSensitive"),R.string.capture_sensitive_body) { _,value ->
+                saveSensitive(capture=value)
+            }.first
+            sensitiveAuto=toggle(R.string.auto_delete_sensitive,latest.getBoolean("autoDeleteSensitive",true),R.string.auto_delete_sensitive_body) { _,value ->
+                if(value)saveSensitive(auto=true)
+                else { sensitiveState();action(Action.SENSITIVE_INDEFINITE) }
+            }.first
+            sensitiveDuration=preference(R.string.sensitive_delete_after,Action.SENSITIVE_DURATION)
+            if(Build.VERSION.SDK_INT>=31)preference(R.string.clipboard_access_notices,Action.CLIPBOARD_ACCESS_NOTICES,s(R.string.clipboard_access_notices_summary))
             toggle(R.string.allow_screenshots,settings.allowScreenshots,R.string.allow_screenshots_body) { _,value -> settings.allowScreenshots=value;localChanged("") }
-            toggle(R.string.hide_recents,settings.hideRecents,R.string.html_port_recents_body) { _,value -> settings.hideRecents=value;localChanged("") }
+            if(Build.VERSION.SDK_INT>=33)toggle(R.string.hide_recents,settings.hideRecents,R.string.html_port_recents_body) { _,value -> settings.hideRecents=value;localChanged("") }
+            else ui.paragraph(content,s(R.string.recents_legacy))
             content.addView(ui.text(s(R.string.privacy_mandatory),15f,true).apply { setPadding(ui.dp(12),ui.dp(8),ui.dp(12),0) })
 
             group(R.string.appearance)
@@ -149,6 +184,7 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
         }
         val update:(Bundle)->Unit={ new ->
             latest=new
+            sensitiveState()
             val connected=client.connected()
             val state=recorderState(client.connectionStage(),new.getBoolean("paused"),new.getBoolean("active"),new.getString("selfTest")=="PASS",new.getString("issue").orEmpty().isNotEmpty())
             val stopped=new.getBoolean("explicitStop")

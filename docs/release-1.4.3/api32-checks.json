@@ -1,0 +1,135 @@
+{
+  "serial": "emulator-5592",
+  "avd": "ClipHistoryCompat_API32_20261031",
+  "api": 32,
+  "theme": "light",
+  "tile_page_limit": 4,
+  "sdk_full": "",
+  "fingerprint": "google/sdk_gphone64_x86_64/emulator64_x86_64_arm64:12/SE1B.240122.005/11418786:userdebug/dev-keys",
+  "release": "12",
+  "apk_sha256": "cb1a7f75718d0d91a626b793375eed11d275a2e296d7b0117d95b8f5c38f7e6b",
+  "test_apk_sha256": "4e6018074996cb45c5e17b8b21402c9e016bc7e30519b98d548c26dded41669e",
+  "suites": [
+    {
+      "suite": "boot-identity",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (boot-identity), API 32. Synthetic validation only.",
+      "seconds": 5.263
+    },
+    {
+      "suite": "live",
+      "passed": true,
+      "summary": "PASS 33 release assertions (live). Synthetic data only.",
+      "seconds": 11.641
+    },
+    {
+      "suite": "sensitive-live",
+      "passed": true,
+      "summary": "PASS 40 sensitive assertions (sensitive-live). Synthetic emulator only.",
+      "seconds": 65.362
+    },
+    {
+      "suite": "encryption",
+      "passed": true,
+      "summary": "PASS 99 encryption assertions (encryption). No clipboard writes.",
+      "seconds": 2.918
+    },
+    {
+      "suite": "sensitive-ui",
+      "passed": true,
+      "summary": "PASS 23 sensitive assertions (sensitive-ui). Synthetic emulator only.",
+      "seconds": 31.608
+    },
+    {
+      "suite": "regression",
+      "passed": true,
+      "summary": "PASS 12 release assertions (regression). Synthetic data only.",
+      "seconds": 5.594
+    },
+    {
+      "suite": "settings",
+      "passed": true,
+      "summary": "PASS 21 feature assertions (settings), API 32. Synthetic validation only.",
+      "seconds": 4.28
+    },
+    {
+      "suite": "onboarding",
+      "passed": true,
+      "summary": "PASS 24 feature assertions (onboarding), API 32. Synthetic validation only.",
+      "seconds": 5.342
+    },
+    {
+      "suite": "audit-diagnostics",
+      "passed": true,
+      "summary": "PASS 35 diagnostic presentation/report assertions, API 32. Synthetic validation only.",
+      "seconds": 2.119
+    },
+    {
+      "suite": "html-port",
+      "passed": true,
+      "summary": "PASS 123 HTML port assertions (html-port), API 32. Owned disposable emulator fixtures only.",
+      "seconds": 9.085
+    },
+    {
+      "suite": "html-port-live",
+      "passed": true,
+      "summary": "PASS 50 HTML port assertions (html-port-live), API 32. Owned disposable emulator fixtures only.",
+      "seconds": 7.225
+    },
+    {
+      "suite": "privacy",
+      "passed": true,
+      "summary": "PASS 11 feature assertions (privacy), API 32. Synthetic validation only.",
+      "seconds": 5.04
+    },
+    {
+      "suite": "quick-errors",
+      "passed": true,
+      "summary": "PASS 24 feature assertions (quick-errors), API 32. Synthetic validation only.",
+      "seconds": 3.637
+    },
+    {
+      "suite": "command-errors",
+      "passed": true,
+      "summary": "PASS 21 feature assertions (command-errors), API 32. Synthetic validation only.",
+      "seconds": 3.171
+    },
+    {
+      "suite": "accessibility",
+      "passed": true,
+      "summary": "PASS 22 feature assertions (accessibility), API 32. Synthetic validation only.",
+      "seconds": 5.122
+    },
+    {
+      "suite": "customization",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (customization), API 32. Synthetic validation only.",
+      "seconds": 2.625
+    },
+    {
+      "suite": "recovery",
+      "passed": true,
+      "summary": "PASS 11 feature assertions (recovery), API 32. Synthetic validation only.",
+      "seconds": 2.221
+    },
+    {
+      "suite": "paused-connection",
+      "passed": true,
+      "summary": "PASS 9 feature assertions (paused-connection), API 32. Synthetic validation only.",
+      "seconds": 2.31
+    },
+    {
+      "suite": "tile",
+      "passed": true,
+      "summary": "PASS 75 feature assertions (tile), API 32. Synthetic validation only.",
+      "seconds": 24.747
+    },
+    {
+      "suite": "helper-failure",
+      "passed": true,
+      "summary": "PASS 10 feature assertions (helper-failure), API 32. Synthetic validation only.",
+      "seconds": 32.711
+    }
+  ],
+  "shizuku_package": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c"
+}

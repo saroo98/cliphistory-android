@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="capture_sensitive">Capture sensitive text</string>
+    <string name="capture_sensitive_body">Save text marked sensitive by its source app. Turning this off removes saved sensitive text and its Undo.</string>
+    <string name="auto_delete_sensitive">Auto-delete sensitive text</string>
+    <string name="auto_delete_sensitive_body">Remove timed sensitive text after the chosen duration or a reboot. Copying it again does not extend its current timer.</string>
+    <string name="sensitive_delete_after">Delete after</string>
+    <string name="sensitive_duration_body">Choose how long to keep sensitive text. A shorter duration can shorten active timers; a longer one applies to new text.</string>
+    <string name="sensitive_custom">Custom duration</string>
+    <string name="sensitive_custom_body">Enter a duration from 1 to 1,440 minutes.</string>
+    <string name="sensitive_duration_invalid">Enter 1 to 1,440 minutes</string>
+    <string name="sensitive_minutes_label">Minutes</string>
+    <string name="sensitive_indefinite_title">Keep sensitive text until deleted?</string>
+    <string name="sensitive_indefinite_body">Sensitive text will stay in history until you delete it or turn capture off. Existing timers will be removed. Encryption protects stored files, but text remains readable while using the app.</string>
+    <string name="sensitive_indefinite_confirm">Keep until deleted</string>
+    <string name="encryption_storage">History encryption</string>
+    <string name="encryption_enabled">AES-256-GCM</string>
+    <string name="encryption_key_security">Key protection</string>
+    <string name="sensitive_saved">Sensitive events saved</string>
+    <string name="expiry_clock">Expiry clock</string>
+    <string name="expiry_clock_unavailable">Boot identity unavailable; timed text is withheld</string>
+    <plurals name="sensitive_minutes">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+</resources>

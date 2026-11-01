@@ -1,0 +1,11 @@
+FAIL after 0 assertions: java.lang.IllegalStateException: PASS One empty slot recovers from the authenticated copy
+
+	at app.cliphistory.EncryptionChecks.run(EncryptionChecks.kt:180)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:79)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2402)
+Caused by: java.lang.IllegalStateException: A completed store with both slots empty fails closed
+	at app.cliphistory.EncryptionChecks.verify(EncryptionChecks.kt:21)
+	at app.cliphistory.EncryptionChecks.rejected(EncryptionChecks.kt:47)
+	at app.cliphistory.EncryptionChecks.missingSnapshots(EncryptionChecks.kt:138)
+	at app.cliphistory.EncryptionChecks.run(EncryptionChecks.kt:175)
+	... 2 more

@@ -1,0 +1,15 @@
+{
+  "mode": "task-stop",
+  "serial": "emulator-5574",
+  "api": "34",
+  "before": {
+    "app.cliphistory.validation": 4450,
+    "app.cliphistory.validation:clipboard": 5075
+  },
+  "started_utc": "2026-10-08T16:31:12Z",
+  "no_capture_after_user_stop": true,
+  "after": {
+    "app.cliphistory.validation": 5842
+  },
+  "elapsed_seconds": 3.609
+}

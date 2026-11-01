@@ -1,0 +1,3 @@
+    versionCode=10 minSdk=34 targetSdk=37
+    versionName=1.4.0
+    signatures=PackageSignatures{6c6d5c0 version:2, signatures:[EF13472A271F187FBCFB3FECC186A5AFA041BF1A2567CAA166C82F8EB5459C82], past signatures:[]}

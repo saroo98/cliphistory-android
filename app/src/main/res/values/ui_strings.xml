@@ -25,9 +25,9 @@
     <string name="paused">Recording paused</string>
     <string name="resume">Resume</string>
     <string name="start_recording">Start recording</string>
-    <string name="start_shizuku">Start Shizuku, then connect ClipHistory.</string>
+    <string name="start_shizuku">Shizuku is installed separately. Start it, then connect ClipHistory.</string>
     <string name="missing_title">Shizuku is needed</string>
-    <string name="missing_body">Install and start Shizuku to enable recording.</string>
+    <string name="missing_body">Shizuku is a separate app. Install and start it to enable recording.</string>
     <string name="permission_title">Allow Shizuku access</string>
     <string name="permission_body">Connect to request access for ClipHistory.</string>
     <string name="denied_title">Shizuku access is off</string>
@@ -123,13 +123,13 @@
     <string name="help_restart">After restarting your phone</string>
     <string name="help_restart_body">Unlock the phone and start non-root Shizuku again. Automatic recovery and Resume after reboot prepare the recorder when enabled. If it does not reconnect, open ClipHistory and tap Connect. Force stop and Stop recorder remain effective until you explicitly start again. Pause stays saved. Copies made while recording is stopped cannot be recovered.</string>
     <string name="help_local">Only on this phone</string>
-    <string name="help_local_body">No accounts, ads, analytics, or cloud sync.</string>
+    <string name="help_local_body">History is encrypted on this device. There are no accounts, ads, analytics, or cloud sync. Text is readable in the app and Android clipboard while in use.</string>
     <string name="help_sensitive">Sensitive text</string>
-    <string name="help_sensitive_body">Text marked sensitive by Android is skipped. Not every app marks private text. Pause recording when needed.</string>
+    <string name="help_sensitive_body">Text marked sensitive by its source app is skipped by default. You can capture it in Settings → Privacy. Auto-delete defaults to 5 minutes; timed entries also expire after a reboot. It removes saved history, not Android’s clipboard. Turning capture off removes saved sensitive text. Not every app marks private text. Pause recording when needed.</string>
     <string name="help_limits">Limits</string>
     <string name="help_limits_body">Text only. Entries over 64 KiB are skipped. Only the main phone profile is supported.</string>
     <string name="help_screen">Screen privacy</string>
-    <string name="help_screen_body">Screenshots and screen recording are blocked by default. You can allow them in Settings → Privacy. Hide history in Recents is a separate control. Do not assume other apps mark every private copy as sensitive; Pause before copying private text.</string>
+    <string name="help_screen_body">Screenshots and screen recording are blocked by default. You can allow them in Settings → Privacy. Android 13 and newer also offer a separate Hide history in Recents control. On Android 11–12, blocking screenshots also hides Recents previews. Do not assume other apps mark every private copy as sensitive; Pause before copying private text.</string>
     <string name="help_setup">Shizuku setup</string>
     <string name="version_license">ClipHistory %1$s · MIT license</string>
     <string name="open_faster">Open history faster</string>
@@ -137,6 +137,7 @@
     <string name="add_tile">Add tile</string>
     <string name="not_now">Not now</string>
     <string name="tile_manual">You can also add it from Quick Settings → Edit.</string>
+    <string name="tile_manual_legacy">Swipe down twice to open Quick Settings. Tap Edit (the pencil), then drag Clipboard into your active tiles. Close Quick Settings and open it again to use the tile.</string>
     <string name="tile_available">Clipboard tile is available</string>
     <string name="tile_subtitle">Open history</string>
     <string name="appearance_body">Choose how ClipHistory looks.</string>

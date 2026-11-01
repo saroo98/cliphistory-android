@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="app.cliphistory.ReleaseDataTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-31T21:54:50.687Z" hostname="local-test-host" time="0.169">
+  <properties/>
+  <testcase name="legacyVersionsDecodeAndVersionThreeRoundTrips" classname="app.cliphistory.ReleaseDataTest" time="0.001"/>
+  <testcase name="malformedUtf8WithAValidChecksumIsRejected" classname="app.cliphistory.ReleaseDataTest" time="0.001"/>
+  <testcase name="previewsDoNotSplitSurrogatePairs" classname="app.cliphistory.ReleaseDataTest" time="0.006"/>
+  <testcase name="maximumHistorySurvivesRoundTrip" classname="app.cliphistory.ReleaseDataTest" time="0.16"/>
+  <testcase name="searchShowsMatchesBeyondTheFirstPreview" classname="app.cliphistory.ReleaseDataTest" time="0.001"/>
+  <testcase name="shortTextRemainsExact" classname="app.cliphistory.ReleaseDataTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,20 @@
+{
+  "old_version_code": 9,
+  "new_version_code": 10,
+  "old_helper_pid": 16398,
+  "helper_after_install": 16398,
+  "new_helper_pid": 16871,
+  "helper_uid": 2000,
+  "owner_uid_preserved": true,
+  "wrapped_key_record_unchanged": true,
+  "exact_synthetic_payload_preserved": true,
+  "authenticated_offline_metadata": {
+    "generation": 7,
+    "count": 1,
+    "paused": false,
+    "limit": 100,
+    "duplicateMode": 0
+  },
+  "listening_after_upgrade": true,
+  "scope": "Owned emulator only; payload hash checked in test memory. No data clear/downgrade, personal phone or plaintext-key export."
+}

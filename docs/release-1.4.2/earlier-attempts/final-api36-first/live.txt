@@ -1,0 +1,28 @@
+PASS Actual Shizuku connection
+PASS Shell listener and durable private storage, API 36
+PASS Set validation history limit
+PASS Clear only synthetic validation history
+PASS Select exact unique-text policy
+PASS Arm live callback test
+PASS Real self-test passes without saving nonce
+Producer package: app.cliphistory.validation.test, target: app.cliphistory.validation
+PASS Synthetic producer is foreground
+PASS Foreground for clipboard restoration
+FAIL after 0 assertions: java.lang.IllegalStateException: PASS Actual Shizuku connection
+PASS Shell listener and durable private storage, API 36
+PASS Set validation history limit
+PASS Clear only synthetic validation history
+PASS Select exact unique-text policy
+PASS Arm live callback test
+PASS Real self-test passes without saving nonce
+PASS Synthetic producer is foreground
+PASS Foreground for clipboard restoration
+
+	at app.cliphistory.ReleaseChecks.run(ReleaseChecks.kt:371)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:83)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2597)
+Caused by: java.lang.IllegalStateException: Synthetic capture count did not reach 1
+	at app.cliphistory.ReleaseChecks.live$awaitCount(ReleaseChecks.kt:213)
+	at app.cliphistory.ReleaseChecks.live(ReleaseChecks.kt:242)
+	at app.cliphistory.ReleaseChecks.run(ReleaseChecks.kt:370)
+	... 2 more

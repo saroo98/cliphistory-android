@@ -1,0 +1,323 @@
+PASS Live upgrade preserves every committed entry, ID, timestamp and setting
+
+PASS Migration phase is durably complete
+
+PASS Slot 0 has the encrypted envelope
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 has no text canary
+
+PASS Slot 0 authenticates and preserves exact state
+
+PASS Slot 1 has the encrypted envelope
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 has no text canary
+
+PASS Slot 1 authenticates and preserves exact state
+
+PASS The stored key record does not contain its plaintext data key
+
+Observed Keystore security level: Software
+
+PASS Private history-a.bin remains owner-only
+
+PASS Private history-b.bin remains owner-only
+
+PASS Private history-key.bin remains owner-only
+
+PASS 160 encryption assertions (stored-upgrade). No clipboard writes.

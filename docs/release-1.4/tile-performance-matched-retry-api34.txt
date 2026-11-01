@@ -1,0 +1,11 @@
+PASS Validation helper removed before seeding
+PASS Synthetic offline history loaded
+PASS Previous SystemUI shade collapse complete
+FAIL after 0 assertions: java.lang.IllegalStateException: System tile state ready for interaction
+	at app.cliphistory.FeatureChecks.await(FeatureChecks.kt:34)
+	at app.cliphistory.FeatureChecks.tile$expand(FeatureChecks.kt:258)
+	at app.cliphistory.FeatureChecks.tile$expand$default(FeatureChecks.kt:248)
+	at app.cliphistory.FeatureChecks.tile(FeatureChecks.kt:325)
+	at app.cliphistory.FeatureChecks.run(FeatureChecks.kt:844)
+	at app.cliphistory.UiSmokeInstrumentation.onStart(UiSmokeInstrumentation.kt:82)
+	at android.app.Instrumentation$InstrumentationThread.run(Instrumentation.java:2402)

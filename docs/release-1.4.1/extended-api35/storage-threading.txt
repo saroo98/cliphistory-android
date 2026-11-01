@@ -1,0 +1,12 @@
+PASS Initial 40 entries loaded
+PASS StrictMode search completes
+PASS StrictMode full-text read completes
+PASS StrictMode copy completes
+PASS StrictMode detects no main-thread history-file or Keystore disk work
+Encode 2837 bytes: 2 ms
+PASS Initial 40 entries loaded
+PASS StrictMode search completes
+PASS StrictMode full-text read completes
+PASS StrictMode copy completes
+PASS StrictMode detects no main-thread history-file or Keystore disk work
+PASS 5 release assertions (storage-threading). Synthetic data only.

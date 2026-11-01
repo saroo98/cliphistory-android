@@ -1,0 +1,16 @@
+{
+  "old_version": "1.3.4-validation",
+  "new_version": "1.4.0-validation",
+  "old_helper_pid": 24282,
+  "helper_pid_after_install": 24282,
+  "new_helper_pid": 24463,
+  "helper_uid": 2000,
+  "app_uid_preserved": true,
+  "exact_committed_state_preserved": true,
+  "both_slots_authenticated": true,
+  "private_modes": "0600",
+  "count": 75,
+  "limit": 100,
+  "paused": false,
+  "duplicate_mode": 0
+}

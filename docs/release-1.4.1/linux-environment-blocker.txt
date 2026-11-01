@@ -1,0 +1,6 @@
+Command: wsl -d Ubuntu --exec true
+Native output normalized for readability; original bytes retained in ignored tool evidence.
+
+Failed to attach disk '<user-local WSL disk>' to WSL2: The system cannot find the path specified.
+
+Error code: Wsl/Service/CreateInstance/MountDisk/HCS/ERROR_PATH_NOT_FOUND

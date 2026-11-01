@@ -1,0 +1,21 @@
+{
+  "serial": "emulator-5592",
+  "avd": "ClipHistory13_API37",
+  "api": 37,
+  "theme": "light",
+  "tile_page_limit": 4,
+  "sdk_full": "37.0",
+  "fingerprint": "google/sdk_gphone64_x86_64/emu64xa:17/CE2A.260420.051.A3/16571990:userdebug/dev-keys",
+  "release": "17",
+  "apk_sha256": "f51febdee89de0cf7167a4ba4916348282f42635952bba5d70d06c99f66e304f",
+  "test_apk_sha256": "d0fec6f276390e10228df1fb7d5bbb9c21b831cf8dfd2e8aa5edb8d5a837c311",
+  "suites": [
+    {
+      "suite": "settings",
+      "passed": true,
+      "summary": "PASS 21 feature assertions (settings), API 37. Synthetic validation only.",
+      "seconds": 3.36
+    }
+  ],
+  "shizuku_package": "versionCode=1086 minSdk=24 targetSdk=36\nversionName=13.6.0.r1086.2650830c"
+}

@@ -2,6 +2,8 @@
 
 **Current evidence: see `VERIFICATION.md`.** This is the broader acceptance checklist, including tests beyond this release's device coverage. Do not infer every item passed from a successful build or connection test.
 
+The 1.4.4 candidate has focused emulator and remote physical-device evidence in [release qualification](docs/release-1.4.4/RELEASE.md). Earlier tests are documented separately for [1.4.3](docs/release-1.4.3/RELEASE.md) and [1.4.2](docs/release-1.4.2/RELEASE.md); their results do not by themselves qualify the newer APK.
+
 Use harmless test text, not passwords or private messages. Do not clear or alter valuable history to run a test without first deciding that it is safe to do so. The app intentionally has no cloud backup/export in this version.
 
 ## First gate: installation and connection
@@ -46,7 +48,7 @@ For disposable data only, also test Android's Clear storage and uninstall/reinst
 
 ## Privacy, permission and size boundaries
 
-Use only a synthetic marked-sensitive clip, not an actual password, to test sensitive filtering. The app checks `android.content.extra.IS_SENSITIVE`; an app that does not mark its own secret cannot be recognised reliably by that flag. Oversized UTF-8 text should increment the skipped counter rather than appearing truncated.
+Use only a synthetic marked-sensitive clip, not an actual password, to test sensitive filtering and opt-in capture. The app checks `android.content.extra.IS_SENSITIVE`; an app that does not mark its own secret cannot be recognised reliably by that flag. Test capture off, capture on, default five-minute expiry, custom duration, confirmed indefinite retention and disable-capture cleanup. Oversized UTF-8 text should increment the skipped counter rather than appearing truncated.
 
 Revoke ClipHistory's Shizuku permission and confirm that recording stops or access is denied. Re-authorise it, reopen the app and check a new copy. Verify that other unprivileged apps cannot bind directly to the private history interface.
 
@@ -70,7 +72,7 @@ Build the validation variant described in `BUILDING.md` for an owned disposable 
 adb shell am instrument -w -e suite live app.cliphistory.validation.test/app.cliphistory.UiSmokeInstrumentation
 ```
 
-The live suite uses the test APK's clipboard producer, verifies real capture and restores the original clipboard as an opaque object on the disposable emulator. It clears only the validation app's synthetic history. The normal `app.cliphistory` package is not its target. For a personal phone, use a signed upgrade/launch check and read-only inspection; do not infer that restoring the clipboard reverses a synthetic capture by another recorder.
+The live suite uses the test APK's clipboard producer, verifies real capture and restores the original clipboard as an opaque object on the disposable emulator. Enable **Settings → Recovery → Automatic recovery** before running it: the failed-notification-Stop assertion exercises that optional supervisor. A reused emulator can retain this option disabled by a previous settings suite. It clears only the validation app's synthetic history. The normal `app.cliphistory` package is not its target. For a personal phone, use a signed upgrade/launch check and read-only inspection; do not infer that restoring the clipboard reverses a synthetic capture by another recorder.
 
 On a disposable emulator with Shizuku stopped, build the normal debug app and run `-e suite regression`, `-e suite layout` or `-e suite capacity` against `app.cliphistory.test/app.cliphistory.UiSmokeInstrumentation`. Omit `suite` for the UI checks and synthetic screenshots. Layout requires an open software keyboard. Capacity uses 500 entries of 64 KiB, then restores small synthetic history.
 
@@ -103,3 +105,27 @@ On the disposable validation emulator run `-e suite html-port` for Settings cont
 With shell-mode Shizuku authorized on that emulator, run `-e suite html-port-live -e theme light` and `dark`. It uses the real paused helper and verifies deletion, pending Undo across navigation and rotation, full-capacity refusal without eviction, original ID/time/text restoration, stale-token rejection and Dismiss. It writes only disposable synthetic history. Its issue-only status check exercises the UI metadata-loss boundary, then independently verifies the actual helper token is unchanged; it is not a fabricated IPC failure claim.
 
 Activity/window decor captures in `files/ui-evidence/` are actual native drawings. Full-system screenshots, motion measurements, hardware behavior and spoken TalkBack results require separate evidence. See `docs/HTML_UI_PORT.md` for this build's executed checks and limits.
+
+## Encryption and sensitive retention (1.4)
+
+Use `-e suite encryption` on the owned disposable emulator for Keystore wrapping, modified-record rejection, legacy v1/v2 migration, a partial first key write, mixed plaintext/ciphertext interrupted migration, completed-phase plaintext rejection, missing-key failure and expiry on a cached offline read. It creates isolated test directories and does not overwrite personal data.
+
+`-e suite key-check` is phone-safe on the separate validation package. It creates new test files, reports the observed Keystore security level, and performs no clipboard write, history seeding, deletion of existing history or permission change. It does not certify the signed production upgrade.
+
+`-e suite sensitive-ui` tests saved offline settings in both themes, screenshot controls, full-text expiry, quick-panel expiry and ID-based retry expiry. `-e suite sensitive-live` requires authorized shell-mode Shizuku and tests actual marked capture, classification on unmarked recopy, preserved clipboard flags, saved/skipped counters, purge policy, real native controls, custom-duration bounds, indefinite confirmation and an actual one-minute deadline. These modes refuse physical phones.
+
+History fixtures use the production encryption wrapper after proving that their helper has stopped. Deliberate corrupt payloads remain test-only. No test hook or fixture Activity is included in the release. Local evidence, build labels and coverage limits are in `docs/release-1.4/RELEASE.md`.
+
+The timing driver requires `--expected-version` with the exact validation version, for example `1.4.0-validation`. Run identical hardware, fixture, theme and measurement modes for before/after comparisons. Capture actual frame/video evidence; accessibility-dump timings are not rendering timings.
+
+`-e suite missing-snapshots` verifies recovery with one authenticated copy and fail-closed handling when both history files are empty or missing after a completed migration. It leaves the wrapped key unchanged. The full `encryption` suite includes these cases. `-e suite storage-threading` invalidates caches off the main thread, then exercises loading, search, full text and copy under a main-thread StrictMode policy. This is a focused disk-work check, not proof that StrictMode observes every JNI or Binder operation.
+
+`tools/test-encrypted-upgrade.py` requires the owned API 34 emulator with a stopped validation baseline already installed. The default is plaintext 1.3.4; `--baseline 1.4.0` and `--baseline 1.4.1` stage timed sensitive, indefinite sensitive and ordinary entries using the installed app’s own encryption. It starts the real old shell recorder, enables Automatic recovery through the native Settings control, installs the new APK in place, and compares the full committed state in test memory. Enabling that fixture option is necessary to expect automatic reconnection after the update. Its sanitized report records helper replacement, exact state preservation, authenticated copies, wrapped-key preservation for encrypted baselines, and private file modes. Never run it on a personal phone.
+
+`tools/test-lifecycle.py` uses native UI and the actual process/task registry instead of instrumentation for lifecycle observations. Android starts and finishes instrumentation by force-stopping its target, which would invalidate a recorder-recovery check. The driver waits for acknowledged listener readiness and verifies synthetic producer events against Android's clipboard hash. Destructive modes refuse a physical device and require this task's disposable ClipHistory emulator. A protected Recents task can omit its accessibility label; the driver verifies native Overview dismissal against the task registry.
+
+After `--mode start`, `--mode clear-storage` explicitly clears only this owned emulator's `app.cliphistory.validation` data. It verifies a connected zero-entry fresh store, a replacement key record/helper, and exactly one newly captured synthetic entry. This is a destructive fixture test, never a personal-phone command. Authentication can then be checked with `-e suite stored-status`; instrumentation must run after, not during, lifecycle observation.
+
+`-e suite phone-observe` is read-only on production ClipHistory while running from the separate validation package. It exports only count, limit, known recorder/settings state and whitelisted encryption diagnostics. It performs no clipboard writes, personal-history export, screenshot, clearing, pause change or connection test.
+
+Before cold or idle timing, restore the three-entry ordinary synthetic fixture with the existing `quick-errors` suite. Sensitive-expiry tests intentionally remove their fixture entries and are not a timing baseline. Select the serial from fresh device and AVD identity checks; do not reuse another project's emulator port. Raw video and traces remain private under `.tools/`.

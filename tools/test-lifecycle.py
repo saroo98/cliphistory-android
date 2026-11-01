@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 """External driver: never kills its instrumentation runner or a personal phone package."""
 import argparse
+import hashlib
 import json
 import re
 import shlex
 import subprocess
 import time
 import uuid
-import hashlib
-import struct
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -17,7 +16,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--adb", required=True)
     parser.add_argument("--serial", required=True)
-    parser.add_argument("--mode", choices=["start", "helper-death", "helper-death-off", "app-death", "recents", "task-stop", "force-stop", "boot", "boot-off", "idle"], required=True)
+    parser.add_argument("--mode", choices=["start", "helper-death", "helper-death-off", "server-death", "app-death", "recents", "task-stop", "force-stop", "boot", "boot-off", "idle", "clear-storage"], required=True)
     parser.add_argument("--automatic",choices=["on","off"])
     parser.add_argument("--after-boot",choices=["on","off"])
     parser.add_argument("--pause",choices=["on","off"])
@@ -77,31 +76,55 @@ def main():
     def recording_options():
         tree=ET.fromstring(adb("shell","run-as",package,"cat","shared_prefs/recorder_recovery.xml"))
         return {n.get("name"):n.get("value") for n in tree}
-    def snapshots():
-        values=[]
-        for slot in ("a","b"):
-            raw = subprocess.check_output([args.adb,"-s",args.serial,"exec-out","run-as",package,"cat",f"no_backup/history-{slot}.bin"],timeout=15)
-            if len(raw)<4:
-                continue
-            length=struct.unpack(">I",raw[:4])[0]
-            payload=raw[4:4+length]
-            if len(payload)>=66 and hashlib.sha256(payload[:-32]).digest()==payload[-32:]:values.append(payload)
-        if not values:raise RuntimeError("No valid validation snapshot")
-        return values
+    def stored_state():
+        # Starting/finishing instrumentation force-stops its target on Android.
+        # Observe native settings instead, preserving the lifecycle under test.
+        adb("shell","am","start","-W","-a","app.cliphistory.OPEN_HISTORY","-n",package+"/app.cliphistory.ui.MainActivity")
+        tree=ui_tree();button=find_label(tree,"More options")
+        if button is None:raise RuntimeError("History metadata is not visible")
+        tap(button);tree=ui_tree();button=find_label(tree,"Settings")
+        if button is None:raise RuntimeError("Settings are not visible")
+        tap(button);tree=ui_tree();toggle=find_label(tree,"Pause recording")
+        if toggle is None or toggle.get("class")!="android.widget.Switch":raise RuntimeError("Pause setting is not visible")
+        state={"paused":toggle.get("checked")=="true"}
+        adb("shell","input","keyevent","4")
+        return state
+    def produce(value):
+        component=package+".test/app.cliphistory.SyntheticClipboardActivity"
+        adb("shell","am","start","-W","-n",component,"-a","app.cliphistory.test.WRITE_SYNTHETIC","--es","text",value)
+        deadline=time.monotonic()+10
+        while find_label(ui_tree(),"Synthetic text copied") is None:
+            if time.monotonic()>deadline:raise RuntimeError("Synthetic producer did not complete its foreground copy")
+        adb("shell","am","start","-W","-n",component,"-a","app.cliphistory.test.READ_HASH")
+        expected="Clipboard SHA-256: "+hashlib.sha256(value.encode("utf-8")).hexdigest()
+        deadline=time.monotonic()+10
+        while find_label(ui_tree(),expected) is None:
+            if time.monotonic()>deadline:raise RuntimeError("Android clipboard did not contain the exact synthetic event")
+        observations["synthetic_event_verified"]=True
     def can_capture():
+        helper=processes().get(package+":clipboard")
+        if not helper:raise RuntimeError("Independent recorder must already be active")
+        # A new PID can appear before encrypted attachment and listener registration.
+        # Wait for the acknowledged recorder state before supplying the test event.
+        adb("shell","am","start","-W","-a","app.cliphistory.OPEN_HISTORY","-n",package+"/app.cliphistory.ui.MainActivity")
+        deadline=time.monotonic()+25
+        while find_label(ui_tree(),"Listening") is None:
+            if time.monotonic()>deadline:raise RuntimeError("Recovered recorder did not acknowledge listener readiness")
+        if processes().get(package+":clipboard")!=helper:raise RuntimeError("Recorder changed before capture verification")
+        observations["listener_ready_before_copy"]=True
         canary = "Synthetic recovered " + args.mode + " " + uuid.uuid4().hex
-        adb("shell", "am", "start", "-n", package + ".test/app.cliphistory.SyntheticClipboardActivity",
-            "-a", "app.cliphistory.test.WRITE_SYNTHETIC", "--es", "text", canary)
+        produce(canary)
+        adb("shell","am","start","-W","-a","app.cliphistory.OPEN_HISTORY","-n",package+"/app.cliphistory.ui.MainActivity")
         deadline = time.monotonic() + 15
         while time.monotonic() < deadline:
-            for payload in snapshots():
-                if canary.encode() in payload[:-32]:
-                    observations["captured_after_recovery"] = True
-                    return
+            if find_label(ui_tree(),canary) is not None:
+                if processes().get(package+":clipboard")!=helper:raise RuntimeError("Recorder changed during capture verification")
+                observations["captured_after_recovery"] = True
+                return
             time.sleep(0.2)
         raise RuntimeError("Recovered process did not capture the synthetic canary")
     if args.mode=="start":
-        adb("shell","am","start","-W","-n",package+"/app.cliphistory.ui.MainActivity")
+        adb("shell","am","start","-W","-a","app.cliphistory.OPEN_HISTORY","-n",package+"/app.cliphistory.ui.MainActivity")
         deadline=time.monotonic()+40
         pressed=False
         while time.monotonic()<deadline:
@@ -131,8 +154,11 @@ def main():
                 if node is None or node.get("class")!="android.widget.Switch":
                     raise RuntimeError("Expected native setting is not visible: "+label)
                 desired="true" if value=="on" else "false"
-                if node.get("checked")!=desired:
-                    tap(node)
+                if node.get("checked")==desired:
+                    continue
+                if node.get("enabled")!="true":
+                    raise RuntimeError("Enable the setting's dependency before changing: "+label)
+                tap(node)
                 deadline=time.monotonic()+8
                 while time.monotonic()<deadline:
                     node=find_label(ui_tree(),label)
@@ -143,6 +169,33 @@ def main():
             observations["requested_settings"]={k:v for k,v in requested.items() if v is not None}
             adb("shell","input","keyevent","4")
         adb("shell","input","keyevent","3")
+    elif args.mode=="clear-storage":
+        # This driver is already restricted to the owned disposable AVD and
+        # isolated package. Never apply the explicit wipe to a personal phone.
+        can_capture()
+        old_helper=processes()[package+":clipboard"]
+        old_record=adb("shell","run-as",package,"sha256sum","no_backup/history-key.bin").split()[0]
+        if adb("shell","pm","clear",package)!="Success":raise RuntimeError("Validation storage was not cleared")
+        observations["helper_survived_storage_clear"]=processes().get(package+":clipboard")==old_helper
+        adb("shell","am","start","-W","-n",package+"/app.cliphistory.ui.MainActivity")
+        deadline=time.monotonic()+45
+        pressed=False
+        while time.monotonic()<deadline:
+            tree=ui_tree()
+            if find_label(tree,"Listening") is not None and find_label(tree,"0 / 100 saved") is not None:break
+            target=next((find_label(tree,label) for label in ("Continue","Not now","Start recorder","Reconnect","Connect")
+                         if find_label(tree,label) is not None),None)
+            if target is not None and (target.get("text") in ("Continue","Not now") or not pressed):
+                tap(target);pressed=target.get("text") not in ("Continue","Not now")
+        else:raise RuntimeError("Fresh cleared store did not connect with empty history")
+        if processes().get(package+":clipboard")==old_helper:raise RuntimeError("Previous in-memory recorder survived fresh attachment")
+        new_record=adb("shell","run-as",package,"sha256sum","no_backup/history-key.bin").split()[0]
+        if new_record==old_record:raise RuntimeError("Cleared store restored the old key record")
+        observations["fresh_store_empty"]=True
+        observations["new_key_record"]=True
+        can_capture()
+        if find_label(ui_tree(),"1 / 100 saved") is None:raise RuntimeError("Fresh history contains more than its new synthetic event")
+        observations["no_previous_history_resurrected"]=True
     elif args.mode in ("helper-death", "helper-death-off", "app-death"):
         if args.mode=="helper-death-off" and (recording_options().get("automatic","true")!="false" or recording_options().get("explicit_stop")=="true"):
             raise RuntimeError("Disable automatic recovery through start --automatic off first")
@@ -172,6 +225,29 @@ def main():
         else:
             if args.mode=="helper-death-off":observations["disabled_recovery_did_not_restart"]=True
             else:raise RuntimeError("Enabled recovery did not restore the interrupted process")
+    elif args.mode=="server-death":
+        servers=[line.split() for line in adb("shell","ps","-A","-o","PID,UID,NAME").splitlines()
+                 if line.strip().endswith(" shizuku_server")]
+        if len(servers)!=1 or servers[0][1]!="2000" or package+":clipboard" not in before:
+            raise RuntimeError("An authorized shell server and helper must be active")
+        old_helper=before[package+":clipboard"]
+        adb("shell","kill","-9",servers[0][0])
+        deadline=time.monotonic()+12
+        while package+":clipboard" in processes():
+            if time.monotonic()>deadline:raise RuntimeError("Server death did not terminate its leased helper")
+            time.sleep(.1)
+        observations["server_lease_terminated_helper"]=True
+        base=adb("shell","pm","path","moe.shizuku.privileged.api").removeprefix("package:").removesuffix("/base.apk")
+        if not re.fullmatch(r"/data/app/~~[A-Za-z0-9_=-]+/moe\.shizuku\.privileged\.api-[A-Za-z0-9_=-]+",base):
+            raise RuntimeError("Unexpected Shizuku APK location")
+        if adb("shell","getprop","ro.product.cpu.abi")!="x86_64":raise RuntimeError("Expected disposable x86_64 emulator")
+        adb("shell",base+"/lib/x86_64/libshizuku.so")
+        deadline=time.monotonic()+45
+        while time.monotonic()<deadline:
+            if processes().get(package+":clipboard") not in (None,old_helper):
+                can_capture();observations["capture_resumed_after_server_restart"]=True;break
+            time.sleep(.2)
+        else:raise RuntimeError("Recovery did not reconnect after server restart")
     elif args.mode=="recents":
         helper=before.get(package+":clipboard")
         if not helper:raise RuntimeError("Validation helper must be active")
@@ -187,8 +263,13 @@ def main():
             if time.monotonic()>deadline:raise RuntimeError("Launcher did not return home before Recents")
         adb("shell","input","keyevent","187")
         deadline=time.monotonic()+10
-        while find_task(ui_tree()) is None:
-            if time.monotonic()>deadline:raise RuntimeError("Validation task is not visible in Recents")
+        # With Recents privacy enabled, Launcher can omit the task's label/node.
+        # Its native Overview actions and the actual task registry establish it.
+        recent_pattern=r"Recent #[^\n]* A="+str(owner_uid)+":"+re.escape(package)+r"(?:\s|\})"
+        while not any(n.get("resource-id","").endswith(("/action_screenshot","/action_select")) for n in ui_tree().iter("node")):
+            if time.monotonic()>deadline:raise RuntimeError("Native Recents actions are not visible")
+        if not re.search(recent_pattern,adb("shell","dumpsys","activity","recents")):
+            raise RuntimeError("Validation task is absent from the actual Recents registry")
         # Clear all is a native Recents dismissal, restricted to the disposable AVD.
         # Avoid swiping a clipped off-centre task thumbnail on Pixel Launcher.
         for _ in range(6):
@@ -198,15 +279,15 @@ def main():
         else:raise RuntimeError("Native Recents Clear all control was not found")
         tap(clear)
         time.sleep(1)
-        if find_task(ui_tree()) is not None:raise RuntimeError("Native Recents dismissal did not remove validation task")
+        if re.search(recent_pattern,adb("shell","dumpsys","activity","recents")):
+            raise RuntimeError("Native Recents dismissal did not remove validation task")
         can_capture()
         observations["capture_continues_after_recents_dismissal"]=True
     elif args.mode in ("task-stop", "force-stop"):
         files_before = adb("shell", "run-as", package, "sha256sum", "no_backup/history-a.bin", "no_backup/history-b.bin")
         adb("shell", *( ["cmd", "activity", "stop-app", package] if args.mode == "task-stop" else ["am", "force-stop", package]))
         # An independent synthetic producer supplies the event that checks the helper stop gate.
-        adb("shell", "am", "start", "-n", package + ".test/app.cliphistory.SyntheticClipboardActivity",
-            "-a", "app.cliphistory.test.WRITE_SYNTHETIC", "--es", "text", "Synthetic lifecycle stop canary")
+        produce("Synthetic lifecycle stop canary "+uuid.uuid4().hex)
         time.sleep(3)
         files_after = adb("shell", "run-as", package, "sha256sum", "no_backup/history-a.bin", "no_backup/history-b.bin")
         if files_before != files_after or package + ":clipboard" in processes():
@@ -216,8 +297,7 @@ def main():
         opts=recording_options()
         if opts.get("explicit_stop")=="true" or opts.get("automatic","true")!="true" or opts.get("after_boot","true")!=("false" if args.mode=="boot-off" else "true"):
             raise RuntimeError("Boot-test settings precondition is not satisfied")
-        newest=max(snapshots(),key=lambda p:struct.unpack(">q",p[8:16])[0])
-        paused=newest[28]==1
+        paused=stored_state()["paused"]
         adb("reboot")
         deadline = time.monotonic() + 180
         while time.monotonic() < deadline:
@@ -248,12 +328,11 @@ def main():
                 observations["reconnected_after_shizuku_start"] = True
                 # Helper existence alone does not prove the restored recorder state.
                 time.sleep(1)
-                restored=max(snapshots(),key=lambda p:struct.unpack(">q",p[8:16])[0])
-                if (restored[28]==1)!=paused:raise RuntimeError("Pause state changed across reboot")
+                if stored_state()["paused"]!=paused:raise RuntimeError("Pause state changed across reboot")
                 observations["pause_preserved"]=paused
                 if paused:
                     before_hash=adb("shell","run-as",package,"sha256sum","no_backup/history-a.bin","no_backup/history-b.bin")
-                    adb("shell","am","start","-n",package+".test/app.cliphistory.SyntheticClipboardActivity","-a","app.cliphistory.test.WRITE_SYNTHETIC","--es","text","Synthetic paused reboot "+uuid.uuid4().hex)
+                    produce("Synthetic paused reboot "+uuid.uuid4().hex)
                     time.sleep(2)
                     if before_hash!=adb("shell","run-as",package,"sha256sum","no_backup/history-a.bin","no_backup/history-b.bin"):raise RuntimeError("Paused reboot captured text")
                     observations["no_capture_while_paused"]=True

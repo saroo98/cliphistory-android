@@ -4,6 +4,7 @@ import android.app.*
 import android.content.*
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.*
 import android.view.*
 import android.view.accessibility.AccessibilityNodeInfo
@@ -53,8 +54,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         stopRecorderForFixture(test)
         checkThat(true,"Validation helper removed before seeding")
         val entries=listOf(Entry(3,3,"Synthetic newest text"),Entry(2,2,"Synthetic second\nwith exact whitespace  "),Entry(1,1,"Synthetic third text"))
-        val (a,b)=PrivateHistory.openForDaemon(context)
-        listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot -> slot.writeAndSync(SnapshotCodec.encode(Snapshot(1,100,4,paused,entries))) } }
+        writeFixturePayload(test,SnapshotCodec.encode(Snapshot(1,100,4,paused,entries)))
         PrivateHistory.invalidate()
         AppSettings(context).apply { welcome="never";backgroundSuggestion=false;allowScreenshots=false;hideRecents=true;appearance=theme;tileMode="quick";tileEnabled=true;motion=true }
         activity=test.startActivitySync(Intent(context,MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)) as MainActivity
@@ -77,14 +77,33 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             dialog.dismiss()
             toggle("Allow screenshots").performClick()
             checkThat(activity.window.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE!=0,"Screenshots disabled live")
-            toggle("Hide history in Recents").performClick()
-            checkThat(!AppSettings(context).hideRecents,"Recents privacy independently persisted")
+            if(Build.VERSION.SDK_INT>=33) {
+                toggle("Hide history in Recents").performClick()
+                checkThat(!AppSettings(context).hideRecents,"Recents privacy independently persisted")
+            } else checkThat(labels.contains(context.getString(R.string.recents_legacy)),"Older Android explains linked Recents and screenshot privacy")
             views(field("page") as View).single { it.tag=="MOTION" }.performClick()
             val motionDialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
             views(motionDialog.window!!.decorView).filterIsInstance<RadioButton>().single { it.text.toString()==context.getString(R.string.html_port_motion_reduced) }.performClick()
             views(motionDialog.window!!.decorView).filterIsInstance<Button>().single { it.text.toString()==context.getString(R.string.done) }.performClick()
             checkThat(!ScreenPrivacy.motionEnabled(AppSettings(context)),"Motion off overrides system motion")
             checkThat(!toggle("Pause recording").isEnabled,"Recorder mutation disabled offline")
+        }
+        if(Build.VERSION.SDK_INT>=31) {
+            val monitor=test.addMonitor(IntentFilter(android.provider.Settings.ACTION_PRIVACY_SETTINGS),
+                Instrumentation.ActivityResult(Activity.RESULT_CANCELED,null),true)
+            try {
+                main {
+                    views(field("page") as View).single { it.tag=="CLIPBOARD_ACCESS_NOTICES" }.performClick()
+                    val dialog=(field("dialogs") as Set<*>).filterIsInstance<Dialog>().single { it.isShowing }
+                    val labels=views(dialog.window!!.decorView).filterIsInstance<TextView>().map { it.text.toString() }
+                    checkThat(labels.any { it.contains("all apps",ignoreCase=true) },"Clipboard notice explains the phone-wide privacy effect")
+                    views(dialog.window!!.decorView).filterIsInstance<Button>().single { it.text.toString()=="Open Android privacy settings" }.performClick()
+                }
+                test.waitForIdleSync()
+                checkThat(monitor.hits==1,"Clipboard notice opens Android privacy settings")
+            } finally { test.removeMonitor(monitor) }
+        } else main {
+            checkThat(views(field("page") as View).none { it.tag=="CLIPBOARD_ACCESS_NOTICES" },"Clipboard notice control is absent before Android 12")
         }
         val page=field("page") as View
         main { views(page).filterIsInstance<ScrollView>().first().scrollTo(0,700) }
@@ -119,16 +138,26 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         val directory=File(context.filesDir,"ui-evidence").apply { mkdirs() }
         main { AppSettings(context).allowScreenshots=false;ScreenPrivacy.apply(activity,AppSettings(context)) }
         SystemClock.sleep(300)
-        val secure=test.uiAutomation.takeScreenshot() ?: error("Secure system screenshot unavailable")
+        val secure=test.uiAutomation.takeScreenshot()
         main { AppSettings(context).allowScreenshots=true;ScreenPrivacy.apply(activity,AppSettings(context)) }
         SystemClock.sleep(300)
         val allowed=test.uiAutomation.takeScreenshot() ?: error("Allowed system screenshot unavailable")
-        val x=secure.width/2;val y=secure.height/2
-        checkThat(secure.getPixel(x,y) and 0x00ffffff==0 && allowed.getPixel(x,y) and 0x00ffffff!=0,
-            "Actual OS captures hide the app surface when screenshots are blocked")
-        File(directory,"os-screenshots-blocked.png").outputStream().use { secure.compress(Bitmap.CompressFormat.PNG,100,it) }
+        val x=allowed.width/2;val y=allowed.height/2
+        // Save the observed frames even if the assertion fails, for diagnosis.
+        if(secure!=null)File(directory,"os-screenshots-blocked.png").outputStream().use { secure.compress(Bitmap.CompressFormat.PNG,100,it) }
+        else File(directory,"os-screenshots-blocked.txt").writeText("Android rejected the secure screenshot; the same screen was captured after enabling screenshots.\n")
         File(directory,"os-screenshots-allowed.png").outputStream().use { allowed.compress(Bitmap.CompressFormat.PNG,100,it) }
-        secure.recycle();allowed.recycle()
+        var focused=false;main { focused=activity.hasWindowFocus() }
+        test.sendStatus(0,Bundle().apply { putString("stream","OS privacy samples: secure=${secure?.getPixel(x,y)?.toUInt()?.toString(16)}, allowed=${allowed.getPixel(x,y).toUInt().toString(16)}, focused=$focused, size=${allowed.width}x${allowed.height}\n") })
+        // Android 11 can reject capture. Android 17's protected rotation frame
+        // was measured as RGB (1,1,1); sample the app interior, not SystemUI.
+        val hidden=secure==null || (1..3).all { column -> (1..3).all { row ->
+            val pixel=secure.getPixel(secure.width*column/4,secure.height*row/4)
+            Color.red(pixel)<=1 && Color.green(pixel)<=1 && Color.blue(pixel)<=1
+        } }
+        checkThat(hidden && allowed.getPixel(x,y) and 0x00ffffff!=0,
+            "Actual OS captures hide the app surface when screenshots are blocked")
+        secure?.recycle();allowed.recycle()
         main { AppSettings(context).allowScreenshots=false;ScreenPrivacy.apply(activity,AppSettings(context)) }
     }
     private fun modalPrivacy() {
@@ -154,9 +183,13 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
                 // rather than bypassing that controller with a raw preference write.
                 main { if(screenshotControl.isChecked!=allow)screenshotControl.performClick() }
                 SystemClock.sleep(300)
-                val image=test.uiAutomation.takeScreenshot() ?: error("OS modal capture unavailable")
-                val samples=(1..3).flatMap { x -> (1..3).map { y -> android.graphics.Color.red(image.getPixel(bounds.left+bounds.width()*x/4,bounds.top+bounds.height()*y/4)) } }
-                medians.add(samples.sorted()[4]);image.recycle()
+                val image=test.uiAutomation.takeScreenshot()
+                if(image==null) {
+                    check(!allow){"Unprotected modal screenshot unavailable"};medians.add(0)
+                } else {
+                    val samples=(1..3).flatMap { x -> (1..3).map { y -> android.graphics.Color.red(image.getPixel(bounds.left+bounds.width()*x/4,bounds.top+bounds.height()*y/4)) } }
+                    medians.add(samples.sorted()[4]);image.recycle()
+                }
                 checkThat((dialog.window!!.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE==0)==allow,"$name window follows live screenshot control")
             }
             checkThat(medians[0]<=16 && medians[1]>=100 && medians[2]<=16,"Actual OS capture protects, exposes and protects $name surface")
@@ -195,7 +228,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         fun shadeCollapsed():Boolean {
             val dump=shell("dumpsys activity service com.android.systemui/.SystemUIService")
             return if(dump.contains("isShadeOrQsExpanded="))dump.contains("isShadeOrQsExpanded=false")
-            else dump.contains("mPanelExpanded=false") && dump.contains("mQsExpanded=false")
+            else Regex("mPanelExpanded[:=]\\s*false").containsMatchIn(dump) && Regex("mQsExpanded[:=]\\s*false").containsMatchIn(dump)
         }
         fun observedBounds(label:String):android.graphics.Rect {
             val bounds=android.graphics.Rect()
@@ -258,8 +291,9 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             } else shell("cmd statusbar expand-settings")
             await("System tile state ready for interaction") {
                 val dump=shell("dumpsys activity service com.android.systemui/.SystemUIService")
-                dump.contains("mExpansionFraction=1.0") && dump.lineSequence()
-                    .any { it.contains("spec=custom($component)") && it.contains("state=$expectedState,") }
+                (dump.contains("mExpansionFraction=1.0") || dump.contains("mPanelExpansionFraction=1.0")) && dump.lineSequence()
+                    .any { (it.contains("spec=custom($component)") ||
+                        Build.VERSION.SDK_INT==30 && it.contains("label=$tileTitle,")) && it.contains("state=$expectedState,") }
             }
             test.uiAutomation.waitForIdle(200,5000)
             if(arguments.getString("tileCommand")=="true")return
@@ -352,19 +386,20 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
                 val bounds=panelBounds()
                 check(!bounds.isEmpty){"Attached native dialog window unavailable"}
                 shell("cmd statusbar collapse");test.uiAutomation.waitForIdle(300,5000)
-                val blocked=test.uiAutomation.takeScreenshot() ?: error("Quick-copy OS screenshot unavailable")
+                val blocked=test.uiAutomation.takeScreenshot()
                 main { AppSettings(context).allowScreenshots=true };SystemClock.sleep(200)
                 val allowed=test.uiAutomation.takeScreenshot() ?: error("Quick-copy allowed screenshot unavailable")
                 // Store only the owned synthetic panel, never the underlying notification shade.
                 for((name,bitmap) in listOf("quick-blocked.png" to blocked,"quick-allowed.png" to allowed)) {
+                    if(bitmap==null)continue
                     val panel=Bitmap.createBitmap(bitmap,bounds.left,bounds.top,bounds.width(),bounds.height())
                     File(folder,name).outputStream().use { panel.compress(Bitmap.CompressFormat.PNG,100,it) };panel.recycle()
                 }
                 val x=bounds.centerX();val y=bounds.centerY()
                 // SystemUI's dim layer can make a protected surface dark grey rather than RGB zero.
-                checkThat(android.graphics.Color.red(blocked.getPixel(x,y))<=16 &&
+                checkThat((blocked==null || android.graphics.Color.red(blocked.getPixel(x,y))<=16) &&
                     android.graphics.Color.red(allowed.getPixel(x,y))>=100,"Actual OS capture follows quick-panel privacy")
-                blocked.recycle();allowed.recycle();main { AppSettings(context).allowScreenshots=false }
+                blocked?.recycle();allowed.recycle();main { AppSettings(context).allowScreenshots=false }
                 // Re-tap while a panel is open: Android must collapse the reopened
                 // shade and retain exactly one panel, rather than refreshing behind it.
                 expand();clickTile()
@@ -464,8 +499,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             closePanel()
             val valid=SnapshotCodec.encode(PrivateHistory.readOffline(context))
             fun replace(payload:ByteArray) {
-                val (a,b)=PrivateHistory.openForDaemon(context)
-                listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot -> slot.writeAndSync(payload) } }
+                writeFixturePayload(test,payload)
                 PrivateHistory.invalidate()
             }
             try {
@@ -661,6 +695,99 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             checkThat(labelsGuide.contains(context.getString(R.string.open_shizuku)) && labelsGuide.contains(context.getString(R.string.connect)),"Offline guide exposes Shizuku and Connect actions")
         }
     }
+    private fun bootIdentityRecovery() {
+        requireDisposableEmulator(test);seed()
+        val args=rikka.shizuku.Shizuku.UserServiceArgs(ComponentName(context,app.cliphistory.daemon.ClipboardUserService::class.java))
+            .daemon(true).processNameSuffix("boot_fixture").version(BuildConfig.VERSION_CODE).tag("cliphistory-boot-identity-fixture")
+        val connected=CountDownLatch(1)
+        var binder:IBinder?=null
+        val connection=object:ServiceConnection {
+            override fun onServiceConnected(name:ComponentName,value:IBinder) { binder=value;connected.countDown() }
+            override fun onServiceDisconnected(name:ComponentName) { }
+        }
+        main { rikka.shizuku.Shizuku.bindUserService(args,connection) }
+        try {
+            checkThat(connected.await(15,TimeUnit.SECONDS),"Isolated boot-identity helper starts")
+            val service=app.cliphistory.ipc.IClipboardDaemon.Stub.asInterface(binder!!)
+            val material=HistoryKeys.load(context)
+            fun attach(boot:Int):Bundle {
+                val (a,b)=PrivateHistory.openForDaemon(context)
+                val key=material.bytes.copyOf()
+                return try { service.attachEncrypted(a,b,rikka.shizuku.Shizuku.getBinder()!!,key,material.storageId,boot) }
+                finally { key.fill(0);a.close();b.close() }
+            }
+            val unknown=attach(-1)
+            checkThat(unknown.getBoolean("ok") && !unknown.getBoolean("bootIdentityKnown"),"Unavailable boot identity permits ordinary recording without claiming a timed clock")
+            val boot=AndroidHistoryClock(context).now().boot
+            checkThat(boot>=0,"App supplies a verified boot identity")
+            val recovered=attach(boot)
+            checkThat(recovered.getBoolean("ok") && recovered.getBoolean("bootIdentityKnown"),"The same leased helper recovers when boot identity becomes available")
+            val conflicting=attach(boot+1)
+            checkThat(!conflicting.getBoolean("ok") && conflicting.getString("issue")=="ENCRYPTION_IDENTITY_CHANGED","A conflicting known boot identity remains rejected")
+            val unknownAgain=attach(-1)
+            checkThat(!unknownAgain.getBoolean("ok") && unknownAgain.getString("issue")=="ENCRYPTION_IDENTITY_CHANGED","A known clock cannot be downgraded to unknown")
+            checkThat(attach(boot).getBoolean("ok"),"Rejected identity changes leave the correct attachment usable")
+        } finally {
+            val dead=CountDownLatch(1)
+            binder?.linkToDeath({dead.countDown()},0)
+            main { rikka.shizuku.Shizuku.unbindUserService(args,connection,true) }
+            if(binder?.isBinderAlive==true)check(dead.await(12,TimeUnit.SECONDS)) { "Boot fixture helper did not stop" }
+        }
+    }
+    private fun helperFailure() {
+        requireDisposableEmulator(test)
+        seed()
+        val argsField=DaemonClient::class.java.getDeclaredField("args").apply { isAccessible=true }
+        val retriesField=DaemonClient::class.java.getDeclaredField("retries").apply { isAccessible=true }
+        val original=argsField.get(client)
+        val invalid=rikka.shizuku.Shizuku.UserServiceArgs(ComponentName(context.packageName,"app.cliphistory.daemon.MissingFixtureService"))
+            .daemon(true).processNameSuffix("failure_fixture").version(BuildConfig.VERSION_CODE).tag("cliphistory-startup-failure-fixture")
+        try {
+            val enabled=CountDownLatch(1)
+            main { client.updateRecovery(automatic=true) { checkThat(it,"Automatic recovery is enabled for the retry fixture");enabled.countDown() } }
+            check(enabled.await(8,TimeUnit.SECONDS))
+            main { argsField.set(client,invalid);client.connect(true);client.setRecoveryActive(true) }
+            val deadline=SystemClock.elapsedRealtime()+45_000
+            while(SystemClock.elapsedRealtime()<deadline) {
+                var failed=false
+                main { failed=client.connectionStage()==ConnectionStage.FAILED && !client.message.startsWith("Recorder stopped by you") }
+                if(failed)break
+                SystemClock.sleep(100)
+            }
+            checkThat(!client.connected(),"A helper launch failure never claims a connection")
+            main {
+                call("diagnostics")
+                val latest=field("latest") as Bundle
+                val report=DetailPages(Ui(activity)).report(latest,true)
+                checkThat(report.contains("HELPER_START_TIMEOUT"),"Actual failed helper startup reaches the copied diagnostic report")
+                checkThat(views(activity.window.decorView).filterIsInstance<TextView>().any { it.text.toString()=="Recorder did not start" },"Actual startup failure shows specific recovery guidance")
+                val setup=views(activity.window.decorView).filterIsInstance<Button>().single { it.text.toString()==context.getString(R.string.setup_help) }
+                setup.performClick()
+                checkThat(field("pageKind")=="help","Startup failure setup action opens the native guide")
+            }
+            await("Automatic recovery starts another connection attempt") {
+                var retrying=false
+                main { retrying=retriesField.getInt(client)>0 && client.connectionStage()==ConnectionStage.CONNECTING }
+                retrying
+            }
+            val loaded=CountDownLatch(1)
+            lateinit var page:DaemonClient.Page
+            main { client.requestPage("",0) { page=it;loaded.countDown() } }
+            check(loaded.await(8,TimeUnit.SECONDS))
+            checkThat(page.status.getString("connectionIssue")=="HELPER_START_TIMEOUT","Retry keeps the previous helper startup failure in diagnostics")
+            main {
+                val diagnostic=DetailPages(Ui(activity)).diagnostics(page.status,true,{}, {},{})
+                checkThat(views(diagnostic.view).filterIsInstance<TextView>().any { it.text.toString()=="Recorder did not start" },"Diagnostics explains the startup failure during an automatic retry")
+            }
+        } finally {
+            main {
+                client.setRecoveryActive(false)
+                rikka.shizuku.Shizuku.unbindUserService(invalid,null,true)
+                argsField.set(client,original)
+            }
+            stopRecorderForFixture(test)
+        }
+    }
     private fun customization() {
         seed();main { call("showSettings") }
         main {
@@ -701,8 +828,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         seed(theme=theme)
         val valid=SnapshotCodec.encode(PrivateHistory.readOffline(context))
         fun replace(payload:ByteArray) {
-            val (a,b)=PrivateHistory.openForDaemon(context)
-            listOf(a,b).forEach { FramedSlot(FdAccess(it,context.applicationInfo.uid)).use { slot -> slot.writeAndSync(payload) } }
+            writeFixturePayload(test,payload)
             PrivateHistory.invalidate()
         }
         fun texts(quick:QuickCopyDialog):List<String> {
@@ -724,6 +850,9 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
                 val rows=QuickCopyDialog::class.java.getDeclaredField("rows").apply { isAccessible=true }.get(quick) as LinearLayout
                 checkThat(rows.minimumHeight==0 && rows.childCount==2,"Error panel releases absent entries and exposes two recovery actions")
                 checkThat((0 until rows.childCount).all { (rows.getChildAt(it).layoutParams as LinearLayout.LayoutParams).topMargin>=(activity.resources.displayMetrics.density*8).toInt() },"Quick error recovery actions retain their visible gaps")
+            }
+            await("Quick error exposes both accessible recovery actions") {
+                node(context.getString(R.string.quick_retry))?.isEnabled==true && node(context.getString(R.string.open_app))?.isEnabled==true
             }
             return quick
         }
@@ -757,6 +886,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             await("Failed-history Diagnostics opens its real page") {
                 var ready=false;main { ready=field("pageKind")=="diagnostics" };ready
             }
+            await("Failed-history Diagnostics exposes Advanced details") { node(context.getString(R.string.advanced_details))?.isEnabled==true }
             checkThat(node(context.getString(R.string.advanced_details))?.performAction(AccessibilityNodeInfo.ACTION_CLICK)==true,"Failed-read Diagnostics Advanced details accepts activation")
             main {
                 val policy=views(field("page") as View).filterIsInstance<LinearLayout>().single { row ->
@@ -844,7 +974,12 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         await("Leaving the Activity removes transient feedback") { var removed=false;main { removed=field("snackbar")==null };removed }
     }
     fun run(suite:String):String {
-        try { when(suite){"command-errors"->commandErrors();"quick-errors"->quickErrors();"accessibility"->accessibility();"settings"->settings();"privacy"->modalPrivacy();"tile"->tile();"tile-performance"->tile(true);"paused-connection"->pausedConnection();"recovery"->recovery();"onboarding"->onboarding();"customization"->customization();else->error("Unknown feature suite") } }
+        val automation=test.uiAutomation
+        log.append("Accessibility flags before window retrieval: ${automation.serviceInfo.flags}\n")
+        automation.serviceInfo=automation.serviceInfo.apply {
+            flags=flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+        }
+        try { when(suite){"boot-identity"->bootIdentityRecovery();"helper-failure"->helperFailure();"command-errors"->commandErrors();"quick-errors"->quickErrors();"accessibility"->accessibility();"settings"->settings();"privacy"->modalPrivacy();"tile"->tile();"tile-performance"->tile(true);"paused-connection"->pausedConnection();"recovery"->recovery();"onboarding"->onboarding();"customization"->customization();else->error("Unknown feature suite") } }
         finally { if(::activity.isInitialized)main { activity.finish() } }
         return log.append("PASS $count feature assertions ($suite), API ${Build.VERSION.SDK_INT}. Synthetic validation only.\n").toString()
     }
