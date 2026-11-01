@@ -15,9 +15,9 @@ Binaries:
   https://github.com/saroo98/cliphistory-android/releases/download/v%v/ClipHistory-%v.apk
 
 Builds:
-  - versionName: 1.3.4
-    versionCode: 8
-    commit: 97c1e996e2619a5cf6f86f7f70614576d795b8c3
+  - versionName: 1.4.4
+    versionCode: 14
+    commit: f240f9b39ba8425747d4180e7b6932f09717b817
     subdir: app
     gradle:
       - yes
@@ -27,8 +27,9 @@ AllowedAPKSigningKeys: ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb
 MaintainerNotes: |-
   FOREGROUND_SERVICE_SPECIAL_USE maintains the user-enabled local clipboard
   recorder and reconnects its authorized Shizuku helper. It has no network role.
+  The HyperOS 3 startup report remains unverified on that firmware.
 
 AutoUpdateMode: Version
 UpdateCheckMode: Tags
-CurrentVersion: 1.3.4
-CurrentVersionCode: 8
+CurrentVersion: 1.4.4
+CurrentVersionCode: 14

@@ -9,7 +9,7 @@ A local clipboard-history companion for Android, with **Shizuku started in non-r
 
 ## Version 1.4.4
 
-**1.4.4/code 14** includes Android 11–13 support, encrypted history, optional sensitive-text capture and the earlier privacy and recovery fixes. It also addresses a confirmed Shizuku startup failure on a Redmi device. Tests and remaining limits are in [1.4.4 qualification](docs/release-1.4.4/RELEASE.md); earlier results remain in [1.4.3 qualification](docs/release-1.4.3/RELEASE.md).
+**1.4.4/code 14** includes Android 11–13 support, encrypted history, optional sensitive-text capture and the earlier privacy and recovery fixes. It also addresses a confirmed Shizuku startup failure on a Redmi device. The [final release checks](docs/release-1.4.4/FINAL_RELEASE.md), [candidate qualification](docs/release-1.4.4/RELEASE.md) and [1.4.3 qualification](docs/release-1.4.3/RELEASE.md) describe the tested versions and remaining limits.
 
 All persisted history uses AES-256-GCM. Sensitive capture is off by default. When enabled, automatic deletion defaults to five minutes; timed sensitive entries also expire after reboot. Queue delay does not extend retention. The copy, search and quick-panel workflow stays the same. Earlier implementation evidence remains in [1.4 qualification](docs/release-1.4/RELEASE.md).
 
