@@ -12,7 +12,7 @@ Local 1.4.0/code 10 adds authenticated encryption for all stored history, option
 
 The final JVM gate passes 65 tests, release lint has zero errors, and source checks pass 74/74. Code-10 Android encryption/migration (95), sensitive live (38), UI/expiry/retry (23), regression (12), quick errors (21), storage threading (5), native tile (353) and capacity (5) checks pass. Three queue-delay regressions failed before the correction and pass afterward. The earlier legacy-helper upgrade passes 160 assertions; a live encrypted code-9 → code-10 upgrade preserves its key/payload/metadata. All twelve retained code-9 idle openings pass and 1,167 encoded frames were reviewed, with missed deadlines disclosed. Code-10 warm/cold measurements pass the baseline regression gate. The final signed Pixel upgrade retains the 16-entry count and observed settings; production diagnostics report AES-256-GCM, StrongBox and a passed expiry clock. Detailed results and coverage limits are in the report and [checks.json](docs/release-1.4/checks.json).
 
-No 1.4 commit, tag, public release, remote recipe update or reproducibility qualification has been performed. The following publication and older-version results are historical records, not new checks or qualification of 1.4.
+At the time of that 1.4.0 qualification, no 1.4 commit, tag, public release, remote recipe update or reproducibility qualification had been performed; 1.4.4 and 1.4.5 were published later. The following publication and older-version results are historical records, not new checks or qualification of 1.4.
 
 # Historical ClipHistory 1.3.4 qualification
 
@@ -39,7 +39,7 @@ Package `app.cliphistory`, code 4, minimum API 34, compile/target API 37. Result
 
 The [release report](docs/release-1.3/RELEASE.md) records digests, commands, selected evidence and bounded assessments: overall **87/100**, publication preparation **85/100**. These are engineering judgments, not certification or F-Droid approval.
 
-The app requests exactly Shizuku access, foreground-service, special-use foreground-service, notifications and boot-completed permissions. It has no internet/overlay/accessibility-service/keyboard permissions. History is private and excluded from backup. Screenshots default to blocked and can be enabled separately from Recents privacy.
+At 1.3.0 the app requested exactly Shizuku access, foreground-service, special-use foreground-service, notifications and boot-completed permissions; 1.4.5 adds Shevery’s access permission. It has no internet/overlay/accessibility-service/keyboard permissions. History is private and excluded from backup. Screenshots default to blocked and can be enabled separately from Recents privacy.
 
 No zero latency, universal success, exhaustive TalkBack audio traversal, kernel wakeup count, multi-day battery soak or every-OEM coverage is claimed. Non-root Shizuku must be restarted after reboot. Unknown owner-stop descriptions fail closed. F-Droid inclusion and main-server verification are external decisions.
 

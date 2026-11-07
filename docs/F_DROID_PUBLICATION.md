@@ -2,7 +2,7 @@
 
 **Current release, 1 November 2026:** 1.4.5/code 15 is published on GitHub at source `329ab008db02a66aae151891b56e2db9d533d9a0`. The exact APK passed the final Pixel check and independent build/signature verification. The public-source F-Droid recipe reproduced it successfully and is submitted in [MR !50917](https://gitlab.com/fdroid/fdroiddata/-/merge_requests/50917), branch commit `c86f77422e02a5de07ca5446c62d7c58b11541ae`. See the [current release record](release-1.4.5/FINAL_RELEASE.md) for exact artifacts, CI status and remaining compatibility limits. No merge or catalogue listing is claimed. Use the [current submission procedure](F_DROID_SUBMISSION.md); the dated notes below are historical evidence, including account-verification states that must not be assumed current.
 
-**1 November compatibility follow-up:** the local candidate was 1.4.4/code 14; its [qualification](release-1.4.4/RELEASE.md) supersedes the earlier local-candidate notes below. At the time of those checks, the submitted 1.3.4 pipeline had passed all nine jobs and the merge request remained open. Check the merge request for its current status.
+**Historical, 1 November compatibility follow-up:** the local candidate was 1.4.4/code 14; its [qualification](release-1.4.4/RELEASE.md) supersedes the earlier local-candidate notes below. At the time of those checks, the submitted 1.3.4 pipeline had passed all nine jobs and the merge request remained open. Check the merge request for its current status.
 
 **31 October historical follow-up:** the existing submission records and local F-Droid recipes targeted 1.3.4/code 8. At that time, the local encrypted-history update was 1.4.2/code 12; see its [qualification](release-1.4.2/RELEASE.md) and the [reusable publication guide](F_DROID_ANDROID_GUIDE.md). The records below qualify the earlier public version only.
 
@@ -29,7 +29,7 @@ This release integrates the supplied logo in Android's adaptive/themed launcher,
 - Clean Windows build: **44 unit tests**, zero failures/errors/skips; release lint **zero errors, 14 warnings**.
 - Independent clean Linux build: unsigned bytes match Windows.
 - Source-distribution audit: **72/72** checks, including no signing material.
-- Non-debuggable package/code/SDK and the same five reviewed permissions verified in the signed APK. No Internet, overlay, Accessibility-service, keyboard permission or native library.
+- Non-debuggable package/code/SDK and the same five reviewed permissions verified in the signed 1.3.4 APK (1.4.5 declares six). No Internet, overlay, Accessibility-service, keyboard permission or native library.
 - CI-matched F-Droid server 2.4.5, source `c21c177ff6d813697aaf9c988ca9fbb2b571b468`, ruamel.yaml 0.18.10: `readmeta`, `rewritemeta`, `lint`, `checkupdates` and `build --test --scan-binary --no-tarball app.cliphistory:8` passed. Canonical rewrite made no byte changes after LF normalization.
 - The full recipe passed source/APK scans, downloaded the public reference, accepted the original signer and compared its APK successfully. Its unsigned digest matches both independent builds above. No scan exemption or check was disabled.
 - Native API 36 emulator: Settings **21**, Onboarding **24**, Native UI **33** assertions passed. Native HTML-port regression: **121 light + 121 dark** assertions passed. Actual Welcome/About OS screenshots and the installed launcher icon were visually inspected. FeatureChecks select light internally; their dark-labelled raw reruns are not dark-theme evidence.

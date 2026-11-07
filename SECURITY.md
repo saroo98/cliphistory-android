@@ -8,9 +8,15 @@ Our source has no network client, analytics, ads, cloud SDK, external command ex
 
 The helper uses Android's existing clipboard service and the shell package's background clipboard permission. It does not grant extra global permissions, disable security settings, root the phone or patch Gboard. Its hidden-interface routing accepts only known shapes; an unrecognised platform signature is an error, not a guessed transaction layout.
 
+Root-started services are refused on purpose. Android's clipboard service only serves a caller that owns the package it names, and no app package belongs to root (UID 0). A root helper reading as the shell package makes Android clear the user's clipboard instead (reproduced on Android 16 in November 2026). Android also changes user IDs per thread, so a root helper cannot reliably switch to the shell user afterwards. The client, the helper and the clipboard bridge each require UID 2000.
+
+Other processes running as shell, such as `adb shell` or another app's Shizuku helper, share the helper's UID. They can stop it and may be able to inspect its memory. Granting Shizuku access to any app is granting shell-level access.
+
 ## Storage and IPC
 
 The normal app creates two files in its private `noBackupFilesDir`, sets owner-only permissions, and passes open descriptors to the helper. The helper validates the owning UID and regular-file type. It does not browse `/data/user/0`, use shared storage or store clips in `/data/local/tmp`.
+
+List pages carry no preview text for sensitive entries; the app shows a fixed "hidden" label in the list, quick panel and screen-reader descriptions, and the full text only on an explicit View.
 
 Positional reads/writes avoid shared seek positions. The shell side does not truncate, chmod or rename app data. Length-prefixed, checksummed snapshots alternate between files. Acknowledgement follows fsync. Explicit clear/delete/limit shrink and pause updates mirror to the recovery slot; failures in cleanup are surfaced. These mechanisms detect interrupted/corrupt writes but cannot guarantee survival of physical storage failure or simultaneous damage to both slots.
 
@@ -63,5 +69,7 @@ No signing key is shipped. The Windows build generates a private owner-specific 
 Build scripts download official tool distributions over HTTPS and check published checksums; Gradle fetches pinned app dependencies from configured repositories. Publisher metadata is part of the trust boundary, and this is not an independent supply-chain audit. The Android merged manifest and APK signature/permissions must be checked after a real build, not inferred solely from source XML.
 
 ## Reporting an issue
+
+Report security problems privately through GitHub: open the repository's **Security** tab and choose **Report a vulnerability** (https://github.com/saroo98/cliphistory-android/security/advisories/new). Use public issues only for problems that are not security-sensitive.
 
 Preserve the app version, APK hash, Android/Shizuku versions and a redacted diagnostic/build report. Do not provide actual passwords or copied personal text. Stop the recorder before reproducing any privacy issue with harmless canary strings.

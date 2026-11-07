@@ -66,9 +66,9 @@ Automatic recovery Off does not stop an already running helper. **Pause** stops 
 
 ## Boundaries
 
-Only the primary Android phone profile and shell UID **2000** are supported by this build. Root/Sui, work profiles, secondary users, images, URIs and multi-item clip payloads are not claimed supported.
+Only the primary Android phone profile and shell UID **2000** are supported by this build. Work profiles, secondary users, images, URIs and multi-item clip payloads are not claimed supported. Root and Sui modes are not supported: Android's clipboard service refuses clipboard reads from root and clears the clipboard instead (reproduced on Android 16 in November 2026), so ClipHistory refuses a root-started service and explains how to restart it. On a rooted phone, start the service with wireless debugging or ADB.
 
-An individual text must be at most **65,536 UTF-8 bytes**. Oversized items are skipped and counted, not silently truncated. Entries marked sensitive by their source app are skipped unless enabled in Settings → Privacy. Turning capture off removes retained sensitive entries and their Undo. Not every source app marks secrets. Text is readable during app use and in Android's clipboard after copying; encryption does not make this a password vault.
+An individual text must be at most **65,536 UTF-8 bytes**. Oversized items are skipped and counted, not silently truncated. Entries marked sensitive by their source app are skipped unless enabled in Settings → Privacy. Some browsers mark copies from private browsing this way; the home screen says when copies were skipped. Saved sensitive entries stay hidden in the list, quick panel and screen-reader labels until opened with View. Turning capture off removes retained sensitive entries and their Undo. Not every source app marks secrets. Text is readable during app use and in Android's clipboard after copying; encryption does not make this a password vault.
 
 Clipboard notifications announce changes; they are not a durable queue of every intermediate clipboard value. Very rapid replacements, process death, permission failures, overload or platform changes can cause missed copies. Registered-listener status or a passed one-shot test does not prove long-term, all-app capture.
 

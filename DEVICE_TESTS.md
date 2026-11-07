@@ -2,7 +2,7 @@
 
 **Current evidence: see `VERIFICATION.md`.** This is the broader acceptance checklist, including tests beyond this release's device coverage. Do not infer every item passed from a successful build or connection test.
 
-The 1.4.4 candidate has focused emulator and remote physical-device evidence in [release qualification](docs/release-1.4.4/RELEASE.md). Earlier tests are documented separately for [1.4.3](docs/release-1.4.3/RELEASE.md) and [1.4.2](docs/release-1.4.2/RELEASE.md); their results do not by themselves qualify the newer APK.
+The current public release, 1.4.5, has emulator and physical-device evidence in its [release record](docs/release-1.4.5/FINAL_RELEASE.md) and [qualification](docs/release-1.4.5/FINAL_QUALIFICATION.md). Earlier tests are documented separately for [1.4.3](docs/release-1.4.3/RELEASE.md) and [1.4.2](docs/release-1.4.2/RELEASE.md); their results do not by themselves qualify the newer APK.
 
 ## Earlier 1.4.5 fork candidates
 
@@ -15,7 +15,9 @@ The following checks preceded the latest manager chooser and privacy description
 - Shizuku+ 13.6.0.r2551, upstream native-package build, shell mode on an Android 17 emulator: the 1.4.5 validation build passed the live capture suite without a companion installed. The fixture already had an authorization from earlier manager tests, so this does not establish the fresh-approval flow.
 - An in-place signed 1.4.4 to 1.4.5 update on a Pixel 8 Pro with thedjchi's Shizuku 13.7.0 fork preserved the observed history count and settings, and the recorder reported Listening. No clipboard text was read or changed for this phone observation.
 
-Those earlier checks did not verify Shizako's F-Droid variant. The subsequent [current-candidate qualification](docs/release-1.4.5/QUALIFICATION.md) adds its actual CI-built `zako3.17-f` artifact, fresh permission approval without the official launcher, live capture, sensitive retention and Settings checks. It also records the latest Pixel and Android matrix results. Other unlisted forks, root and device-owner modes remain unverified or outside the supported contract. The maintainer's reported symptom did not include enough detail to establish whether it was identical to the reproduced missing-service state. The 1.4.5 source and release have not been submitted to F-Droid.
+Those earlier checks did not verify Shizako's F-Droid variant. The subsequent [current-candidate qualification](docs/release-1.4.5/QUALIFICATION.md) adds its actual CI-built `zako3.17-f` artifact, fresh permission approval without the official launcher, live capture, sensitive retention and Settings checks. It also records the latest Pixel and Android matrix results. Other unlisted forks remain unverified. Root and device-owner modes are not supported: Android refuses clipboard reads from root and clears the clipboard instead (reproduced on an Android 16 emulator, 7 November 2026). The maintainer's reported symptom did not include enough detail to establish whether it was identical to the reproduced missing-service state. 1.4.5 was later submitted in F-Droid MR !50917.
+
+**Emulator note for sensitive tests:** turn off the emulator's clipboard sharing (Extended controls → Settings) before running `sensitive-live`. With sharing on, the emulator re-posts every copy from the host computer as plain text, which drops Android's sensitive flag for every app (seen on an Android 16 emulator, 7 November 2026). The suite stops with `EMULATOR_CLIPBOARD_SYNC_STRIPS_SENSITIVE_FLAG` in that case instead of reporting a false failure. Real phones are not affected.
 
 Use harmless test text, not passwords or private messages. Do not clear or alter valuable history to run a test without first deciding that it is safe to do so. The app intentionally has no cloud backup/export in this version.
 

@@ -1,6 +1,6 @@
 # Start here
 
-**Local candidate: `ClipHistory-1.4.4.apk`, code 14, Android 11+.** See [qualification](docs/release-1.4.4/RELEASE.md) for tests and remaining publication gates. It must be rebuilt from the release commit before submission and is not the public F-Droid version.
+**Current public release: ClipHistory 1.4.5, code 15, Android 11+.** See the [release record](docs/release-1.4.5/FINAL_RELEASE.md) for the exact APK and checks. Version 1.4.6 is in preparation and is not released yet.
 
 Use the signed release from https://github.com/saroo98/cliphistory-android/releases. See `VERIFICATION.md` for current build and device evidence. The source archive includes no private signing key.
 
