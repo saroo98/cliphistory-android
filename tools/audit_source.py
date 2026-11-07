@@ -94,7 +94,9 @@ check("quick tile uses the platform QS dialog without a task launch or overlay p
       "showDialog(dialog)" in source and "QuickCopyActivity" not in source and
       "android.service.quicksettings.ACTIVE_TILE" not in text("app/src/main/AndroidManifest.xml") and
       "SYSTEM_ALERT_WINDOW" not in permissions)
-check("IPC history is paged", "count in 1..40" in daemon and "SearchPreview.snippet" in daemon and "maxLength:Int=180" in text("app/src/main/java/app/cliphistory/core/SearchPreview.kt"))
+preview_source = text("app/src/main/java/app/cliphistory/core/SearchPreview.kt")
+check("IPC history is paged", "count in 1..40" in daemon and "listPreview(" in daemon and "SearchPreview.snippet(text, query)" in preview_source and "maxLength:Int=180" in preview_source)
+check("sensitive entries never travel as previews", 'if (sensitive) "" else' in preview_source and "listPreview(" in text("app/src/main/java/app/cliphistory/client/DaemonClient.kt"))
 check("self-test uses tested probe tracker", "ProbeTracker()" in daemon and "probe.match" in daemon)
 build = text("app/build.gradle.kts")
 check("compile and target API 37", "compileSdk = 37" in build and "targetSdk = 37" in build)
