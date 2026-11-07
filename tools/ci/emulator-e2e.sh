@@ -179,9 +179,24 @@ finish() {
 }
 trap finish EXIT
 
+# On a slow emulator the launcher can stop responding. Its system dialog then takes input
+# focus, which blocks the test app's clipboard access and UI checks. Before each suite, close
+# such a dialog by stopping the unresponsive app, unless it is the app under test.
+dismiss_foreign_anr() {
+  local focus pkg
+  focus="$(shell dumpsys window 2>/dev/null | grep -m1 'mCurrentFocus=' || true)"
+  [[ "$focus" == *'Application Not Responding: '* ]] || return 0
+  pkg="$(sed -n 's/.*Application Not Responding: \([A-Za-z0-9._]*\).*/\1/p' <<<"$focus")"
+  [[ -n "$pkg" && "$pkg" != "$PACKAGE" && "$pkg" != "$PACKAGE.test" ]] || return 0
+  log "Closing a 'not responding' dialog for $pkg before the next suite"
+  shell am force-stop "$pkg" >/dev/null 2>&1 || true
+  sleep 2
+}
+
 run_suite() {
   local suite="$1"; shift
   local started=$SECONDS rc=0 output result detail seconds
+  dismiss_foreign_anr
   log "Suite $suite: running"
   output="$(timeout "$SUITE_TIMEOUT" "$ADB" -s "$SERIAL" shell am instrument -w -e suite "$suite" \
     -e theme light -e tilePage 4 "$@" "$RUNNER" 2>&1 | tr -d '\r')" || rc=$?
@@ -228,11 +243,20 @@ suite_or_stop() {
   fi
 }
 
+# Android 17 images can report boot completed before the package service accepts installs
+# ("Failure calling service package: Broken pipe"), so wait for it and retry only those errors.
+package_service_ready() { [[ "$(shell pm path android 2>/dev/null | head -n 1)" == package:* ]]; }
 install_apk() {
-  local out
-  out="$("$ADB" -s "$SERIAL" install -r "$(native "$1")" 2>&1 | tr -d '\r')" || true
-  printf '%s: %s\n' "$(basename "$1")" "$out" >> "$OUTPUT/install.txt"
-  grep -q '^Success' <<<"$out" || fail_setup "Installing $(basename "$1") did not report Success: $out"
+  local out='' attempt
+  for attempt in 1 2 3 4; do
+    for _ in $(seq 1 30); do package_service_ready && break; sleep 2; done
+    out="$("$ADB" -s "$SERIAL" install -r "$(native "$1")" 2>&1 | tr -d '\r')" || true
+    printf '%s (attempt %s): %s\n' "$(basename "$1")" "$attempt" "$out" >> "$OUTPUT/install.txt"
+    grep -q '^Success' <<<"$out" && return 0
+    grep -qE "Broken pipe|Can't find service|Failure calling service|device offline" <<<"$out" || break
+    sleep 5
+  done
+  fail_setup "Installing $(basename "$1") did not report Success: $out"
 }
 
 set_adbd_mode() {

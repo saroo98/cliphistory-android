@@ -32,7 +32,10 @@ class ForkDiscoveryChecks(private val test:Instrumentation) {
             return "PASS An installed stopped compatible service is recognized.\n"
         }
         val until=SystemClock.elapsedRealtime()+15_000
-        while(!Shizuku.pingBinder() && SystemClock.elapsedRealtime()<until)SystemClock.sleep(100)
+        // The Binder answers before the service's bind callback delivers its uid and version; an
+        // unauthorized query in between reports -1, so wait for all three.
+        fun ready()=runCatching { Shizuku.pingBinder() && Shizuku.getVersion()>=13 && Shizuku.getUid()==2000 }.getOrDefault(false)
+        while(!ready() && SystemClock.elapsedRealtime()<until)SystemClock.sleep(100)
         check(Shizuku.pingBinder()) { "No compatible service Binder arrived" }
         check(Shizuku.getVersion()>=13 && Shizuku.getUid()==2000) { "The fixture needs API 13+ in shell mode" }
         check(Shizuku.checkSelfPermission()!=PackageManager.PERMISSION_GRANTED) { "The fixture must not be pre-authorized" }

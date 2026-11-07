@@ -121,6 +121,18 @@ jobs:
           printf '[set]\nclipboardSharing=false\n' > "$conf"
           cat "$conf"
 
+      - name: Install the Android emulator (retried)
+        # The emulator runner installs the emulator without retrying, and one nightly download
+        # arrived damaged ("Error on ZipFile unknown archive"). Once it is installed here, the
+        # runner's own install step has nothing left to download.
+        run: |
+          for attempt in 1 2 3; do
+            "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install emulator --channel=0 < /dev/null > /dev/null && exit 0
+            echo "Emulator install attempt $attempt failed; retrying"
+            sleep 15
+          done
+          exit 1
+
       - name: Run emulator checks
         uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         env:
