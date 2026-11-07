@@ -7,6 +7,7 @@
     <string name="checking">Checking recorder…</string>
     <plurals name="saved_count"><item quantity="one">%1$d / %2$d saved</item><item quantity="other">%1$d / %2$d saved</item></plurals>
     <plurals name="match_count"><item quantity="one">%1$d match · %2$d / %3$d saved</item><item quantity="other">%1$d matches · %2$d / %3$d saved</item></plurals>
+    <plurals name="sensitive_skipped_hint"><item quantity="one">%1$d copy was marked private by its app, so it wasn’t saved. You can save private copies in Settings.</item><item quantity="other">%1$d copies were marked private by their apps, so they weren’t saved. You can save private copies in Settings.</item></plurals>
     <string name="offline_count">%1$s · Offline</string>
     <string name="empty_title">Your next copy starts here</string>
     <string name="empty_body">Copy text in any app, then find it here.</string>
@@ -37,7 +38,21 @@
     <string name="attention_title">Recorder needs attention</string>
     <string name="attention_body">Check your service and the recorder diagnostics, then try again.</string>
     <string name="unsupported_title">Check your service setup</string>
-    <string name="unsupported_body">Use a compatible service in non-root shell mode on the main phone profile.</string>
+    <string name="unsupported_body">Your service app is running in a mode ClipHistory can’t use. Start it with wireless debugging or ADB, then reconnect.</string>
+    <string name="outdated_title">Update your service app</string>
+    <string name="outdated_body">ClipHistory needs Shizuku API 13 or newer. Update your service app, restart it, then reconnect.</string>
+    <string name="root_mode_title">Start your service without root</string>
+    <string name="root_mode_body">Your service app was started with root. Android only allows clipboard reading when the service is started with wireless debugging or ADB. Restart it that way, then reconnect.</string>
+    <string name="profile_required_body">ClipHistory works only on the main phone profile. Work profiles, private spaces and other users aren’t supported.</string>
+    <string name="clipboard_unsupported_body">This Android version’s clipboard service isn’t supported yet. Copy the Diagnostics report and share it in a bug report.</string>
+    <string name="sensitive_hidden">Sensitive text · hidden</string>
+    <string name="sensitive_hint_settings">Settings</string>
+    <string name="sensitive_hint_hide">Don’t show again</string>
+    <string name="service_mode">Service mode</string>
+    <string name="service_mode_shell">Shell (wireless debugging or ADB)</string>
+    <string name="service_mode_root">Root (not supported)</string>
+    <string name="service_mode_other">User ID %1$d (not supported)</string>
+    <string name="service_apps">Service apps installed</string>
     <string name="connect">Connect</string>
     <string name="reconnect">Reconnect</string>
     <string name="open_shizuku">Open service app</string>
@@ -128,7 +143,7 @@
     <string name="help_local">Only on this phone</string>
     <string name="help_local_body">History is encrypted on this device. There are no accounts, ads, analytics, or cloud sync. Text is readable in the app and Android clipboard while in use.</string>
     <string name="help_sensitive">Sensitive text</string>
-    <string name="help_sensitive_body">Text marked sensitive by its source app is skipped by default. You can capture it in Settings → Privacy. Auto-delete defaults to 5 minutes; timed entries also expire after a reboot. It removes saved history, not Android’s clipboard. Turning capture off removes saved sensitive text. Not every app marks private text. Pause recording when needed.</string>
+    <string name="help_sensitive_body">Text marked sensitive by its source app is skipped by default, for example passwords and copies from private browsing in some browsers. You can capture it in Settings → Privacy. Saved sensitive entries stay hidden in the list; use View to see one. Auto-delete defaults to 5 minutes; timed entries also expire after a reboot. It removes saved history, not Android’s clipboard. Turning capture off removes saved sensitive text. Not every app marks private text. Pause recording when needed.</string>
     <string name="help_limits">Limits</string>
     <string name="help_limits_body">Text only. Entries over 64 KiB are skipped. Only the main phone profile is supported.</string>
     <string name="help_screen">Screen privacy</string>

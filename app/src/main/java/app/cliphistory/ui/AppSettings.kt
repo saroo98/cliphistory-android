@@ -41,6 +41,9 @@ class AppSettings(private val context: Context) {
     var backgroundSeen: Boolean
         get() = flag("background_seen", false)
         set(value) { put("background_seen", value) }
+    var sensitiveHintHidden: Boolean
+        get() = flag("sensitive_hint_hidden", false)
+        set(value) { put("sensitive_hint_hidden", value) }
     fun register(listener:SharedPreferences.OnSharedPreferenceChangeListener) { prefs.registerOnSharedPreferenceChangeListener(listener) }
     fun unregister(listener:SharedPreferences.OnSharedPreferenceChangeListener) { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     private fun flag(key:String,default:Boolean)=try { prefs.getBoolean(key,default) } catch (_:ClassCastException) { default }

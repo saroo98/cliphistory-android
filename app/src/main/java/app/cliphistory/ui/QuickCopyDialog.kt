@@ -202,7 +202,7 @@ class QuickCopyDialog(base:Context,private val openHistory:()->Unit):Dialog(
                 nextNotice=null
                 if(page.rows.isEmpty())action(R.string.open_app){openApp()}
                 shown.forEach { row ->
-                    val button=entryButton(row.preview).apply {
+                    val button=entryButton(if(row.sensitive)context.getString(R.string.sensitive_hidden) else row.preview).apply {
                         setOnClickListener { copy(row.id) }
                     }
                     rows.addView(button,LinearLayout.LayoutParams(-1,-2).apply { topMargin=dp(8) })

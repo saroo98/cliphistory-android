@@ -68,7 +68,8 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
         return serial {
             var transferred = false
             try {
-                check(Process.myUid()==2000) { "START_SHIZUKU_USING_WIRELESS_DEBUGGING" }
+                // Never relax: a root helper makes Android clear the clipboard (see serviceStage).
+                check(Process.myUid()==SHELL_UID) { "START_SHIZUKU_USING_WIRELESS_DEBUGGING" }
                 if(dataKey.size!=32 || storageIdentity.size!=16 || bootCount< -1)throw StoreException("INVALID_ENCRYPTION_KEY")
                 check(userId==0) { "PRIMARY_PHONE_PROFILE_REQUIRED" }
                 ownerStop.verify()
@@ -195,7 +196,8 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
         val retries=longArrayOf(1000,3000,10_000)
         if(!failed)expiryFailures=0
         else if(expiryFailures>=retries.size)return
-        val wait=if(failed)retries[expiryFailures++] else delay
+        // An early tick finds nothing expired and simply schedules the next one.
+        val wait=if(failed)retries[expiryFailures++] else expiryWait(delay)
         fun submit(attempt:Int) {
             if(stopping.get())return
             if(!enqueue {
@@ -213,12 +215,7 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
         }
         expiryTask=deadlines.schedule({submit(0)},wait,TimeUnit.MILLISECONDS)
     }
-    private fun safeIssue(t: Throwable): String = when(t) {
-        is java.lang.reflect.InvocationTargetException -> t.targetException?.let { safeIssue(it) } ?: "PLATFORM_INVOCATION_FAILED"
-        is StoreException -> t.reason
-        is SecurityException -> "ANDROID_PERMISSION_DENIED"
-        else -> "OPERATION_FAILED_${t.javaClass.simpleName}"
-    }
+    private fun safeIssue(t: Throwable): String = issueCode(t)
     private fun serial(action: () -> Bundle): Bundle {
         return try {
             worker.submit<Bundle> {
@@ -276,7 +273,7 @@ class ClipboardUserService(context: Context) : IClipboardDaemon.Stub() {
             Bundle().apply {
                 putBoolean("ok",true);putLong("generation",repo().state.generation);putInt("total",entries.size)
                 putLongArray("ids",page.map { it.id }.toLongArray());putLongArray("times",page.map { it.timestamp }.toLongArray())
-                putStringArray("previews",page.map { SearchPreview.snippet(it.text,query) }.toTypedArray())
+                putStringArray("previews",page.map { listPreview(it.text,query,it.sensitive) }.toTypedArray())
                 putBooleanArray("sensitive",page.map { it.sensitive }.toBooleanArray())
                 putIntArray("expiryBoots",page.map { it.expiry?.boot?:-1 }.toIntArray())
                 putLongArray("expiryTimes",page.map { it.expiry?.elapsed?:0 }.toLongArray())

@@ -1,5 +1,5 @@
 <resources>
-    <string name="setup_install">1. Install Shizuku or a compatible service app. Some forks need a separate compatibility app; follow their instructions. ClipHistory requires non-root shell mode. Run one service at a time.</string>
+    <string name="setup_install">1. Install Shizuku or a compatible service app. Some forks need a separate compatibility app; follow their instructions. Start it with wireless debugging or ADB, also on rooted phones: Android doesn’t allow clipboard reading from root. Run one service at a time.</string>
     <string name="setup_debugging">2. Connect to Wi-Fi. In Android Settings, enable Developer options if needed, then enable Wireless debugging. The official guide explains where these settings are on your phone.</string>
     <string name="setup_pair">3. In Shizuku, choose Pairing. In Wireless debugging, choose Pair device with pairing code. Enter Android’s code in the service app. Other forks may use different steps.</string>
     <string name="setup_start">4. Start your service and wait until it is running. If ClipHistory is not recognised after an update, restart the service. Pairing and starting are separate steps.</string>

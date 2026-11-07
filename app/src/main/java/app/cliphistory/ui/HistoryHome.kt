@@ -26,7 +26,8 @@ class HistoryHome(
     dismissKeyboard:()->Unit,
     preview:(Long)->Unit,
     copy:(Long)->Unit,
-    options:(DaemonClient.Row)->Unit
+    options:(DaemonClient.Row)->Unit,
+    private val privacySettings:()->Unit={}
 ) {
     val root=ui.column()
     val search=EditText(ui.activity)
@@ -47,7 +48,8 @@ class HistoryHome(
     private val diagnosticsButton=ui.button(s(R.string.diagnostics),action=diagnostics)
     private val bar=LinearLayout(ui.activity)
     private val header=ui.column()
-    private var renderedStatus:Triple<RecorderState,Boolean,Boolean>?=null
+    private var renderedStatus:List<Any>?=null
+    private var rerenderStatus:(()->Unit)?=null
     private var keyboardShowing=false
     private var copyableRows=false
     data class Anchor(val id:Long,val position:Int,val top:Int)
@@ -150,10 +152,15 @@ class HistoryHome(
         emptyIcon.setImageResource(if(failed)R.drawable.ic_warning else if(query.isNotEmpty())R.drawable.ic_search else R.drawable.ic_clipboard)
         retryButton.visibility=if(failed)View.VISIBLE else View.GONE
         diagnosticsButton.visibility=if(failed)View.VISIBLE else View.GONE
-        status(state,total>0,page.status.getBoolean("explicitStop"))
+        val issue=issueKind(page.status.getString("connectionIssue").orEmpty().ifEmpty { page.status.getString("issue").orEmpty() })
+        val skipped=if(page.offline || page.status.getBoolean("captureSensitive") || AppSettings(ui.activity).sensitiveHintHidden)0
+            else page.status.getLong("sensitiveSkipped").coerceIn(0,Int.MAX_VALUE.toLong()).toInt()
+        val stopped=page.status.getBoolean("explicitStop")
+        rerenderStatus={ renderedStatus=null;status(state,total>0,stopped,issue,0) }
+        status(state,total>0,stopped,issue,skipped)
     }
-    private fun status(state:RecorderState,hasHistory:Boolean,stoppedByUser:Boolean) {
-        val key=Triple(state,hasHistory,stoppedByUser)
+    private fun status(state:RecorderState,hasHistory:Boolean,stoppedByUser:Boolean,issue:IssueKind=IssueKind.NONE,skipped:Int=0) {
+        val key=listOf(state,hasHistory,stoppedByUser,issue,skipped)
         if(renderedStatus==key)return
         renderedStatus=key
         status.removeAllViews();status.setPadding(0,0,0,ui.dp(12));status.background=null
@@ -169,7 +176,7 @@ class HistoryHome(
             row.setOnClickListener { recorder() };row.isFocusable=true;row.contentDescription="${label.text}. ${s(R.string.recorder)}"
             if(state==RecorderState.PAUSED)row.addView(ui.button(s(R.string.resume),action=resume))
             if(state==RecorderState.LISTENING)row.addView(ui.button(s(R.string.connection_test),action=test))
-            status.addView(row);return
+            status.addView(row);sensitiveHint(skipped);return
         }
         val (title,body)=if(stoppedByUser)R.string.user_stopped_title to R.string.user_stopped_body else when(state) {
             RecorderState.MISSING->R.string.missing_title to R.string.missing_body
@@ -178,7 +185,14 @@ class HistoryHome(
             RecorderState.DENIED->R.string.denied_title to R.string.denied_body
             RecorderState.CONNECTING->R.string.connecting to R.string.checking_storage
             RecorderState.UNSUPPORTED->R.string.unsupported_title to R.string.unsupported_body
-            else->R.string.attention_title to R.string.attention_body
+            RecorderState.OUTDATED->R.string.outdated_title to R.string.outdated_body
+            RecorderState.ROOT_MODE->R.string.root_mode_title to R.string.root_mode_body
+            else->R.string.attention_title to when(issue) {
+                IssueKind.MAIN_PROFILE_REQUIRED->R.string.profile_required_body
+                IssueKind.CLIPBOARD_NOT_SUPPORTED->R.string.clipboard_unsupported_body
+                IssueKind.SHELL_MODE_REQUIRED->R.string.unsupported_body
+                else->R.string.attention_body
+            }
         }
         if(hasHistory) {
             val row=LinearLayout(ui.activity).apply { gravity=Gravity.CENTER_VERTICAL;minimumHeight=ui.dp(48) }
@@ -186,7 +200,7 @@ class HistoryHome(
             val label=when {
                 stoppedByUser->R.string.start_recorder
                 state==RecorderState.CONNECTING->R.string.connecting
-                state in listOf(RecorderState.MISSING,RecorderState.UNSUPPORTED)->R.string.setup_help
+                state.needsServiceSetup->R.string.setup_help
                 state==RecorderState.STOPPED->R.string.open_shizuku
                 state==RecorderState.DENIED->R.string.open_shizuku
                 state==RecorderState.PERMISSION->R.string.connect
@@ -195,7 +209,7 @@ class HistoryHome(
             row.addView(ui.button(s(label)) {
                 when {
                     stoppedByUser->connect()
-                    state in listOf(RecorderState.MISSING,RecorderState.UNSUPPORTED)->help()
+                    state.needsServiceSetup->help()
                     state==RecorderState.STOPPED || state==RecorderState.DENIED->openShizuku()
                     else->connect()
                 }
@@ -212,9 +226,24 @@ class HistoryHome(
         if(stoppedByUser)actions.addView(ui.button(s(R.string.start_recorder),action=connect)) else when(state) {
             RecorderState.CONNECTING->actions.addView(ProgressBar(ui.activity).apply { isIndeterminate=true },LinearLayout.LayoutParams(ui.dp(24),ui.dp(36)))
             RecorderState.MISSING->{ actions.addView(ui.button(s(R.string.setup_help),action=help));actions.addView(ui.button(s(R.string.try_again),action=connect)) }
+            RecorderState.UNSUPPORTED,RecorderState.OUTDATED,RecorderState.ROOT_MODE->{
+                actions.addView(ui.button(s(R.string.setup_help),action=help));actions.addView(ui.button(s(R.string.open_shizuku),action=openShizuku))
+            }
             RecorderState.PERMISSION->{ actions.addView(ui.button(s(R.string.connect),action=connect));actions.addView(ui.button(s(R.string.open_shizuku),action=openShizuku)) }
             else->{actions.addView(ui.button(s(R.string.open_shizuku),action=openShizuku));actions.addView(ui.button(s(R.string.reconnect),action=connect))}
         }
+        box.addView(actions);status.addView(box)
+    }
+    /** Explains skipped private copies (for example private browsing) instead of failing silently. */
+    private fun sensitiveHint(skipped:Int) {
+        if(skipped<=0)return
+        val box=ui.column().apply { background=ui.shape(ui.color(R.color.secondary_surface),16);setPadding(ui.dp(16),ui.dp(12),ui.dp(16),ui.dp(4)) }
+        box.addView(ui.text(ui.activity.resources.getQuantityString(R.plurals.sensitive_skipped_hint,skipped,skipped),14f,true))
+        val actions=LinearLayout(ui.activity).apply {
+            orientation=if(ui.activity.resources.configuration.fontScale>1.3f)LinearLayout.VERTICAL else LinearLayout.HORIZONTAL
+        }
+        actions.addView(ui.button(s(R.string.sensitive_hint_settings),action=privacySettings))
+        actions.addView(ui.button(s(R.string.sensitive_hint_hide)) { AppSettings(ui.activity).sensitiveHintHidden=true;rerenderStatus?.invoke() })
         box.addView(actions);status.addView(box)
     }
 }

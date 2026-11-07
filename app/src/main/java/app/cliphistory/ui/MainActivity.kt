@@ -101,7 +101,7 @@ class MainActivity:Activity() {
         previewScroll=state?.getInt("preview_scroll",-1)?:-1
         root=FrameLayout(this).apply { setBackgroundColor(ui.color(R.color.canvas)) }
         home=HistoryHome(ui,::showMenu,{ client.connect(true) },::openManager,::help,::recorder,
-            { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview,::copyEntry,::entryActions)
+            { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview,::copyEntry,::entryActions,::showSettings)
         root.addView(home.root,FrameLayout.LayoutParams(-1,-1));setContentView(root)
         window.insetsController?.setSystemBarsAppearance(if(light)WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS else 0,
             WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS)
@@ -210,8 +210,10 @@ class MainActivity:Activity() {
                 putString("operationIssue",operationIssue);putString("recoveryMessage",client.recoveryMessage);putLong("checkedAt",System.currentTimeMillis())
             }
             offline=result.offline;generation=result.generation
+            val stage=client.connectionStage()
+            latest.putString("connectionStage",stage.name)
             syncUndo(latest)
-            home.show(result,rows,recorderState(client.connectionStage(),latest.getBoolean("paused"),latest.getBoolean("active"),latest.getString("selfTest")=="PASS",latest.getString("issue").orEmpty().isNotEmpty()),query)
+            home.show(result,rows,recorderState(stage,latest.getBoolean("paused"),latest.getBoolean("active"),latest.getString("selfTest")=="PASS",latest.getString("issue").orEmpty().isNotEmpty()),query)
             if(reset){restoredAnchor=null;restoredCount=40;home.list.setSelection(0)}
             else restoredAnchor?.let { anchor -> home.list.post { home.restore(anchor) };restoredAnchor=null }
             restoredCount=maxOf(40,rows.size)
@@ -471,7 +473,8 @@ class MainActivity:Activity() {
             val text=result.text
             if(text==null || client.expired(result.expiry)) { notifyUser(R.string.entry_gone);refresh();return@getText }
             val dialog=sheet(R.string.saved_text) { box,dialog ->
-            box.addView(ui.text(SearchPreview.snippet(text,home.search.text.toString())).apply { tag="entry-text";maxLines=2;ellipsize=TextUtils.TruncateAt.END })
+            val shown=if(result.sensitive || row.sensitive)s(R.string.sensitive_hidden) else SearchPreview.snippet(text,home.search.text.toString())
+            box.addView(ui.text(shown).apply { tag="entry-text";maxLines=2;ellipsize=TextUtils.TruncateAt.END })
             box.addView(ui.text(android.text.format.DateUtils.getRelativeTimeSpanString(row.time),13f,true));box.addView(ui.space(16))
             ui.actionRow(box,s(if(settings.returnAfterCopy)R.string.copy_return else R.string.copy),R.drawable.ic_copy){dialog.dismiss();copyEntry(row.id)}
             ui.actionRow(box,s(R.string.view_full),R.drawable.ic_eye){dialog.dismiss();preview(row.id)}

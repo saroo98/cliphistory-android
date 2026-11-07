@@ -201,4 +201,23 @@ class SensitivePolicyTest {
         assertEquals(1,f.repo.state.entries.map { it.expiry }.distinct().size)
         f.clock.time=HistoryTime(7,61000);assertTrue(f.repo.available.entries.isEmpty())
     }
+    @Test fun sensitiveEntriesNeverTravelAsListPreviews() {
+        assertEquals("",listPreview("424242 one-time code","",true))
+        assertEquals("",listPreview("424242 one-time code","4242",true))
+        assertEquals("ordinary text",listPreview("ordinary text","",false))
+    }
+    @Test fun expiryTimerWaitsAtMostOneMinuteOfAwakeTime() {
+        assertEquals(60_000L,expiryWait(5*60_000L))
+        assertEquals(1_500L,expiryWait(1_500L))
+        assertEquals(0L,expiryWait(-5L))
+    }
+    @Test fun deadlinePassedDuringSleepIsPurgedFromBothSlotsOnTheNextTick() {
+        val f=Fixture();f.enable(5)
+        assertEquals(CaptureResult.SAVED,f.repo.capture("otp 424242",1,true))
+        assertEquals(60_000L,expiryWait(f.repo.expiryDelay()!!))
+        f.clock.time=HistoryTime(7,1000+8*60*60_000L) // The phone slept for eight hours.
+        assertEquals(0L,f.repo.expiryDelay())
+        assertTrue(f.repo.expire(retryCleanup=true))
+        for(slot in listOf(f.a,f.b))assertFalse(String(slot.bytes,Charsets.ISO_8859_1).contains("424242"))
+    }
 }

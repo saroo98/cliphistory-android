@@ -30,6 +30,8 @@ class SensitiveChecks(private val test:Instrumentation) {
         val deadline=SystemClock.elapsedRealtime()+12000
         while(SystemClock.elapsedRealtime()<deadline) { if(condition()){verify(true,message);return};SystemClock.sleep(40) };error(message)
     }
+    private fun nodes(root:android.view.accessibility.AccessibilityNodeInfo?):List<android.view.accessibility.AccessibilityNodeInfo> = if(root==null)emptyList()
+        else listOf(root)+(0 until root.childCount).flatMap { nodes(root.getChild(it)) }
     private fun views(view:View):List<View> = listOf(view)+(if(view is ViewGroup)(0 until view.childCount).flatMap { views(view.getChildAt(it)) } else emptyList())
     private fun field(name:String)=MainActivity::class.java.getDeclaredField(name).apply { isAccessible=true }.get(activity)
     private fun call(name:String,vararg args:Any) { MainActivity::class.java.declaredMethods.single { it.name==name && it.parameterCount==args.size }.apply { isAccessible=true }.invoke(activity,*args) }
@@ -90,6 +92,12 @@ class SensitiveChecks(private val test:Instrumentation) {
             main { activity.finish() };test.waitForIdleSync()
         }
         seed(8000)
+        main {
+            val hidden=context.getString(R.string.sensitive_hidden)
+            val all=views(activity.window.decorView)
+            verify(texts().contains(hidden) && texts().none { it.contains("Synthetic private") },"Sensitive list entry is shown as hidden")
+            verify(all.none { it.contentDescription?.contains("Synthetic private")==true },"Sensitive list entry is not spoken by TalkBack")
+        }
         main { call("preview",3L) }
         await("Sensitive full text opens without an authentication step") { var found=false;main { found=texts().contains("Synthetic private 🌿\n exact spaces  ") };found }
         await("Expired full text closes and disappears from history") { var found=false;main { found=field("pageKind")=="" && (field("home") as HistoryHome).adapter.count==2 };found }
@@ -97,8 +105,11 @@ class SensitiveChecks(private val test:Instrumentation) {
         main { activity.finish() };seed(8000)
         lateinit var quick:QuickCopyDialog
         main { quick=QuickCopyDialog(activity){ };quick.show() }
-        await("Quick panel loads unexpired sensitive preview") { var found=false;main { found=views(quick.window!!.decorView).filterIsInstance<TextView>().any { it.text.toString().startsWith("Synthetic private") } };found }
-        await("Quick panel refreshes while held across expiry") { var hidden=false;main { hidden=views(quick.window!!.decorView).filterIsInstance<TextView>().none { it.text.toString().startsWith("Synthetic private") } };hidden }
+        val hiddenLabel=context.getString(R.string.sensitive_hidden)
+        await("Quick panel shows the unexpired sensitive entry as hidden") { var found=false;main {
+            val shown=views(quick.window!!.decorView).filterIsInstance<TextView>().map { it.text.toString() }
+            found=shown.contains(hiddenLabel) && shown.none { it.startsWith("Synthetic private") } };found }
+        await("Quick panel refreshes while held across expiry") { var hidden=false;main { hidden=views(quick.window!!.decorView).filterIsInstance<TextView>().none { it.text.toString()==hiddenLabel } };hidden }
         main { quick.dismiss();activity.finish() };seed(6000)
         val retryExpiry=PrivateHistory.readOffline(context).entries.first().expiry!!
         log.append("History retry fixture remaining milliseconds: ${retryExpiry.elapsed-SystemClock.elapsedRealtime()}\n")
@@ -110,7 +121,7 @@ class SensitiveChecks(private val test:Instrumentation) {
         main {
             quick=QuickCopyDialog(activity){ };quick.show()
         }
-        await("Quick panel is loaded before retry fixture") { var ready=false;main { ready=views(quick.window!!.decorView).filterIsInstance<Button>().any { it.text.toString().startsWith("Synthetic private") } };ready }
+        await("Quick panel is loaded before retry fixture") { var ready=false;main { ready=views(quick.window!!.decorView).filterIsInstance<Button>().any { it.text.toString()==hiddenLabel } };ready }
         main {
             val expiry=PrivateHistory.readOffline(context).entries.first().expiry!!
             QuickCopyDialog::class.java.getDeclaredMethod("showCopyFailure",Long::class.javaPrimitiveType,Expiry::class.java).apply { isAccessible=true }.invoke(quick,3L,expiry)
@@ -135,6 +146,24 @@ class SensitiveChecks(private val test:Instrumentation) {
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP).putExtra("text",text).putExtra("sensitive",marked)) }
         }
         fun entries()=service.page("",0,40).getLongArray("ids")!!.map { service.entry(it) }
+        // Emulator clipboard sharing re-posts each copy from the host as plain text, which drops
+        // Android's sensitive flag for every app. Detect that instead of reporting a false failure.
+        fun sensitiveFlagSurvives():String {
+            produce("Synthetic_private",true);SystemClock.sleep(1500)
+            main { activity.startActivity(Intent(SyntheticClipboardActivity.READ_SYNTHETIC_STATE).setClassName(test.context.packageName,SyntheticClipboardActivity::class.java.name)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
+            var state=""
+            await("Synthetic clipboard state is readable") {
+                state=nodes(test.uiAutomation.rootInActiveWindow).mapNotNull { it.text?.toString() }.firstOrNull { it.startsWith("Synthetic clipboard state:") }.orEmpty()
+                state.isNotEmpty()
+            }
+            return state
+        }
+        val environment=sensitiveFlagSurvives()
+        log.append("$environment\n")
+        check(environment.endsWith("marked=true")) {
+            "EMULATOR_CLIPBOARD_SYNC_STRIPS_SENSITIVE_FLAG: turn off the emulator's clipboard sharing (Extended controls > Settings), then rerun."
+        }
         try {
             service.clearHistory();policy(false)
             val skipped=service.status().getLong("sensitiveSkipped")
@@ -163,8 +192,11 @@ class SensitiveChecks(private val test:Instrumentation) {
             await("History copy retains Android's sensitive preview flag") { var marked=false;main { marked=activity.getSystemService(ClipboardManager::class.java).primaryClipDescription?.extras?.getBoolean(ClipDescription.EXTRA_IS_SENSITIVE)==true };marked }
             lateinit var quick:QuickCopyDialog
             main { activity.getSystemService(ClipboardManager::class.java).clearPrimaryClip();quick=QuickCopyDialog(activity){ };quick.show() }
-            await("Sensitive quick-copy entry is visible") { var present=false;main { present=views(quick.window!!.decorView).filterIsInstance<Button>().any { it.text.toString()=="Synthetic source-sensitive" } };present }
-            main { click(quick.window!!.decorView,"Synthetic source-sensitive") }
+            val hiddenLabel=context.getString(R.string.sensitive_hidden)
+            await("Sensitive quick-copy entry is listed but hidden") { var present=false;main {
+                val buttons=views(quick.window!!.decorView).filterIsInstance<Button>().map { it.text.toString() }
+                present=buttons.contains(hiddenLabel) && buttons.none { it=="Synthetic source-sensitive" } };present }
+            main { click(quick.window!!.decorView,hiddenLabel) }
             await("Quick copy dismisses and retains the sensitive flag") { var marked=false;main { marked=!quick.isShowing && activity.getSystemService(ClipboardManager::class.java).primaryClipDescription?.extras?.getBoolean(ClipDescription.EXTRA_IS_SENSITIVE)==true };marked }
             main { call("preview",id) }
             await("Sensitive full-text preview is selectable") { var ready=false;main { ready=views(activity.window.decorView).filterIsInstance<TextView>().any { it.tag=="preview-text" && it.text.toString()=="Synthetic source-sensitive" } };ready }

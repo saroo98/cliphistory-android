@@ -39,13 +39,22 @@ class RecordingRecoveryService : Service() {
     private fun notification(message:Int):Notification {
         val open=PendingIntent.getActivity(this,7,Intent(this,MainActivity::class.java),PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val stop=PendingIntent.getService(this,8,Intent(this,RecordingRecoveryService::class.java).setAction(STOP),PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
-        return Notification.Builder(this,CHANNEL).setSmallIcon(R.drawable.ic_cliphistory_system)
+        val builder=Notification.Builder(this,CHANNEL).setSmallIcon(R.drawable.ic_cliphistory_system)
             .setContentTitle(getString(R.string.app_name)).setContentText(getString(message))
             .setContentIntent(open).setOngoing(true).setOnlyAlertOnce(true).setShowWhen(false)
             .setVisibility(Notification.VISIBILITY_SECRET)
-            .addAction(Notification.Action.Builder(null,getString(R.string.open_app),open).build())
+        // After a reboot the user usually only needs to start the service app: one tap.
+        if(message==R.string.recovery_waiting)serviceAppIntent()?.let { launch ->
+            builder.addAction(Notification.Action.Builder(null,getString(R.string.open_shizuku),
+                PendingIntent.getActivity(this,9,launch,PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)).build())
+        }
+        return builder.addAction(Notification.Action.Builder(null,getString(R.string.open_app),open).build())
             .addAction(Notification.Action.Builder(null,getString(R.string.stop_recorder),stop).build()).build()
     }
+    /** Only when exactly one known service app is installed; otherwise ClipHistory asks which. */
+    private fun serviceAppIntent():Intent?=try {
+        client.managerPackage()?.let { packageManager.getLaunchIntentForPackage(it) }?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    } catch (_:Exception) { null }
     private fun updateNotification() {
         val message=notificationMessage()
         // Clipboard changes do not change this notification; avoid Android dropping a real state change.

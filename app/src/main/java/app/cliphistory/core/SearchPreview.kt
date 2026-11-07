@@ -14,3 +14,7 @@ object SearchPreview {
         return prefix+text.substring(start,end)+if(end<text.length)" …" else ""
     }
 }
+
+/** Sensitive entries never travel as list previews; the UI shows a fixed label instead. */
+fun listPreview(text: String, query: String, sensitive: Boolean): String =
+    if (sensitive) "" else SearchPreview.snippet(text, query)

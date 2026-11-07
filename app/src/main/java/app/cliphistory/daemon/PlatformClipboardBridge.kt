@@ -37,7 +37,8 @@ class PlatformClipboardBridge(
     private val death = IBinder.DeathRecipient { registered = false; onFailure("SYSTEM_CLIPBOARD_DISCONNECTED") }
 
     fun start() {
-        check(Process.myUid() == 2000) { "WIRELESS_SHIZUKU_SHELL_REQUIRED" }
+        // Shell only: as root, Android clears the clipboard instead of reading it (see serviceStage).
+        check(Process.myUid() == app.cliphistory.core.SHELL_UID) { "WIRELESS_SHIZUKU_SHELL_REQUIRED" }
         val serviceManager = Class.forName("android.os.ServiceManager")
         systemBinder = serviceManager.getMethod("getService", String::class.java).invoke(null, "clipboard") as? IBinder
             ?: error("SYSTEM_CLIPBOARD_UNAVAILABLE")

@@ -16,3 +16,8 @@ fun sensitiveDeadline(now: HistoryTime, minutes: Int): Expiry {
     if(now.boot<0 || now.elapsed<0 || now.elapsed>Long.MAX_VALUE-duration)throw StoreException("BOOT_IDENTITY_UNAVAILABLE")
     return Expiry(now.boot,now.elapsed+duration)
 }
+
+/** Longest single wait for the expiry timer. Timer delays pause while the phone sleeps but
+ * deadlines use elapsed real time, so re-check at least once a minute of awake time. */
+const val MAX_EXPIRY_WAIT_MS = 60_000L
+fun expiryWait(delayMs: Long): Long = delayMs.coerceIn(0L, MAX_EXPIRY_WAIT_MS)

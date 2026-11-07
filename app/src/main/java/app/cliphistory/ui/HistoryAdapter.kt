@@ -38,8 +38,10 @@ class HistoryAdapter(private val ui:Ui,private val preview:(DaemonClient.Row)->U
             },LinearLayout.LayoutParams(-2,-2))
         }
         val row=getItem(position)
-        val preview=SpannableString(row.preview)
-        if(query.isNotEmpty()) {
+        // Sensitive text is never shown or spoken in the list; View opens it on request.
+        val label=if(row.sensitive)context.getString(R.string.sensitive_hidden) else row.preview
+        val preview=SpannableString(label)
+        if(query.isNotEmpty() && !row.sensitive) {
             var start=row.preview.indexOf(query,ignoreCase=true)
             while(start>=0) {
                 preview.setSpan(BackgroundColorSpan(context.getColor(R.color.selected)),start,start+query.length,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
@@ -54,10 +56,10 @@ class HistoryAdapter(private val ui:Ui,private val preview:(DaemonClient.Row)->U
             else DateUtils.getRelativeTimeSpanString(row.time,now,DateUtils.MINUTE_IN_MILLIS)
         val time=(body.getChildAt(1) as TextView).text.toString()
         layout.getChildAt(1).apply {
-            contentDescription=context.getString(R.string.port_view_entry,row.preview,time)
+            contentDescription=context.getString(R.string.port_view_entry,label,time)
             setOnClickListener { this@HistoryAdapter.preview(row) }
         }
-        layout.contentDescription=context.getString(R.string.port_copy_entry,row.preview,time)
+        layout.contentDescription=context.getString(R.string.port_copy_entry,label,time)
         layout.isFocusable=true;layout.setOnClickListener { copy(row.id) }
         layout.setOnLongClickListener { options(row);true }
         layout.accessibilityDelegate=object:View.AccessibilityDelegate() {

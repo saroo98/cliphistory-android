@@ -90,7 +90,8 @@ class DaemonClient(private val context: Context) {
                     }
                     if(response.getBoolean("ok")) service.registerObserver(observer)
                 } catch(t:Throwable) {
-                    response=Bundle().apply { putBoolean("ok",false);putString("issue","CONNECT_FAILED_${t.javaClass.simpleName}") }
+                    val code=if(t is StoreException)t.reason else "CONNECT_FAILED_${t.javaClass.simpleName}"
+                    response=Bundle().apply { putBoolean("ok",false);putString("issue",code) }
                 }
                 main.post {
                     if(attaching===service)attaching=null
@@ -102,7 +103,10 @@ class DaemonClient(private val context: Context) {
                     if(response.getBoolean("ok")) {
                         options=preferences.options();remote=service;message="Connected";connectionIssue="";resumeOnConnect=false
                         cancelRetries();startRecoveryIfAllowed()
-                    } else { remote=null;message="Connection failed: ${response.getString("issue")}";cancelRetries() }
+                    } else {
+                        remote=null;connectionIssue=response.getString("issue").orEmpty()
+                        message="Connection failed: $connectionIssue";cancelRetries()
+                    }
                     changed()
                 }
             }
@@ -196,9 +200,13 @@ class DaemonClient(private val context: Context) {
         bundle.putBoolean("autoDeleteSensitive",snapshot.autoDeleteSensitive)
         bundle.putInt("sensitiveMinutes",snapshot.sensitiveMinutes)
     }
-    fun installedManagers()=listOf("moe.shizuku.privileged.api","com.churan.shizako",
-        "eu.darken.porter","com.hamondev.shevery","af.shizuku.plus.api").filter {
+    fun installedManagers()=MANAGERS.filter {
         context.packageManager.getLaunchIntentForPackage(it)!=null
+    }
+    companion object {
+        /** Must match the manifest's package queries. */
+        val MANAGERS=listOf("moe.shizuku.privileged.api","com.churan.shizako",
+            "eu.darken.porter","com.hamondev.shevery","af.shizuku.plus.api")
     }
     /** A shortcut is safe only when the installed manager is unambiguous. */
     fun managerPackage():String?=installedManagers().singleOrNull()
@@ -208,11 +216,10 @@ class DaemonClient(private val context: Context) {
             connecting -> ConnectionStage.CONNECTING
             !Shizuku.pingBinder() -> if(installedManagers().isEmpty())
                 ConnectionStage.MISSING else ConnectionStage.STOPPED
-            Shizuku.getVersion()<13 -> ConnectionStage.UNSUPPORTED
+            Shizuku.getVersion()<MIN_SERVICE_API -> ConnectionStage.OUTDATED
             Shizuku.checkSelfPermission()!=PackageManager.PERMISSION_GRANTED ->
                 if(permissionDenied || Shizuku.shouldShowRequestPermissionRationale()) ConnectionStage.DENIED else ConnectionStage.PERMISSION
-            Shizuku.getUid()!=2000 -> ConnectionStage.UNSUPPORTED
-            else -> ConnectionStage.FAILED
+            else -> serviceStage(Shizuku.getVersion(),Shizuku.getUid()) ?: ConnectionStage.FAILED
         }
     } catch (_:Exception) { ConnectionStage.STOPPED }
     fun connect(askPermission:Boolean) {
@@ -252,7 +259,7 @@ class DaemonClient(private val context: Context) {
         if(connecting)return
         try {
             if(!Shizuku.pingBinder()) { message="Start or restart your compatible service, then reconnect.";changed();return }
-            if(Shizuku.getVersion()<13) { message="Update your service app; Shizuku API 13 or newer is required.";changed();return }
+            if(Shizuku.getVersion()<MIN_SERVICE_API) { message=context.getString(R.string.outdated_body);changed();return }
             if(Shizuku.checkSelfPermission()!=PackageManager.PERMISSION_GRANTED) {
                 message="Tap Connect and allow service access."
                 if(askPermission) {
@@ -261,7 +268,11 @@ class DaemonClient(private val context: Context) {
                 }
                 changed();return
             }
-            if(Shizuku.getUid()!=2000) { message="Use a non-root shell service started with wireless debugging or ADB.";changed();return }
+            when(serviceStage(Shizuku.getVersion(),Shizuku.getUid())) {
+                ConnectionStage.ROOT_MODE -> { message=context.getString(R.string.root_mode_body);changed();return }
+                null -> Unit
+                else -> { message=context.getString(R.string.unsupported_body);changed();return }
+            }
             if(!storageReady) {
                 connecting=true;message="Checking private history…";changed()
                 io.execute {
@@ -381,7 +392,9 @@ class DaemonClient(private val context: Context) {
             }
             val loaded=preferences.options()
             main.post {
-                options=loaded;pendingStop=false
+                // The stop moved the epoch, so an in-flight connect can no longer finish
+                // and its timeout no longer fires. Never leave the UI stuck on Connecting.
+                options=loaded;pendingStop=false;connecting=false;attaching=null
                 if(options.explicitlyStopped) {
                     activatedThisSession=false
                     remote=null;connecting=false;connectionIssue="";message="Recorder stopped by you. Tap Connect to start it again."
@@ -425,7 +438,7 @@ class DaemonClient(private val context: Context) {
             policy(this,snapshot);putInt("encryptionVersion",1);putString("encryptionSecurity",encryptionSecurity)
             putBoolean("bootIdentityKnown",historyBoot>=0)
         }
-        return Page(status,matched.drop(offset).take(40).map { Row(it.id,it.timestamp,SearchPreview.snippet(it.text,query),it.sensitive,it.expiry) },matched.size,snapshot.generation,true)
+        return Page(status,matched.drop(offset).take(40).map { Row(it.id,it.timestamp,listPreview(it.text,query,it.sensitive),it.sensitive,it.expiry) },matched.size,snapshot.generation,true)
     }
     private fun readIssue(t:Exception)=when(t) {
         is StoreException->t.reason

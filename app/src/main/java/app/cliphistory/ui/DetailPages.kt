@@ -9,6 +9,11 @@ import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.*
 import app.cliphistory.BuildConfig
 import app.cliphistory.R
+import app.cliphistory.client.DaemonClient
+import app.cliphistory.core.IssueKind
+import app.cliphistory.core.ROOT_UID
+import app.cliphistory.core.SHELL_UID
+import app.cliphistory.core.issueKind
 import java.text.NumberFormat
 
 class DetailPages(private val ui:Ui) {
@@ -147,6 +152,8 @@ class DetailPages(private val ui:Ui) {
         s(R.string.recorder_connection) to b.getString("connectionMessage",s(R.string.not_confirmed)),
         s(R.string.connection_issue) to b.getString("connectionIssue").orEmpty().ifEmpty { s(R.string.none) },
         s(R.string.shizuku_version) to try { if(rikka.shizuku.Shizuku.pingBinder())rikka.shizuku.Shizuku.getVersion().toString() else s(R.string.not_confirmed) } catch (_:Exception) { s(R.string.not_confirmed) },
+        s(R.string.service_mode) to serviceMode(),
+        s(R.string.service_apps) to serviceApps(),
         s(R.string.security_patch) to Build.VERSION.SECURITY_PATCH,
         s(R.string.generation) to if(offline)s(R.string.not_connected) else b.getLong("generation").toString(),
         s(R.string.api_signature) to b.getString("signature",s(R.string.not_connected)),
@@ -156,6 +163,18 @@ class DetailPages(private val ui:Ui) {
         s(R.string.capture_sensitive) to if(b.containsKey("captureSensitive"))s(if(b.getBoolean("captureSensitive"))R.string.enabled else R.string.disabled) else s(R.string.not_confirmed),
         s(R.string.expiry_clock) to s(if(b.getBoolean("bootIdentityKnown"))R.string.passed else R.string.expiry_clock_unavailable)
     )
+    private fun serviceMode():String=try {
+        if(!rikka.shizuku.Shizuku.pingBinder())s(R.string.not_confirmed) else when(val uid=rikka.shizuku.Shizuku.getUid()) {
+            SHELL_UID->s(R.string.service_mode_shell)
+            ROOT_UID->s(R.string.service_mode_root)
+            -1->s(R.string.not_confirmed)
+            else->ui.activity.getString(R.string.service_mode_other,uid)
+        }
+    } catch (_:Exception) { s(R.string.not_confirmed) }
+    /** Known service apps and their versions only; no other installed apps are listed. */
+    private fun serviceApps():String=DaemonClient.MANAGERS.mapNotNull { name ->
+        try { "$name ${ui.activity.packageManager.getPackageInfo(name,0).versionName.orEmpty()}".trim() } catch (_:Exception) { null }
+    }.joinToString(", ").ifEmpty { s(R.string.none) }
     fun report(b:Bundle,offline:Boolean)=(diagnosticRows(b,offline)+advanced(b,offline)).joinToString("\n") { "${it.first}: ${it.second}" }+"\n\n"+s(R.string.report_privacy)+"\n"+s(R.string.test_boundary)
     private fun displayedValue(key:String,value:String):String {
         if(key!=s(R.string.connection_test))return value
@@ -180,6 +199,21 @@ class DetailPages(private val ui:Ui) {
         val issue=b.getString("issue").orEmpty()
         val readFailed=b.getBoolean("historyReadFailed") || issue=="BOTH_SNAPSHOTS_UNREADABLE" || issue.startsWith("HISTORY_READ_FAILED") || issue=="HISTORY_ACCESS_DENIED"
         if(readFailed)return Health(R.string.history_failed,R.string.html_port_read_retry_advice,DiagnosticAction.RETRY,R.string.try_again)
+        // A running but unusable service must not be reported as "not connected, no issue".
+        when(b.getString("connectionStage")) {
+            "ROOT_MODE"->return Health(R.string.root_mode_title,R.string.root_mode_body,DiagnosticAction.HELP,R.string.setup_help)
+            "OUTDATED"->return Health(R.string.outdated_title,R.string.outdated_body,DiagnosticAction.HELP,R.string.setup_help)
+            "UNSUPPORTED"->return Health(R.string.unsupported_title,R.string.unsupported_body,DiagnosticAction.HELP,R.string.setup_help)
+            "MISSING"->return Health(R.string.missing_title,R.string.missing_body,DiagnosticAction.HELP,R.string.setup_help)
+            "PERMISSION"->return Health(R.string.permission_title,R.string.permission_body,DiagnosticAction.CONNECT,R.string.connect)
+            "DENIED"->return Health(R.string.denied_title,R.string.denied_body,DiagnosticAction.HELP,R.string.setup_help)
+        }
+        when(issueKind(b.getString("connectionIssue"))) {
+            IssueKind.MAIN_PROFILE_REQUIRED->return Health(R.string.attention_title,R.string.profile_required_body,DiagnosticAction.HELP,R.string.setup_help)
+            IssueKind.CLIPBOARD_NOT_SUPPORTED->return Health(R.string.attention_title,R.string.clipboard_unsupported_body,DiagnosticAction.HELP,R.string.setup_help)
+            IssueKind.SHELL_MODE_REQUIRED->return Health(R.string.unsupported_title,R.string.unsupported_body,DiagnosticAction.HELP,R.string.setup_help)
+            else->Unit
+        }
         if(offline && b.getString("connectionIssue")=="HELPER_START_TIMEOUT")
             return Health(R.string.helper_start_failed,R.string.helper_start_failed_body,DiagnosticAction.HELP,R.string.setup_help)
         if(offline)return Health(R.string.html_port_recorder_disconnected,R.string.html_port_connect_advice,DiagnosticAction.CONNECT,R.string.connect)
