@@ -150,7 +150,10 @@ jobs:
           cores: 4
           ram-size: 4096M # current emulators raise smaller google_apis AVDs to 4096 MB anyway
           disk-size: 6144M
-          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          # Android 17's surfaceflinger aborts at boot under swiftshader_indirect ("Assertion failed:
+          # !rcEnc->featureInfo()->hasReadColorBufferDma"), restarting the whole system; it uses the
+          # emulator's ANGLE software renderer instead.
+          emulator-options: -no-window -gpu ${{ matrix.api == '37.0' && 'swangle_indirect' || 'swiftshader_indirect' }} -no-snapshot -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: bash tools/ci/emulator-e2e.sh --serial emulator-5554 --expect-avd cliphistory-ci --apk validation-apks/cliphistory-validation.apk --test-apk validation-apks/cliphistory-validation-test.apk --output reports/ci/device
 
