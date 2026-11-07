@@ -34,7 +34,6 @@ class DaemonClient(private val context: Context) {
     private val main=Handler(Looper.getMainLooper())
     private val io=Executors.newSingleThreadExecutor { r -> Thread(r,"ClipHistory-client") }
     private val listeners=LinkedHashSet<() -> Unit>()
-    private val pageRequest=AtomicLong(0)
     @Volatile private var remote:IClipboardDaemon?=null
     private var attaching:IClipboardDaemon?=null
     @Volatile var message="Start your service app, then tap Connect.";private set
@@ -306,11 +305,18 @@ class DaemonClient(private val context: Context) {
             } },30_000)
         } catch(t:Throwable) { disconnected("Cannot connect: ${t.javaClass.simpleName}") }
     }
-    fun requestPage(query:String,offset:Int,callback:(Page)->Unit) {
+    /** One screen's page reads. A newer request or [cancel] from the same screen makes its older
+     * reads stale; other screens are unaffected. Android stops a closing screen after the next
+     * one has started, so an app-wide token would drop the new screen's first page. */
+    class PageReads {
+        internal val latest=AtomicLong(0)
+        fun cancel() { latest.incrementAndGet() }
+    }
+    fun requestPage(reads:PageReads,query:String,offset:Int,callback:(Page)->Unit) {
         val service=remote
-        val token=pageRequest.incrementAndGet()
+        val token=reads.latest.incrementAndGet()
         io.execute {
-            if(token!=pageRequest.get())return@execute
+            if(token!=reads.latest.get())return@execute
             val result=try {
                 if(service!=null && service.asBinder().isBinderAlive) {
                     val status=service.status();val page=service.page(query.take(512),offset,40)
@@ -328,7 +334,7 @@ class DaemonClient(private val context: Context) {
                     try { offlinePage(query,offset) } catch(failure:Exception){failedPage(failure,true)}
                 } else failedPage(t,service==null)
             }
-            main.post { if(token==pageRequest.get()) {
+            main.post { if(token==reads.latest.get()) {
                 result.status.putString("encryptionSecurity",encryptionSecurity)
                 result.status.putString("connectionMessage",message)
                 result.status.putString("connectionIssue",connectionIssue)
@@ -404,7 +410,6 @@ class DaemonClient(private val context: Context) {
             }
         }
     }
-    fun cancelPageReads() { pageRequest.incrementAndGet() }
     /** Independent bounded read: a tile must not invalidate the Activity's pagination. */
     fun requestLatest(count:Int=3,callback:(Page)->Unit) {
         require(count in 1..3)

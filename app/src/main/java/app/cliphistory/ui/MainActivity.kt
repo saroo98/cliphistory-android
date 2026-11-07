@@ -39,6 +39,7 @@ class MainActivity:Activity() {
     private var offline=true
     private var visible=false
     private var request=0
+    private val pageReads=DaemonClient.PageReads()
     private var generation=0L
     private var loadedQuery=""
     private var page:View?=null
@@ -122,7 +123,7 @@ class MainActivity:Activity() {
             override fun beforeTextChanged(s:CharSequence?,start:Int,count:Int,after:Int){}
             override fun onTextChanged(s:CharSequence?,start:Int,before:Int,count:Int) {
                 home.clear.visibility=if(s.isNullOrEmpty())View.GONE else View.VISIBLE
-                request++;client.cancelPageReads();main.removeCallbacks(searchChanged);main.postDelayed(searchChanged,150)
+                request++;pageReads.cancel();main.removeCallbacks(searchChanged);main.postDelayed(searchChanged,150)
             }
             override fun afterTextChanged(s:Editable?){}
         })
@@ -169,7 +170,7 @@ class MainActivity:Activity() {
         ScreenPrivacy.apply(this,settings);dialogs.forEach { ScreenPrivacy.apply(it.window,settings) }
     }
     override fun onStop() {
-        visible=false;request++;navigation++;client.cancelPageReads();client.removeListener(changed);main.removeCallbacksAndMessages(null)
+        visible=false;request++;navigation++;pageReads.cancel();client.removeListener(changed);main.removeCallbacksAndMessages(null)
         removeNotice()
         if(pageKind=="preview") { previewScroll=findScroll(page)?.scrollY?:previewScroll;eraseEntryText(page) }
         dialogs.toList().forEach { it.dismiss() };menu?.dismiss();super.onStop()
@@ -231,7 +232,7 @@ class MainActivity:Activity() {
         // Binder pages remain bounded to 40 items. Refresh all previously loaded pages
         // before replacing the list so observer updates do not discard the scroll anchor.
         fun read(offsetToRead:Int,accumulated:List<DaemonClient.Row>,expected:Long?) {
-            client.requestPage(query,offsetToRead) { result ->
+            client.requestPage(pageReads,query,offsetToRead) { result ->
                 if(!visible || token!=request)return@requestPage
                 if(expected!=null && expected!=result.generation) { refresh(reset=true);return@requestPage }
                 val combined=accumulated+result.rows

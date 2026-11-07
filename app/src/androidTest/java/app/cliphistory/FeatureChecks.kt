@@ -128,10 +128,21 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
         checkThat(backgroundStatus.contains(context.getString(R.string.port_background_allowed)) || backgroundStatus.contains(context.getString(R.string.port_background_restricted)),"App background permission is described separately")
         val completed=CountDownLatch(2)
         main {
-            client.requestPage("",0) { checkThat(it.rows.size==3,"Activity page not cancelled by independent tile read");completed.countDown() }
+            client.requestPage(DaemonClient.PageReads(),"",0) { checkThat(it.rows.size==3,"Activity page not cancelled by independent tile read");completed.countDown() }
             client.requestLatest { checkThat(it.rows.size==3 && it.offline,"Tile read uses valid offline snapshot");completed.countDown() }
         }
         check(completed.await(8,TimeUnit.SECONDS))
+        // C12: Android stops a closing history screen after the next one has started, so the
+        // closing screen's cancel must not drop the next screen's first page.
+        val closing=DaemonClient.PageReads();val reopened=CountDownLatch(1)
+        main { client.requestPage(DaemonClient.PageReads(),"",0) { reopened.countDown() };closing.cancel() }
+        checkThat(reopened.await(8,TimeUnit.SECONDS),"A closing screen does not cancel the next screen's page")
+        // A screen's own cancel (search typing, onStop) still drops its stale read. Reads run in
+        // order on one worker, so a later read finishing proves the stale one was skipped.
+        val own=DaemonClient.PageReads();var stale=false;val flushed=CountDownLatch(1)
+        main { client.requestPage(own,"",0) { stale=true };own.cancel();client.requestPage(DaemonClient.PageReads(),"",0) { flushed.countDown() } }
+        check(flushed.await(8,TimeUnit.SECONDS))
+        main { checkThat(!stale,"A screen's own cancel still drops its stale page") }
         screenshots()
     }
     private fun screenshots() {
@@ -774,7 +785,7 @@ class FeatureChecks(private val test:Instrumentation,private val arguments:Bundl
             }
             val loaded=CountDownLatch(1)
             lateinit var page:DaemonClient.Page
-            main { client.requestPage("",0) { page=it;loaded.countDown() } }
+            main { client.requestPage(DaemonClient.PageReads(),"",0) { page=it;loaded.countDown() } }
             check(loaded.await(8,TimeUnit.SECONDS))
             checkThat(page.status.getString("connectionIssue")=="HELPER_START_TIMEOUT","Retry keeps the previous helper startup failure in diagnostics")
             main {
