@@ -131,7 +131,9 @@ jobs:
           api-level: ${{ matrix.api }}
           target: google_apis # adb root works on google_apis images (needed by shizako-root)
           arch: x86_64
-          profile: pixel_8_pro # same device profile as the local ClipHistory AVDs
+          # pixel_6 (1080 x 2400, 420 dpi) matches the local 1.4.6 audit AVDs. The runner image's
+          # command-line tools 12.0 have no pixel_8_pro profile, so AVD creation failed with it.
+          profile: pixel_6
           avd-name: cliphistory-ci
           cores: 4
           ram-size: 4096M # current emulators raise smaller google_apis AVDs to 4096 MB anyway
