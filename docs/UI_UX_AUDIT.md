@@ -4,7 +4,7 @@
 
 The owner requested a premium, minimal Android clipboard utility and authorized implementation, emulator validation, and a local commit. Preserve the existing quiet mineral palette, native Views architecture, exact clipboard contents, privacy protections, and customization. No new production dependency or remote publication belongs to this change.
 
-Two independent Impeccable reviewers, both GPT-6.1 Sol with maximum reasoning effort, assessed the incumbent source and native evidence before implementation. Assessment A scored design 79/100 and Nielsen usability 30/40. Assessment B scored native technical health 16/20. Neither established a P0 or P1 defect. These are reviewer judgments, not universal quality certifications.
+Two independent design reviews assessed the incumbent source and native evidence before implementation. Assessment A scored design 79/100 and Nielsen usability 30/40. Assessment B scored native technical health 16/20. Neither established a P0 or P1 defect. These are reviewer judgments, not universal quality certifications.
 
 Native evidence included 138 emulator screen captures, 28 valid large-font/orientation captures, and seven successful motion recordings. Two producer-screen adaptivity captures and one failed automation recording were explicitly excluded. Captures of Android-owned transitions are not app layout defects. Motion samples cannot establish physical-device frame pacing. Historical 81-assertion validation is only a baseline; fresh results follow separately.
 
@@ -31,7 +31,7 @@ Native evidence included 138 emulator screen captures, 28 valid large-font/orien
 | Quick-copy write-error copy promises an absent Open app action | Name the existing saved-text retry and Close paths; keep the entry list available. |
 | Empty quick copy reserves three absent rows | Release reserved row height after a settled empty/error result; retain stable populated loading dimensions. Explain how to save text. |
 
-## Complete Impeccable coverage
+## Complete review coverage
 
 | Criterion | Reviewed outcome / verification boundary |
 |---|---|

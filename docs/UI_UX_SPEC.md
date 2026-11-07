@@ -1,24 +1,24 @@
-# ClipHistory: Complete UI/UX Image-Generation Prompt
+# ClipHistory: Complete UI/UX Design Specification
 
 Prepared from the current ClipHistory source. This is a design brief, not an assertion that the proposed redesign or additions are implemented.
 
 ## How to use this
 
-Paste the entire section between **BEGIN IMAGE PROMPT** and **END IMAGE PROMPT** into ChatGPT with image generation available. It tells ChatGPT to create the first screen, establish a reference, then generate the rest consistently when you say `Next` or request a screen ID.
+The section between **BEGIN DESIGN SPECIFICATION** and **END DESIGN SPECIFICATION** describes every screen. Design S01 first as the visual reference, then the remaining screens consistently with it.
 
-Generating separate screens makes small text and layout easier to inspect than requesting dozens of screens in one collage. Reattach the first generated screen if you start a new conversation. Images cannot guarantee exact typography, pixel measurements, interaction behavior, or animation performance; the specifications below remain the reference for later implementation.
+Separate screens make small text and layout easier to inspect than one large collage. Mockups cannot guarantee exact typography, pixel measurements, interaction behavior, or animation performance; the specifications below remain the reference for implementation.
 
 The only proposed functional additions in this brief are full-text preview, an appearance preference, and an optional copy-and-stay preference. No future roadmap has yet been agreed. These are proposals for your review, not claims about existing functionality. Other changes are visual or navigational treatments of existing features.
 
 ---
 
-# BEGIN IMAGE PROMPT
+# BEGIN DESIGN SPECIFICATION
 
-Act as an expert Android product designer and mobile interface art director. Generate high-fidelity UI images for **ClipHistory**, a private text clipboard-history app for a Pixel 8 Pro running Android 17.
+This specification describes high-fidelity UI screens for **ClipHistory**, a private text clipboard-history app for a Pixel 8 Pro running Android 17.
 
-I want a coherent, buildable Android interface that feels calm, minimal, fluid, snappy, and carefully finished. Design an everyday utility I can open, scan, tap, and leave in seconds. Treat text readability and retrieval speed as the product's main visual priorities.
+The goal is a coherent, buildable Android interface that feels calm, minimal, fluid, snappy, and carefully finished: an everyday utility that can be opened, scanned, tapped, and left in seconds. Text readability and retrieval speed are the main visual priorities.
 
-Generate images, not code. Do not answer with only a description. Follow the specification below closely instead of inventing your own features, layout, colors, or copy.
+Follow the specification closely; do not invent features, layout, colors, or copy.
 
 ## 1. Product and scope
 
@@ -51,11 +51,11 @@ ClipHistory complements Gboard. It is not a keyboard and does not replace Gboard
 2. **Appearance preference:** System, Light, and Dark, default System.
 3. **Copy behavior preference:** “Return after copying,” default on. Turning it off keeps ClipHistory open after a successful copy.
 
-Mark these screens “Proposed addition” in their image captions, not as decorative badges inside the app. They have not been implemented or approved for development yet.
+Mark these screens “Proposed addition” in their mockup captions, not as decorative badges inside the app. They have not been implemented or approved for development yet.
 
 ### Strict exclusions
 
-No accounts, sign-in, cloud sync, AI assistant, subscriptions, advertisements, categories, folders, tags, favorites, pinning, editing clips, images, link previews, analytics charts, batch selection, export/import, biometric lock, or new keyboard. Do not invent source-app attribution: the current data does not identify which app a clip came from.
+No accounts, sign-in, cloud sync, subscriptions, advertisements, categories, folders, tags, favorites, pinning, editing clips, images, link previews, analytics charts, batch selection, export/import, biometric lock, or new keyboard. Do not invent source-app attribution: the current data does not identify which app a clip came from.
 
 Do not introduce bottom tabs, a floating action button, a permanent notification, decorative onboarding slides, or persistent system overlays. Do not add a sensitive-clips switch, encryption badge, guaranteed-capture claim, or Undo action. The existing delete operation does not implement undo.
 
@@ -126,9 +126,9 @@ Maintain readability. Do not use low-opacity gray to make important text disappe
 
 These values are design specifications, not text to print inside the UI.
 
-## 3. Image framing and consistency
+## 3. Screen framing and consistency
 
-Generate one standalone portrait app screen per image by default.
+Show one standalone portrait app screen per mockup.
 
 - Use a 9:20 screen aspect ratio, approximately 1080 × 2400 pixels or the closest supported portrait resolution. Treat the layout as roughly 412 × 915 logical units, not a claim about the phone's exact density.
 - Use a straight-on, flat screen view. No perspective, hands, desk, floating devices, dramatic shadows, or giant hardware frames.
@@ -136,10 +136,10 @@ Generate one standalone portrait app screen per image by default.
 - Status time: 9:41. Battery: 86%. Keep these fixed across ordinary screens.
 - Keep app controls clear of system bars and keyboard. A sheet must not place buttons behind the gesture region.
 - Preserve the same type, icon style, palette, margins, app bar, and search geometry across screens.
-- Put screen ID and any “Proposed addition” label in the response caption, outside the generated UI.
+- Put the screen ID and any “Proposed addition” label outside the app screen, not inside the UI.
 - Do not put color swatches, dimensions, arrows, or explanatory labels inside normal app screenshots.
 
-The first image, S01, becomes the visual reference for every subsequent screen. If a later image drifts, regenerate it against S01 rather than inventing a new visual style. Use the same existing images as visual references when available.
+The first screen, S01, is the visual reference for every subsequent screen. If a later screen drifts, redo it against S01 rather than inventing a new visual style.
 
 ## 4. Navigation and main-screen layout
 
@@ -351,7 +351,7 @@ Top group:
 
 Below: **Saved this session: 73**, **Sensitive clips skipped: 2**, **Oversized clips skipped: 0**, **Unsupported clips skipped: 0**, **Overload drops: 0**, **Recovered damaged snapshot: No**, **Issue: None**.
 
-Advanced details may continue below the fold and include security patch, snapshot generation, and actual clipboard API signature. Do not invent these values to fill the image. Show a collapsed **Advanced details** row when space is insufficient.
+Advanced details may continue below the fold and include security patch, snapshot generation, and actual clipboard API signature. Do not invent these values to fill the screen. Show a collapsed **Advanced details** row when space is insufficient.
 
 Footer: **This report contains no saved clipboard text.** Copying the report replaces the current clipboard, so include a subtle **Copies to your clipboard** label near that action. These example values are design data, not actual device verification.
 
@@ -419,7 +419,7 @@ Same home as S01, with the third row briefly tinted after a successful copy. Sho
 
 ### S28: Recoverable error states
 
-Generate one variant per request, using the same error language and layout:
+Each variant uses the same error language and layout:
 
 - **S28a: History read failed:** retain the app frame, heading **History could not be read**, description **Your existing files have not been erased.**, action **Try again**, secondary **Diagnostics**. Do not show zero history as though data is gone.
 - **S28b: Copy failed:** small dialog **Couldn't copy text**, description **Android did not allow this copy. Your saved text is unchanged.**, action **OK**. Do not show success or close the app as if copying succeeded.
@@ -444,7 +444,7 @@ An optional icon study on a neutral background: the same clipboard-and-two-lines
 
 ## 8. Coverage and consistency rules
 
-Before generating each image, privately check:
+Before finishing each screen, check:
 
 - Correct screen ID and actual state.
 - Same visual system and geometry as S01.
@@ -460,21 +460,13 @@ Before generating each image, privately check:
 
 If there is a conflict, prioritize truthful behavior, readability, the specified hierarchy, then decoration. Do not silently solve crowded content by shrinking fonts. Use scrolling or the specified secondary screen.
 
-## 9. Generation protocol
+## 9. Working order
 
-Start by generating **S01 only**, at the largest supported portrait resolution. It is the visual anchor. Do not generate a tiny contact sheet or substitute an essay for the image.
+Design **S01** first at full portrait resolution; it is the visual anchor. Then design the remaining numbered screens in catalog order, using S01 and the most relevant existing screen as references, plus the lettered variants where listed. Dark versions use the fixed dark tokens and preserve the layout. Revisions change only the requested attributes.
 
-After each image, give a short caption with its screen ID/name and whether it contains a proposed addition. Then list the next ID to generate. Keep captions outside the app artwork.
+The result should look ready to translate into real components, with a calm reading experience and a one-tap path back to the user's work.
 
-When I say **Next**, generate the next main numbered screen from this catalog, using S01 and the most relevant existing screen as references. Generate lettered variants when I request their full ID. Do not automatically omit the remaining catalog because only a limited number of images can be produced in one response.
-
-When I say **Generate S15**, generate that exact screen with the same visual system. When I say **Generate S15 in dark**, use the fixed dark tokens and preserve the layout. When I say **Revise**, change only the requested attributes and preserve the rest.
-
-If a session or reference image is missing and you cannot maintain visual continuity, ask me to attach S01 rather than pretending you can reproduce an unseen image exactly.
-
-Produce polished, practical Android product-design images. The result should look ready to translate into real components, with a calm reading experience and a one-tap path back to my work.
-
-# END IMAGE PROMPT
+# END DESIGN SPECIFICATION
 
 ---
 
@@ -482,7 +474,7 @@ Produce polished, practical Android product-design images. The result should loo
 
 Start with S01, S02, S03, S13, S14, and S24 to judge the visual system and main interaction flow. Then create connection/recovery states, settings, privacy/diagnostics, and the remaining variants. Generate boards last, once the screen system is stable.
 
-Approve the look of S01 before investing in the full set. If changing its palette, typography, or geometry later, regenerate affected screens against the revised anchor.
+Approve the look of S01 before investing in the full set. If changing its palette, typography, or geometry later, redo affected screens against the revised anchor.
 
 ## Source boundary
 

@@ -1,4 +1,4 @@
-# Emulator end-to-end checks with a real Shizuku-compatible service started over adb (roadmap G2).
+# Emulator end-to-end checks with a real Shizuku-compatible service started over adb.
 #
 #   pull_request, push to main   smoke: API 30 and 36, official Shizuku 13.6.0 over adb
 #   nightly schedule, manual run full:  API 30, 31, 33, 34, 35, 36, 37 x {shizuku-adb, shizako-adb, shizako-root}

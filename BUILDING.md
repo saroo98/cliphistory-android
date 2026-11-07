@@ -38,7 +38,7 @@ The script:
 
 Build output is recorded in `build-windows.log`. The source, clipboard data and key are not uploaded by our scripts. Ordinary build tools connect to their repositories to download dependencies. If downloads are blocked on your network, the script stops rather than switching to an untrusted APK mirror.
 
-The generated signing key is not escrowed or recoverable through this chat. Keep `.signing/cliphistory.jks` and `.signing/password.txt` privately backed up. They are deliberately excluded from source control and the delivered ZIP. A different key cannot install a normal update over the existing package.
+The generated signing key is not escrowed or recoverable from anywhere else. Keep `.signing/cliphistory.jks` and `.signing/password.txt` privately backed up. They are deliberately excluded from source control and the delivered ZIP. A different key cannot install a normal update over the existing package.
 
 If Windows SmartScreen, organisational policy or SDK licensing prevents the bootstrap, use a current Android Studio installation to open the project, install the specified SDK/toolchain, and build it normally. Do not disable platform-wide security controls to run the script.
 

@@ -54,7 +54,7 @@ On 2026-10-02, initial exact app-ID lookup returned 404 and scoped ClipHistory s
 
 ## Branding delivery limits
 
-The new GitHub README wordmark is published and visually verified. The 1280 x 640 social-preview image is committed, but **its Settings upload is pending** because Chrome's ChatGPT extension requires file-URL access for file uploads. Permission to change that access was requested; it has not been granted. No account avatar or unrelated fork logo was changed. No live website exists; favicon exports are prepared for future use.
+The new GitHub README wordmark is published and visually verified. The 1280 x 640 social-preview image is committed, but **its Settings upload is pending** because the browser upload was blocked by a file-access setting. Permission to change that access was requested; it has not been granted. No account avatar or unrelated fork logo was changed. No live website exists; favicon exports are prepared for future use.
 
 The local HTML reference has embedded logo assets, version 1.3.4 and a passing JavaScript syntax/source check. Its browser visual check was blocked by the browser's local-file URL policy. The exact local edit is preserved in [html-logo.patch](release-1.3.4/html-logo.patch); browser rendering is unverified.
 

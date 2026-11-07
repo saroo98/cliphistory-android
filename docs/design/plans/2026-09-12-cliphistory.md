@@ -1,11 +1,9 @@
 # ClipHistory Implementation Plan
 
-> **For agentic workers:** Inline execution in this chat; execute task-by-task with test and review gates.
-
 **Goal:** Implement the approved local-only Android clipboard app and an auditable build/test handover.
 **Architecture:** Privileged listener plus single-writer two-slot storage, app-UID-guarded AIDL, normal app UI and Quick Settings tile.
 **Tech Stack:** Native Kotlin/Android views, Shizuku API 13.1.5, Android API 37; no server.
-**Spec:** docs/superpowers/specs/2026-09-12-cliphistory-design.md
+**Spec:** docs/design/specs/2026-09-12-cliphistory-design.md
 
 ## Global constraints
 - API 37 target and compile; API 34 minimum.

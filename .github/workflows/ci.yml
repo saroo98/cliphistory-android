@@ -1,4 +1,4 @@
-# Build, unit-test and lint ClipHistory (roadmap G1).
+# Build, unit-test and lint ClipHistory.
 #
 # Never signs and never uses secrets: -PunsignedRelease ignores any local signing files, so the
 # release output is app-release-unsigned.apk. The APK digests in the job summary come from the

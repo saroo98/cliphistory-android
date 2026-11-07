@@ -1,6 +1,6 @@
 # ClipHistory 1.1.0 UI delivery
 
-Implemented from the written 31-scene design specification. The input was a written image-generation prompt, not 31 supplied reference images. This is a native Android implementation of that specification, rather than a claim of pixel matching unseen images.
+Implemented from the written 31-scene design specification. The input was a written design specification, not 31 supplied reference images. This is a native Android implementation of that specification, rather than a claim of pixel matching unseen images.
 
 ## Changes
 
