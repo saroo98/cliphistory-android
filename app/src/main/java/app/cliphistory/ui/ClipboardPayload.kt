@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
 import app.cliphistory.client.DaemonClient
+import app.cliphistory.core.isDragShadowFailure
 
 /** Keep Android's preview protection when a sensitive history entry is copied. */
 object ClipboardPayload {
@@ -19,6 +20,11 @@ object ClipboardPayload {
         override fun onTextContextMenuItem(id:Int):Boolean {
             if(id==android.R.id.copy && copyAction!=null) { copyAction?.invoke { clearFocus() };return true }
             return super.onTextContextMenuItem(id)
+        }
+        /** Android 11 throws when a long-press starts dragging a selection whose drag shadow is
+         * empty (seen on a realme RMX3231 in Firebase Test Lab). Ignore that long-press instead of crashing. */
+        override fun performLongClick():Boolean = try { super.performLongClick() } catch (error:IllegalStateException) {
+            if(isDragShadowFailure(error))false else throw error
         }
     }
     fun text(label:String,value:String,sensitive:Boolean=false):ClipData = ClipData.newPlainText(label,value).apply {
