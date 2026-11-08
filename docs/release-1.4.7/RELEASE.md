@@ -2,6 +2,19 @@
 
 Version **1.4.7 / code 17**. Candidate checked on 8 November 2026: `release/1.4.7` at `0362040` plus the version bump, changelog and docs in this commit. The final release APK is rebuilt from the tagged commit; compared with the candidate, only `META-INF/version-control-info.textproto` changes, because it records the commit. Final hashes are recorded after tagging.
 
+## Final release
+
+Published on [GitHub](https://github.com/saroo98/cliphistory-android/releases/tag/v1.4.7) on 8 November 2026.
+
+| Item | Verified identity |
+| --- | --- |
+| Tag and source commit | `v1.4.7` → `fd2c3c8b2a9d6cd10ac77096bf6258fba54ed8b6` |
+| Signed APK: release asset, public download and installed Pixel APK | `df21327e460d8e6ee083f310109833ba8bdd93af17c0b612f65e122ac8caaa7d`, 2,693,239 bytes |
+| Unsigned APK, Windows (JBR 21) and Linux (OpenJDK 17) clean builds of the tag | `755ef7b4afbb33ae2252655362292db7a0ed64bf44954585855171db6313815c` |
+| Signing certificate | `ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82` |
+
+The tagged commit rebuilt byte-identically on Windows and Linux, `apksigcopier compare --unsigned` matches the signed APK, and it differs from the checked candidate below only in `META-INF/version-control-info.textproto`. Unit tests 100/100, lint 0 errors. The Pixel 8 Pro has the exact release installed in place over the candidate, with its data kept; it launches without a crash.
+
 ## What changed
 
 - **Rooted phones without manual steps** (`3353fcc`). Android lets ClipHistory read the clipboard only as the shell user, never as root. The [Sui fork with Shell mode](https://github.com/XiaoTong6666/Sui) can give one app Shell access while other apps keep root, and it starts with the phone. ClipHistory now tells Sui users to choose **Always (Shell)**, explains how to switch if root or Deny was chosen, opens Setup help at a new "Rooted phone" answer, and continues the Connect when Sui restarts the app to apply the choice (only while that Connect waits on Sui; any other Force stop still stops recording). The recorder itself is unchanged, and a service running as root is still refused.
