@@ -1,0 +1,346 @@
+{
+  "density": 420,
+  "min_touch_px": 126,
+  "modes": {
+    "light": {
+      "ok": true,
+      "issues": [],
+      "rtl": null,
+      "controls": {
+        "pre-prompt": [
+          {
+            "label": "More options",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Search saved text",
+            "w": 851,
+            "h": 136
+          },
+          {
+            "label": "Connect",
+            "w": 218,
+            "h": 126
+          }
+        ],
+        "choose-shell": [
+          {
+            "label": "More options",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Search saved text",
+            "w": 851,
+            "h": 136
+          },
+          {
+            "label": "Setup help",
+            "w": 253,
+            "h": 126
+          },
+          {
+            "label": "Reconnect",
+            "w": 255,
+            "h": 126
+          }
+        ],
+        "rooted-help": [
+          {
+            "label": "Back",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Rooted phone",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Get Sui with Shell mode",
+            "w": 976,
+            "h": 136
+          },
+          {
+            "label": "The service runs, but recording will not connect",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Limits",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Only on this phone",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Sensitive text",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Screen privacy",
+            "w": 976,
+            "h": 147
+          }
+        ]
+      }
+    },
+    "dark": {
+      "ok": true,
+      "issues": [],
+      "rtl": null,
+      "controls": {
+        "pre-prompt": [
+          {
+            "label": "More options",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Search saved text",
+            "w": 851,
+            "h": 136
+          },
+          {
+            "label": "Connect",
+            "w": 218,
+            "h": 126
+          }
+        ],
+        "choose-shell": [
+          {
+            "label": "More options",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Search saved text",
+            "w": 851,
+            "h": 136
+          },
+          {
+            "label": "Setup help",
+            "w": 253,
+            "h": 126
+          },
+          {
+            "label": "Reconnect",
+            "w": 255,
+            "h": 126
+          }
+        ],
+        "rooted-help": [
+          {
+            "label": "Back",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Rooted phone",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Get Sui with Shell mode",
+            "w": 976,
+            "h": 136
+          },
+          {
+            "label": "The service runs, but recording will not connect",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Limits",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Only on this phone",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Sensitive text",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Screen privacy",
+            "w": 976,
+            "h": 147
+          }
+        ]
+      }
+    },
+    "font200": {
+      "ok": true,
+      "issues": [],
+      "rtl": null,
+      "controls": {
+        "pre-prompt": [
+          {
+            "label": "More options",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Search saved text",
+            "w": 851,
+            "h": 140
+          },
+          {
+            "label": "Connect",
+            "w": 892,
+            "h": 134
+          }
+        ],
+        "choose-shell": [
+          {
+            "label": "More options",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Search saved text",
+            "w": 851,
+            "h": 140
+          },
+          {
+            "label": "Setup help",
+            "w": 892,
+            "h": 134
+          },
+          {
+            "label": "Reconnect",
+            "w": 892,
+            "h": 134
+          }
+        ],
+        "rooted-help": [
+          {
+            "label": "Back",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Rooted phone",
+            "w": 976,
+            "h": 160
+          }
+        ]
+      }
+    },
+    "rtl": {
+      "ok": true,
+      "issues": [],
+      "rtl": {
+        "chevron": [
+          [
+            52,
+            343,
+            104,
+            395
+          ]
+        ],
+        "title": [
+          [
+            135,
+            341,
+            1028,
+            398
+          ]
+        ],
+        "mirrored": true
+      },
+      "controls": {
+        "pre-prompt": [
+          {
+            "label": "More options",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Search saved text",
+            "w": 851,
+            "h": 136
+          },
+          {
+            "label": "Connect",
+            "w": 218,
+            "h": 126
+          }
+        ],
+        "choose-shell": [
+          {
+            "label": "More options",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Search saved text",
+            "w": 851,
+            "h": 136
+          },
+          {
+            "label": "Setup help",
+            "w": 253,
+            "h": 126
+          },
+          {
+            "label": "Reconnect",
+            "w": 255,
+            "h": 126
+          }
+        ],
+        "rooted-help": [
+          {
+            "label": "Back",
+            "w": 126,
+            "h": 126
+          },
+          {
+            "label": "Rooted phone",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Get Sui with Shell mode",
+            "w": 976,
+            "h": 136
+          },
+          {
+            "label": "The service runs, but recording will not connect",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Limits",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Only on this phone",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Sensitive text",
+            "w": 976,
+            "h": 147
+          },
+          {
+            "label": "Screen privacy",
+            "w": 976,
+            "h": 147
+          }
+        ]
+      }
+    }
+  }
+}

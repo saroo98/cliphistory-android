@@ -2,7 +2,7 @@
 
 **Current evidence: see `VERIFICATION.md`.** This is the broader acceptance checklist, including tests beyond this release's device coverage. Do not infer every item passed from a successful build or connection test.
 
-The current public release, 1.4.5, has emulator and physical-device evidence in its [release record](docs/release-1.4.5/FINAL_RELEASE.md) and [qualification](docs/release-1.4.5/FINAL_QUALIFICATION.md). Earlier tests are documented separately for [1.4.3](docs/release-1.4.3/RELEASE.md) and [1.4.2](docs/release-1.4.2/RELEASE.md); their results do not by themselves qualify the newer APK.
+The current public release, 1.4.7, has its checks in the [1.4.7 release note](docs/release-1.4.7/RELEASE.md), including rooted Sui Shell mode. The last full emulator and physical-device qualification is 1.4.5's [release record](docs/release-1.4.5/FINAL_RELEASE.md) and [qualification](docs/release-1.4.5/FINAL_QUALIFICATION.md). Earlier tests are documented separately for [1.4.3](docs/release-1.4.3/RELEASE.md) and [1.4.2](docs/release-1.4.2/RELEASE.md); their results do not by themselves qualify the newer APK.
 
 ## Earlier 1.4.5 fork candidates
 

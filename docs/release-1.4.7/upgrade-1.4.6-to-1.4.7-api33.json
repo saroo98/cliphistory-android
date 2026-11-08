@@ -1,0 +1,83 @@
+{
+  "old_apk_sha256": "77bb5ab28c2557158f7177a099dd580080a25d46004ccc65a3931cfbe670e3e2",
+  "new_apk_sha256": "cf08723d5c1c5dc457e27c69802fd2c535ae41fccaaf030ea88c9a221e41fc7e",
+  "steps": [
+    {
+      "server": [
+        " 2000 shizuku_server"
+      ],
+      "step": "Official Shizuku started in shell mode",
+      "ok": true,
+      "s": 1.4
+    },
+    {
+      "version": "1.4.6",
+      "code": 16,
+      "uid": 10176,
+      "step": "Public 1.4.6 installed",
+      "ok": true,
+      "s": 2.2
+    },
+    {
+      "helper_pid": 5550,
+      "helper_uid": 2000,
+      "prompt": true,
+      "step": "1.4.6 records through the real Shizuku prompt",
+      "ok": true,
+      "s": 16.3
+    },
+    {
+      "step": "1.4.6 saved the synthetic copies (A, B, A gives B, A)",
+      "ok": true,
+      "s": 34.0
+    },
+    {
+      "version": "1.4.7",
+      "code": 17,
+      "uid": 10176,
+      "step": "Signed 1.4.7 installed in place",
+      "ok": true,
+      "s": 35.4
+    },
+    {
+      "old_pid": 5550,
+      "new_helper": [
+        6827,
+        2000
+      ],
+      "waited_s": 4.2,
+      "step": "Recorder restarted by itself after the update (app not opened)",
+      "ok": true,
+      "s": 39.6
+    },
+    {
+      "step": "After the update: history kept, background copy saved, no \"stopped by you\"",
+      "ok": true,
+      "s": 50.1
+    },
+    {
+      "changed": {},
+      "step": "Settings kept across the update",
+      "ok": true,
+      "s": 50.3
+    },
+    {
+      "step": "Force stop: recording stopped, copy not saved, \"Recorder stopped by you\" shown",
+      "ok": true,
+      "s": 63.4
+    },
+    {
+      "helper_uid": 2000,
+      "step": "Start recorder resumes recording",
+      "ok": true,
+      "s": 78.8
+    }
+  ],
+  "android": "13 / API 33",
+  "status_after_update": [
+    "Listening"
+  ],
+  "settings_changed_by_update": {},
+  "ok": true,
+  "elapsed_s": 78.8
+}

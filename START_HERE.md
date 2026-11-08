@@ -1,6 +1,6 @@
 # Start here
 
-**Current public release: ClipHistory 1.4.5, code 15, Android 11+.** See the [release record](docs/release-1.4.5/FINAL_RELEASE.md) for the exact APK and checks. Version 1.4.6 is in preparation and is not released yet.
+**Current public release: ClipHistory 1.4.7, code 17, Android 11+.** See the [release note](docs/release-1.4.7/RELEASE.md) for the exact APK and checks.
 
 Use the signed release from https://github.com/saroo98/cliphistory-android/releases. See `VERIFICATION.md` for current build and device evidence. The source archive includes no private signing key.
 

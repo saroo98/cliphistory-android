@@ -2,7 +2,7 @@
 
 ## Verification boundary
 
-Current release evidence is in the [1.4.5 release record](docs/release-1.4.5/FINAL_RELEASE.md) and `VERIFICATION.md`. Windows, Linux and device results are recorded separately for each version. Earlier Linux or physical-device results do not qualify this candidate. Device coverage does not guarantee compatibility across all Android manufacturers or future OS updates. The [F-Droid guide](docs/F_DROID_ANDROID_GUIDE.md) lists the remaining independent-build and publication gates.
+Current release evidence is in the [1.4.7 release note](docs/release-1.4.7/RELEASE.md); the last full record is the [1.4.5 release record](docs/release-1.4.5/FINAL_RELEASE.md) and `VERIFICATION.md`. Windows, Linux and device results are recorded separately for each version. Earlier Linux or physical-device results do not qualify this candidate. Device coverage does not guarantee compatibility across all Android manufacturers or future OS updates. The [F-Droid guide](docs/F_DROID_ANDROID_GUIDE.md) lists the remaining independent-build and publication gates.
 
 ## Pinned app toolchain
 

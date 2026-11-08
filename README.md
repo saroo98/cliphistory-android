@@ -9,6 +9,14 @@ A local clipboard-history companion for Android, using **Shizuku or a compatible
 
 Compatible services must provide Shizuku API 13 or newer and support UserServices. Some forks require a compatibility companion; follow the fork's setup instructions. The current source recognizes a running compatible service without relying on the original manager package name. Compatibility depends on the service, activation mode and Android version, so individual forks still need testing.
 
+## Version 1.4.7
+
+**1.4.7/code 17** lets rooted phones record without wireless debugging, through [Sui with Shell mode](#rooted-phones): choose **Always (Shell)** once and recording resumes by itself after every restart. The [release note](docs/release-1.4.7/RELEASE.md) lists the checks and remaining limits.
+
+## Version 1.4.6
+
+**1.4.6/code 16** names unsupported service modes plainly (root, outdated, other modes) with Setup help, hides sensitive entries in the list, quick panel and screen reader, deletes timed sensitive entries on time after sleep, shows when private copies were skipped, and fixes history sometimes appearing empty when the app is reopened.
+
 ## Version 1.4.5
 
 **1.4.5/code 15** improves compatible service discovery, adds an explicit manager choice when several are installed, fixes recovery after APK updates on older Android, and clarifies setup and sensitive-history settings. The [release verification](docs/release-1.4.5/FINAL_RELEASE.md) records exact artifacts, device checks and F-Droid status; [device procedures](DEVICE_TESTS.md) describe how to repeat them. Download the signed APK from [GitHub Releases](https://github.com/saroo98/cliphistory-android/releases/tag/v1.4.5). F-Droid inclusion remains subject to maintainer review.
@@ -29,7 +37,7 @@ For this and future apps, use the [F-Droid development and publication guide](do
 
 **1.3.3/code 7** ports the reviewed HTML UI refinements into the native Android application. It adds clearer Settings summaries, guided setup, visible full-text actions, persistent single-deletion Undo and focused error recovery. See [port and verification](docs/HTML_UI_PORT.md). The preceding tile launch fix is documented in [tile verification](docs/TILE_LAUNCH_FIX.md). F-Droid submission status and exact release evidence are recorded in [publication preparation](docs/F_DROID_PUBLICATION.md). A prepared or submitted app is not an accepted F-Droid listing.
 
-Public source: https://github.com/saroo98/cliphistory-android. Published signed APKs are in the repository's Releases page. Version 1.4.5 requires Android 11 (API 30) or later; compile and target remain API 37. Version 1.3.4 requires Android 14.
+Public source: https://github.com/saroo98/cliphistory-android. Published signed APKs are in the repository's Releases page. Version 1.4.7 requires Android 11 (API 30) or later; compile and target remain API 37. Version 1.3.4 requires Android 14.
 
 Version 1.3.0/code 4 adds exact unique-text history, configurable screen privacy, optional recorder recovery, a temporary floating quick-copy panel, battery guidance and consolidated Settings. Build and actual device evidence, including remaining acceptance checks, is in `VERIFICATION.md`. Historical 1.2 results do not establish 1.3 readiness. The F-Droid recipe is `fdroid/metadata/app.cliphistory.yml`, with store text and images in `fastlane/metadata/android/`.
 
