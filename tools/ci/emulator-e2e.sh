@@ -180,23 +180,42 @@ finish() {
 trap finish EXIT
 
 # On a slow emulator the launcher can stop responding. Its system dialog then takes input
-# focus, which blocks the test app's clipboard access and UI checks. Before each suite, close
-# such a dialog by stopping the unresponsive app, unless it is the app under test.
+# focus, which blocks the test app's clipboard access and UI checks. Close such a dialog by
+# stopping the unresponsive app, unless it is the app under test, then go Home so the launcher
+# starts fresh. `dumpsys window` lists one mCurrentFocus per display and the frozen launcher's
+# own window can come first (API 34, Nov 2026), so every focus line is checked. ANR reporting
+# itself stays on. Returns 0 if a dialog was closed.
 dismiss_foreign_anr() {
-  local focus pkg
-  focus="$(shell dumpsys window 2>/dev/null | grep -m1 'mCurrentFocus=' || true)"
-  [[ "$focus" == *'Application Not Responding: '* ]] || return 0
-  pkg="$(sed -n 's/.*Application Not Responding: \([A-Za-z0-9._]*\).*/\1/p' <<<"$focus")"
-  [[ -n "$pkg" && "$pkg" != "$PACKAGE" && "$pkg" != "$PACKAGE.test" ]] || return 0
-  log "Closing a 'not responding' dialog for $pkg before the next suite"
-  shell am force-stop "$pkg" >/dev/null 2>&1 || true
-  sleep 2
+  local pkg closed=1
+  while read -r pkg; do
+    [[ -n "$pkg" && "$pkg" != "$PACKAGE" && "$pkg" != "$PACKAGE.test" ]] || continue
+    log "Closing a 'not responding' dialog for $pkg"
+    shell am force-stop "$pkg" >/dev/null 2>&1 || true
+    closed=0
+  done < <(shell dumpsys window 2>/dev/null | grep 'mCurrentFocus=' |
+    sed -n 's/.*Application Not Responding: \([A-Za-z0-9._]*\).*/\1/p' | sort -u)
+  ((closed)) && return 1
+  shell input keyevent KEYCODE_HOME >/dev/null 2>&1 || true
+  sleep 3
+  return 0
+}
+
+# A launcher that hangs at boot raises its dialog about 10 s later, after the setup checks
+# have started. Watch for a quiet period first, recovering as often as needed.
+settle_system() {
+  local quiet_since=$SECONDS end=$((SECONDS + 120))
+  while ((SECONDS < end)); do
+    if dismiss_foreign_anr; then quiet_since=$SECONDS; fi
+    ((SECONDS - quiet_since >= 20)) && return 0
+    sleep 2
+  done
+  log "Warning: the system did not stay responsive for 20 s within 2 minutes; continuing"
 }
 
 run_suite() {
   local suite="$1"; shift
   local started=$SECONDS rc=0 output result detail seconds
-  dismiss_foreign_anr
+  dismiss_foreign_anr || true
   log "Suite $suite: running"
   output="$(timeout "$SUITE_TIMEOUT" "$ADB" -s "$SERIAL" shell am instrument -w -e suite "$suite" \
     -e theme light -e tilePage 4 "$@" "$RUNNER" 2>&1 | tr -d '\r')" || rc=$?
@@ -301,6 +320,8 @@ if [[ -n "$EXPECT_AVD" && "$AVD_NAME" != "$EXPECT_AVD" ]]; then
   fail_setup "AVD is '$AVD_NAME', expected '$EXPECT_AVD'"
 fi
 start_logcat
+shell input keyevent KEYCODE_HOME >/dev/null 2>&1 || true
+settle_system
 API="$(shell getprop ro.build.version.sdk)"
 RELEASE="$(shell getprop ro.build.version.release)"
 FINGERPRINT="$(shell getprop ro.build.fingerprint)"
@@ -393,6 +414,7 @@ if [[ "$MODE" == root ]]; then
   # Android clears the clipboard when root reads it as another package, so the app refuses
   # UID 0 servers. Check the refusal, that no recorder helper starts and that nothing was cleared.
   log "Checking that $PACKAGE refuses the root $SERVER"
+  dismiss_foreign_anr || true
   "$PYTHON" "$(native "$ROOT/tools/ci/authorize-service.py")" --adb "$(native "$ADB")" --serial "$SERIAL" \
     --manager-package "$MANAGER" --expected-uid 0 --expect-root-refusal \
     --output "$(native "$OUTPUT/authorization.json")" 2>&1 | tee -a "$OUTPUT/e2e.log" ||
@@ -409,6 +431,7 @@ fi
 
 # --- Authorize through the manager's real prompt ----------------------------------------------
 log "Authorizing $PACKAGE through the $MANAGER prompt"
+dismiss_foreign_anr || true
 "$PYTHON" "$(native "$ROOT/tools/ci/authorize-service.py")" --adb "$(native "$ADB")" --serial "$SERIAL" \
   --manager-package "$MANAGER" --expected-uid "$EXPECTED_UID" \
   --output "$(native "$OUTPUT/authorization.json")" 2>&1 | tee -a "$OUTPUT/e2e.log" ||
