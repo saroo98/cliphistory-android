@@ -5,7 +5,7 @@
 
 # ClipHistory
 
-A local clipboard-history companion for Android, using **Shizuku or a compatible service started in non-root shell mode**. It is not a keyboard and does not modify Gboard.
+A local clipboard-history companion for Android, using **Shizuku or a compatible service in shell mode**: started with wireless debugging or ADB, or, on a rooted phone, [Sui with Shell mode](#rooted-phones). It is not a keyboard and does not modify Gboard.
 
 Compatible services must provide Shizuku API 13 or newer and support UserServices. Some forks require a compatibility companion; follow the fork's setup instructions. The current source recognizes a running compatible service without relying on the original manager package name. Compatibility depends on the service, activation mode and Android version, so individual forks still need testing.
 
@@ -60,13 +60,24 @@ On Windows, extract the ZIP fully, then double-click **`BUILD_WINDOWS.cmd`**. Re
 
 Once a build has succeeded, install its APK using the existing signing identity, start Shizuku, open ClipHistory and approve Shizuku access. Run the optional **Connection test** and add the tile through Android's confirmation. The connection test replaces the current shared clipboard with harmless text. Your usual keyboard stays unchanged.
 
-After reboot, unlock and start non-root Shizuku again. Enabled recovery prepares after unlock and attempts reconnection when Shizuku becomes available and Android permits it. It does not automatically open the full Activity. Copies made before reconnection cannot be reconstructed. Battery settings are optional and cannot remove Shizuku's restart requirement.
+After reboot, unlock and start non-root Shizuku again (Sui with Shell mode starts by itself). Enabled recovery prepares after unlock and attempts reconnection when Shizuku becomes available and Android permits it. It does not automatically open the full Activity. Copies made before reconnection cannot be reconstructed. Battery settings are optional and cannot remove Shizuku's restart requirement.
 
 Automatic recovery Off does not stop an already running helper. **Pause** stops saving; **Stop recorder** stops the helper and blocks recovery until explicit Start. Force stop and Android Task Manager Stop are respected. Unknown manufacturer user-stop descriptions fail closed and may require explicit reconnection.
 
+## Rooted phones
+
+Android lets ClipHistory read the clipboard only as the shell user, not as root. On a rooted phone, the seamless setup is [Sui with Shell mode](https://github.com/XiaoTong6666/Sui), a Zygisk module that starts with the phone and can give one app Shell access while other apps keep root:
+
+1. Install the Sui module in Magisk with Zygisk enabled, or in KernelSU or APatch with a Zygisk implementation, then reboot.
+2. Open ClipHistory and tap **Connect**. When Sui asks, choose **Always (Shell)**.
+
+Recording then resumes by itself after every restart, without wireless debugging. If you chose root or Deny, open Sui (long-press the Settings app icon, then tap Sui), tap ClipHistory and choose **Allowed (Shell)**, then return to ClipHistory: it finishes connecting by itself, or tap **Connect**. The original Sui offers root only, and Shizuku or other services started with root stay unsupported.
+
+Tested on an Android 16 emulator with Magisk 31.1 and Sui 13.5.4.3 in November 2026. KernelSU, APatch and real devices are not verified yet.
+
 ## Boundaries
 
-Only the primary Android phone profile and shell UID **2000** are supported by this build. Work profiles, secondary users, images, URIs and multi-item clip payloads are not claimed supported. Root and Sui modes are not supported: Android's clipboard service refuses clipboard reads from root and clears the clipboard instead (reproduced on Android 16 in November 2026), so ClipHistory refuses a root-started service and explains how to restart it. On a rooted phone, start the service with wireless debugging or ADB.
+Only the primary Android phone profile and shell UID **2000** are supported by this build. Work profiles, secondary users, images, URIs and multi-item clip payloads are not claimed supported. Root mode is not supported: Android's clipboard service refuses clipboard reads from root and clears the clipboard instead (reproduced on Android 16 in November 2026), so ClipHistory refuses a root-started service and explains what to do instead. On a rooted phone, use [Sui with Shell mode](#rooted-phones), or start the service with wireless debugging or ADB.
 
 An individual text must be at most **65,536 UTF-8 bytes**. Oversized items are skipped and counted, not silently truncated. Entries marked sensitive by their source app are skipped unless enabled in Settings → Privacy. Some browsers mark copies from private browsing this way; the home screen says when copies were skipped. Saved sensitive entries stay hidden in the list, quick panel and screen-reader labels until opened with View. Turning capture off removes retained sensitive entries and their Undo. Not every source app marks secrets. Text is readable during app use and in Android's clipboard after copying; encryption does not make this a password vault.
 

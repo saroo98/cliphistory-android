@@ -15,6 +15,9 @@ class RecorderPreferences(private val context: Context) {
     )
     val explicitStartTime: Long get() = try { prefs.getLong("explicit_start_time",0) } catch (_:ClassCastException) { 0 }
     val acknowledgedExit: Long get() = try { prefs.getLong("acknowledged_exit",0) } catch (_:ClassCastException) { 0 }
+    /** Whether the last explicit Connect is waiting for the user's answer in the service app.
+     * Missing or invalid means no, so a force stop keeps counting as the user's stop. */
+    val waitingForService: Boolean get() = flag("waiting_for_service",false)
     fun bootCount(): Int? = try {
         Settings.Global.getInt(context.contentResolver, Settings.Global.BOOT_COUNT).takeIf { it >= 0 }
     } catch (_: Exception) { null }
@@ -36,9 +39,13 @@ class RecorderPreferences(private val context: Context) {
         restore.commit()
         return false
     }
-    fun activate():Boolean=save { putBoolean("explicit_stop",false);putInt("activated_boot",bootCount() ?: -1);putLong("explicit_start_time",System.currentTimeMillis()) }
+    fun activate():Boolean=save { putBoolean("explicit_stop",false);putInt("activated_boot",bootCount() ?: -1);putLong("explicit_start_time",System.currentTimeMillis());putBoolean("waiting_for_service",false) }
     fun completeSetup():Boolean=save { putBoolean("setup_completed",true) }
+    fun markWaitingForService():Boolean=save { putBoolean("waiting_for_service",true) }
+    fun markConnected():Boolean=save { putBoolean("waiting_for_service",false) }
     fun stop(exitTime:Long=0):Boolean=save { putBoolean("explicit_stop",true);putLong("acknowledged_exit",maxOf(acknowledgedExit,exitTime)) }
+    /** Records an exit as seen without treating it as the user's stop. */
+    fun acknowledgeExit(exitTime:Long):Boolean=save { putLong("acknowledged_exit",maxOf(acknowledgedExit,exitTime)) }
     fun setAutomatic(value:Boolean):Boolean=save { putBoolean("automatic",value) }
     fun setAfterBoot(value:Boolean):Boolean=save { putBoolean("after_boot",value) }
 }

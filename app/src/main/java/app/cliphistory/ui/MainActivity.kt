@@ -102,7 +102,7 @@ class MainActivity:Activity() {
         previewScroll=state?.getInt("preview_scroll",-1)?:-1
         root=FrameLayout(this).apply { setBackgroundColor(ui.color(R.color.canvas)) }
         home=HistoryHome(ui,::showMenu,{ client.connect(true) },::openManager,::help,::recorder,
-            { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview,::copyEntry,::entryActions,::showSettings)
+            { command({it.setPaused(false)}) },::connectionTest,{ refresh() },{ refresh(append=true) },::diagnostics,::hideKeyboard,::preview,::copyEntry,::entryActions,::showSettings,{ client.serviceIsSui() })
         root.addView(home.root,FrameLayout.LayoutParams(-1,-1));setContentView(root)
         window.insetsController?.setSystemBarsAppearance(if(light)WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS else 0,
             WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS)
@@ -212,7 +212,7 @@ class MainActivity:Activity() {
             }
             offline=result.offline;generation=result.generation
             val stage=client.connectionStage()
-            latest.putString("connectionStage",stage.name)
+            latest.putString("connectionStage",stage.name);latest.putBoolean("serviceIsSui",client.serviceIsSui())
             syncUndo(latest)
             home.show(result,rows,recorderState(stage,latest.getBoolean("paused"),latest.getBoolean("active"),latest.getString("selfTest")=="PASS",latest.getString("issue").orEmpty().isNotEmpty()),query)
             if(reset){restoredAnchor=null;restoredCount=40;home.list.setSelection(0)}
@@ -563,18 +563,25 @@ class MainActivity:Activity() {
             })
         }
     }
-    private fun help() { helpFromSettings=false;helpSettingsScroll=0;showHelp() }
+    private fun help() {
+        helpFromSettings=false;helpSettingsScroll=0
+        // Root and Sui setup problems open Setup help at its "Rooted phone" answer.
+        val rooted=rootedHelpApplies(recorderState(client.connectionStage()),client.serviceIsSui())
+        if(rooted)helpTopics.add(R.string.help_rooted)
+        showHelp(if(rooted)R.string.help_rooted else null)
+    }
     private fun settingsHelp() {
         helpFromSettings=true;helpSettingsScroll=findScroll(page)?.scrollY?:0;showHelp()
     }
-    private fun showHelp() {
+    private fun showHelp(focusTopic:Int?=null) {
         if(pageKind=="help")helpScroll=findScroll(page)?.scrollY?:helpScroll
         helpConnected=client.connected()
-        val view=pages.help(::backPage,::openWebsite,::openManager,{client.connect(true)},helpConnected,helpTopics) {
+        val view=pages.help(::backPage,::openWebsite,::openManager,{client.connect(true)},helpConnected,helpTopics,focusTopic) {
             helpScroll=findScroll(page)?.scrollY?:0;showLicenses()
         }
         val scroll=helpScroll
-        showPage("help",view);view.post { findScroll(view)?.scrollTo(0,scroll) }
+        showPage("help",view)
+        if(focusTopic==null)view.post { findScroll(view)?.scrollTo(0,scroll) }
     }
     private fun showLicenses() {
         if(pageKind=="help")licensesFromSettings=false

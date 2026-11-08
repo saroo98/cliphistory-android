@@ -61,7 +61,8 @@ class DetailPages(private val ui:Ui) {
         }
         parent.addView(row);parent.addView(body);parent.addView(ui.divider());return row
     }
-    fun help(back:()->Unit,website:(String)->Unit,manager:()->Unit,connect:()->Unit,connected:Boolean,openTopics:MutableSet<Int>,licenses:()->Unit):View=page(s(R.string.help_privacy),back) { content,_ ->
+    fun help(back:()->Unit,website:(String)->Unit,manager:()->Unit,connect:()->Unit,connected:Boolean,openTopics:MutableSet<Int>,
+        focusTopic:Int?=null,licenses:()->Unit):View=page(s(R.string.help_privacy),back) { content,_ ->
         lateinit var questions:TextView
         ui.actionRow(content,s(R.string.html_port_clipboard_questions)) {
             (content.parent as? ScrollView)?.scrollTo(0,questions.top);questions.requestFocus()
@@ -107,10 +108,15 @@ class DetailPages(private val ui:Ui) {
                 if(title==R.string.help_helper_start)ui.actionRow(text,s(R.string.shizuku_compatibility_reports)) {
                     website("https://github.com/RikkaApps/Shizuku/issues/1198")
                 }
-                disclosure(content,s(title),text,title in openTopics,heading=true) { expanded -> if(expanded)openTopics.add(title) else openTopics.remove(title) }
+                if(title==R.string.help_rooted)ui.actionRow(text,s(R.string.help_rooted_link)) {
+                    website("https://github.com/XiaoTong6666/Sui")
+                }
+                val row=disclosure(content,s(title),text,title in openTopics,heading=true) { expanded -> if(expanded)openTopics.add(title) else openTopics.remove(title) }
+                if(title==focusTopic)row.post { (content.parent as? ScrollView)?.scrollTo(0,row.top);row.requestFocus() }
             }
         }
-        topics(listOf(R.string.help_gboard to R.string.help_gboard_body,R.string.help_restart to R.string.help_restart_body,R.string.help_helper_start to R.string.help_helper_start_body,R.string.help_limits to R.string.help_limits_body))
+        topics(listOf(R.string.help_gboard to R.string.help_gboard_body,R.string.help_restart to R.string.help_restart_body,R.string.help_rooted to R.string.help_rooted_body,
+            R.string.help_helper_start to R.string.help_helper_start_body,R.string.help_limits to R.string.help_limits_body))
         content.addView(ui.space(28));content.addView(ui.title(s(R.string.html_port_privacy_saved_text),18f).apply { isAccessibilityHeading=true });content.addView(ui.space(12))
         topics(listOf(R.string.help_local to R.string.help_local_body,R.string.help_sensitive to R.string.help_sensitive_body,R.string.help_screen to R.string.help_screen_body))
         content.addView(ui.space(24));content.addView(ui.text(ui.activity.getString(R.string.version_license,BuildConfig.VERSION_NAME),13f,true))
@@ -172,9 +178,10 @@ class DetailPages(private val ui:Ui) {
         }
     } catch (_:Exception) { s(R.string.not_confirmed) }
     /** Known service apps and their versions only; no other installed apps are listed. */
-    private fun serviceApps():String=DaemonClient.MANAGERS.mapNotNull { name ->
+    private fun serviceApps():String=(DaemonClient.MANAGERS.mapNotNull { name ->
         try { "$name ${ui.activity.packageManager.getPackageInfo(name,0).versionName.orEmpty()}".trim() } catch (_:Exception) { null }
-    }.joinToString(", ").ifEmpty { s(R.string.none) }
+    } + listOfNotNull("Sui".takeIf { try { rikka.sui.Sui.isSui() } catch (_:Throwable) { false } }))
+        .joinToString(", ").ifEmpty { s(R.string.none) }
     fun report(b:Bundle,offline:Boolean)=(diagnosticRows(b,offline)+advanced(b,offline)).joinToString("\n") { "${it.first}: ${it.second}" }+"\n\n"+s(R.string.report_privacy)+"\n"+s(R.string.test_boundary)
     private fun displayedValue(key:String,value:String):String {
         if(key!=s(R.string.connection_test))return value
@@ -200,6 +207,12 @@ class DetailPages(private val ui:Ui) {
         val readFailed=b.getBoolean("historyReadFailed") || issue=="BOTH_SNAPSHOTS_UNREADABLE" || issue.startsWith("HISTORY_READ_FAILED") || issue=="HISTORY_ACCESS_DENIED"
         if(readFailed)return Health(R.string.history_failed,R.string.html_port_read_retry_advice,DiagnosticAction.RETRY,R.string.try_again)
         // A running but unusable service must not be reported as "not connected, no issue".
+        // Sui users fix root or Deny by choosing Shell in Sui itself.
+        val sui=b.getBoolean("serviceIsSui")
+        when(b.getString("connectionStage")) {
+            "ROOT_MODE","DENIED"->if(sui)return Health(R.string.sui_shell_title,R.string.sui_shell_body,DiagnosticAction.HELP,R.string.setup_help)
+            "PERMISSION"->if(sui)return Health(R.string.permission_title,R.string.sui_permission_body,DiagnosticAction.CONNECT,R.string.connect)
+        }
         when(b.getString("connectionStage")) {
             "ROOT_MODE"->return Health(R.string.root_mode_title,R.string.root_mode_body,DiagnosticAction.HELP,R.string.setup_help)
             "OUTDATED"->return Health(R.string.outdated_title,R.string.outdated_body,DiagnosticAction.HELP,R.string.setup_help)

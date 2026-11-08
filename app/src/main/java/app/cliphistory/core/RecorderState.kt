@@ -53,3 +53,21 @@ fun recorderState(
 val RecorderState.needsServiceSetup: Boolean
     get() = this == RecorderState.MISSING || this == RecorderState.UNSUPPORTED ||
         this == RecorderState.OUTDATED || this == RecorderState.ROOT_MODE
+
+/**
+ * What to tell the user while setting up. Sui asks "root or Shell" in its own prompt and can
+ * serve ClipHistory as Shell while other apps keep root, so Sui users get Sui steps instead of
+ * "start your service with wireless debugging". The root refusal itself stays unchanged.
+ */
+enum class SetupAdvice { STANDARD, SUI_CHOOSE_SHELL, SUI_SWITCH_TO_SHELL }
+
+fun setupAdvice(state: RecorderState, serviceIsSui: Boolean): SetupAdvice = when {
+    !serviceIsSui -> SetupAdvice.STANDARD
+    state == RecorderState.PERMISSION -> SetupAdvice.SUI_CHOOSE_SHELL
+    state == RecorderState.DENIED || state == RecorderState.ROOT_MODE -> SetupAdvice.SUI_SWITCH_TO_SHELL
+    else -> SetupAdvice.STANDARD
+}
+
+/** States whose fix is explained under "Rooted phone" in Setup help, which then opens there. */
+fun rootedHelpApplies(state: RecorderState, serviceIsSui: Boolean): Boolean =
+    state == RecorderState.ROOT_MODE || setupAdvice(state, serviceIsSui) != SetupAdvice.STANDARD

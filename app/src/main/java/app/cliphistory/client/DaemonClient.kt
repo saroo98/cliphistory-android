@@ -81,9 +81,10 @@ class DaemonClient(private val context: Context) {
                         !java.security.MessageDigest.isEqual(response.getByteArray("storageIdentity"),material.storageId)))
                         throw StoreException("ENCRYPTION_IDENTITY_CHANGED")
                     if(response.getBoolean("ok") && resumeOnConnect)response=service.setPaused(false)
-                    if(response.getBoolean("ok") && !preferences.options().setupCompleted && !preferences.completeSetup()) {
-                        // Attach may already have registered the privileged listener. A
-                        // failed first-setup write must not leave an unreported recorder.
+                    if(response.getBoolean("ok") && !recordConnected()) {
+                        // Attach may already have registered the privileged listener. A failed
+                        // setup or connection write must not leave an unreported recorder, and an
+                        // unsaved connection must not let a later force stop look like a restart.
                         try { service.setPaused(true) } finally { Shizuku.unbindUserService(args,connection,true) }
                         response=Bundle().apply { putBoolean("ok",false);putString("issue","PREFERENCES_NOT_SAVED") }
                     }
@@ -121,7 +122,7 @@ class DaemonClient(private val context: Context) {
             if(requestCode==71)main.post {
                 permissionDenied=grant!=PackageManager.PERMISSION_GRANTED
                 if(!permissionDenied && !pendingStop && activatedThisSession && !options.explicitlyStopped)connectAllowed()
-                else { connecting=false;message="Permission denied. Allow ClipHistory in Shizuku's authorised apps.";changed() }
+                else { connecting=false;message=if(serviceIsSui())context.getString(R.string.sui_shell_body) else "Permission denied. Allow ClipHistory in Shizuku's authorised apps.";changed() }
             }
         }
         io.execute {
@@ -129,11 +130,20 @@ class DaemonClient(private val context: Context) {
                 val exits=context.getSystemService(ActivityManager::class.java).getHistoricalProcessExitReasons(null,0,16)
                 val stop=exits.firstOrNull { isNewUserStop(it.timestamp,it.reason==ApplicationExitInfo.REASON_USER_REQUESTED,
                     preferences.explicitStartTime,preferences.acknowledgedExit,it.description,context.packageName) }
-                if(stop!=null && !preferences.stop(stop.timestamp))error("PREFERENCES_NOT_SAVED")
+                // Sui restarts ClipHistory to apply the user's answer while Connect is still
+                // unfinished. That is not a stop: the Connect continues in this process.
+                val continueConnect=stop!=null && isRestartDuringConnect(stop.timestamp,preferences.explicitStartTime,preferences.waitingForService)
+                if(stop!=null && !(if(continueConnect)preferences.acknowledgeExit(stop.timestamp) else preferences.stop(stop.timestamp)))
+                    error("PREFERENCES_NOT_SAVED")
                 val loaded=preferences.options();val marker=preferences.bootCount()
                 historyBoot=marker?:-1
                 val prepared=try { prepareStorage();true } catch (_:Exception) { false }
-                main.post { options=loaded;boot=marker;ready=true;storageReady=prepared;startRecoveryIfAllowed();connect(false) }
+                main.post {
+                    options=loaded;boot=marker;ready=true;storageReady=prepared
+                    if(continueConnect)activatedThisSession=true
+                    startRecoveryIfAllowed()
+                    if(continueConnect)connectAllowed() else connect(false)
+                }
             } catch (_:Exception) {
                 main.post { ready=true;message="Cannot verify the previous stop. Tap Connect to start explicitly.";changed() }
             }
@@ -181,6 +191,14 @@ class DaemonClient(private val context: Context) {
     private fun changed() { listeners.toList().forEach { it() } }
     private fun disconnected(reason:String,issue:String="") { connectionEpoch++;connecting=false;remote=null;attaching=null;message=reason;connectionIssue=issue;changed();scheduleRetry() }
     fun connected()=remote?.asBinder()?.isBinderAlive==true
+    /** True when the service is Sui, which can give ClipHistory Shell access instead of root. */
+    fun serviceIsSui():Boolean=try { rikka.sui.Sui.isSui() } catch (_:Throwable) { false }
+    /** First setup and "no longer waiting on the service app" must both be saved. */
+    private fun recordConnected():Boolean=(preferences.options().setupCompleted || preferences.completeSetup()) &&
+        (!preferences.waitingForService || preferences.markConnected())
+    /** The user's explicit Connect now waits for their answer in the service app (Sui restarts
+     * ClipHistory to apply it). A failed write only means that restart counts as a stop. */
+    private fun waitForService() { if(activatedThisSession)io.execute { preferences.markWaitingForService() } }
     val initialized get()=ready
     fun expired(expiry:Expiry?)=expiry?.expired(HistoryTime(historyBoot,SystemClock.elapsedRealtime()))==true
     fun expiryDelay(expiry:Expiry?)=expiry?.let { if(expired(it))0L else (it.elapsed-SystemClock.elapsedRealtime()).coerceAtLeast(0) }
@@ -262,13 +280,14 @@ class DaemonClient(private val context: Context) {
             if(Shizuku.checkSelfPermission()!=PackageManager.PERMISSION_GRANTED) {
                 message="Tap Connect and allow service access."
                 if(askPermission) {
+                    waitForService()
                     if(Shizuku.shouldShowRequestPermissionRationale()) message="Allow ClipHistory in your service app's authorised applications."
                     else Shizuku.requestPermission(71)
                 }
                 changed();return
             }
             when(serviceStage(Shizuku.getVersion(),Shizuku.getUid())) {
-                ConnectionStage.ROOT_MODE -> { message=context.getString(R.string.root_mode_body);changed();return }
+                ConnectionStage.ROOT_MODE -> { waitForService();message=context.getString(if(serviceIsSui())R.string.sui_shell_body else R.string.root_mode_body);changed();return }
                 null -> Unit
                 else -> { message=context.getString(R.string.unsupported_body);changed();return }
             }

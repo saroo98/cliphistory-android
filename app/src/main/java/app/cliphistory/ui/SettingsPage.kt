@@ -188,7 +188,8 @@ class SettingsPage(private val ui:Ui,private val pages:DetailPages,private val s
             val connected=client.connected()
             val state=recorderState(client.connectionStage(),new.getBoolean("paused"),new.getBoolean("active"),new.getString("selfTest")=="PASS",new.getString("issue").orEmpty().isNotEmpty())
             val stopped=new.getBoolean("explicitStop")
-            val label=if(stopped)R.string.user_stopped_title else when(state) {
+            val label=if(stopped)R.string.user_stopped_title
+            else if(setupAdvice(state,client.serviceIsSui())==SetupAdvice.SUI_SWITCH_TO_SHELL)R.string.sui_shell_title else when(state) {
                 RecorderState.RECORDING->R.string.recording;RecorderState.LISTENING->R.string.listening;RecorderState.PAUSED->R.string.paused
                 RecorderState.CONNECTING->R.string.connecting;RecorderState.MISSING->R.string.missing_title;RecorderState.PERMISSION->R.string.permission_title
                 RecorderState.DENIED->R.string.denied_title;RecorderState.UNSUPPORTED->R.string.unsupported_title;RecorderState.ATTENTION->R.string.attention_title

@@ -11,7 +11,7 @@ Keep a calm, searchable history of copied plain text on your device.
 • Read saved history offline when the recorder is stopped.
 • Keep all stored history encrypted on this device. Optionally save source-marked sensitive text, with automatic deletion that defaults to five minutes.
 
-Requires Android 11 or newer, the primary device profile, and Shizuku API 13 or newer with UserService support, running in non-root shell mode. Shizuku or a compatible service is installed separately; some forks need a compatibility companion. Guided setup covers pairing, starting the service and granting access. Restart the service after reboot if it does not start automatically. Android 11–12 use manual Quick Settings tile setup; separate Recents-preview privacy requires Android 13 or newer.
+Requires Android 11 or newer, the primary device profile, and Shizuku API 13 or newer with UserService support, running in shell mode: started with wireless debugging or ADB, or on a rooted phone through Sui with Shell mode, which also starts by itself after every restart. Shizuku or a compatible service is installed separately; some forks need a compatibility companion. Guided setup covers pairing, starting the service and granting access. Restart the service after reboot if it does not start automatically. Android 11–12 use manual Quick Settings tile setup; separate Recents-preview privacy requires Android 13 or newer.
 
 No internet permission, account, advertising, analytics or cloud service. Your usual keyboard stays unchanged. History uses private no-backup storage. Screenshots and screen recording are blocked by default and can be allowed. Separate Recents hiding is available on Android 13 and newer.
 

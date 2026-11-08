@@ -27,4 +27,29 @@ class ServiceModeTest {
         val setup = RecorderState.values().filter { it.needsServiceSetup }.toSet()
         assertEquals(setOf(RecorderState.MISSING, RecorderState.UNSUPPORTED, RecorderState.OUTDATED, RecorderState.ROOT_MODE), setup)
     }
+    @Test fun suiRootStaysRefusedEvenThoughSuiCanOfferShell() {
+        // Sui only changes the advice. A root UID is refused whichever service provides it.
+        assertEquals(ConnectionStage.ROOT_MODE, serviceStage(13, 0))
+        assertNull(serviceStage(13, 2000))
+    }
+    @Test fun suiUsersAreToldToChooseShellBeforeAndAfterTheirAnswer() {
+        assertEquals(SetupAdvice.SUI_CHOOSE_SHELL, setupAdvice(RecorderState.PERMISSION, serviceIsSui = true))
+        assertEquals(SetupAdvice.SUI_SWITCH_TO_SHELL, setupAdvice(RecorderState.ROOT_MODE, serviceIsSui = true))
+        assertEquals(SetupAdvice.SUI_SWITCH_TO_SHELL, setupAdvice(RecorderState.DENIED, serviceIsSui = true))
+    }
+    @Test fun otherServicesAndWorkingStatesKeepStandardAdvice() {
+        for (state in RecorderState.values()) assertEquals(SetupAdvice.STANDARD, setupAdvice(state, serviceIsSui = false))
+        for (state in listOf(RecorderState.LISTENING, RecorderState.RECORDING, RecorderState.PAUSED, RecorderState.CONNECTING,
+            RecorderState.STOPPED, RecorderState.MISSING, RecorderState.ATTENTION, RecorderState.UNSUPPORTED, RecorderState.OUTDATED))
+            assertEquals(SetupAdvice.STANDARD, setupAdvice(state, serviceIsSui = true))
+    }
+    @Test fun rootAndSuiProblemsOpenTheRootedPhoneHelp() {
+        assertTrue(rootedHelpApplies(RecorderState.ROOT_MODE, serviceIsSui = false))
+        assertTrue(rootedHelpApplies(RecorderState.ROOT_MODE, serviceIsSui = true))
+        assertTrue(rootedHelpApplies(RecorderState.PERMISSION, serviceIsSui = true))
+        assertTrue(rootedHelpApplies(RecorderState.DENIED, serviceIsSui = true))
+        assertFalse(rootedHelpApplies(RecorderState.PERMISSION, serviceIsSui = false))
+        assertFalse(rootedHelpApplies(RecorderState.MISSING, serviceIsSui = false))
+        assertFalse(rootedHelpApplies(RecorderState.LISTENING, serviceIsSui = true))
+    }
 }

@@ -49,4 +49,24 @@ class RecoveryPolicyTest {
         }
         assertTrue(isDeliberateUserStop(true,"stop app.cliphistory due to installPackageLI"))
     }
+    // Sui force-stops ClipHistory ("stop <pkg> due to from pid <Sui>") to apply "Always (Shell)" or a
+    // switch away from root or Deny, while the user's Connect waits for that answer.
+    @Test fun serviceRestartWhileConnectWaitsForTheServiceContinuesTheConnect() {
+        val start = 1_000_000L
+        assertTrue(isRestartDuringConnect(start + 3_000, start, waitingForService = true))
+        assertTrue(isRestartDuringConnect(start + CONNECT_IN_PROGRESS_MS, start, waitingForService = true))
+    }
+    @Test fun forceStopAfterAConnectedOrFailedConnectStillStopsRecording() {
+        // Not waiting on the service: the recorder connected, or Connect failed for another reason
+        // (for example the helper did not start). The user's force stop must keep it stopped.
+        val start = 1_000_000L
+        assertFalse(isRestartDuringConnect(start + 3_000, start, waitingForService = false))
+    }
+    @Test fun oldOrMisorderedConnectsNeverExcuseAStop() {
+        val start = 1_000_000L
+        assertFalse(isRestartDuringConnect(start + CONNECT_IN_PROGRESS_MS + 1, start, waitingForService = true))
+        assertFalse(isRestartDuringConnect(start, start, waitingForService = true))
+        assertFalse(isRestartDuringConnect(start - 1, start, waitingForService = true))
+        assertFalse(isRestartDuringConnect(5_000, 0, waitingForService = true))
+    }
 }

@@ -27,7 +27,8 @@ class HistoryHome(
     preview:(Long)->Unit,
     copy:(Long)->Unit,
     options:(DaemonClient.Row)->Unit,
-    private val privacySettings:()->Unit={}
+    private val privacySettings:()->Unit={},
+    private val serviceIsSui:()->Boolean={false}
 ) {
     val root=ui.column()
     val search=EditText(ui.activity)
@@ -160,7 +161,9 @@ class HistoryHome(
         status(state,total>0,stopped,issue,skipped)
     }
     private fun status(state:RecorderState,hasHistory:Boolean,stoppedByUser:Boolean,issue:IssueKind=IssueKind.NONE,skipped:Int=0) {
-        val key=listOf(state,hasHistory,stoppedByUser,issue,skipped)
+        // Sui users choose Shell in Sui itself; there is no separate service app to open.
+        val advice=if(stoppedByUser)SetupAdvice.STANDARD else setupAdvice(state,serviceIsSui())
+        val key=listOf(state,hasHistory,stoppedByUser,issue,skipped,advice)
         if(renderedStatus==key)return
         renderedStatus=key
         status.removeAllViews();status.setPadding(0,0,0,ui.dp(12));status.background=null
@@ -178,7 +181,9 @@ class HistoryHome(
             if(state==RecorderState.LISTENING)row.addView(ui.button(s(R.string.connection_test),action=test))
             status.addView(row);sensitiveHint(skipped);return
         }
-        val (title,body)=if(stoppedByUser)R.string.user_stopped_title to R.string.user_stopped_body else when(state) {
+        val (title,body)=if(stoppedByUser)R.string.user_stopped_title to R.string.user_stopped_body
+        else if(advice==SetupAdvice.SUI_CHOOSE_SHELL)R.string.permission_title to R.string.sui_permission_body
+        else if(advice==SetupAdvice.SUI_SWITCH_TO_SHELL)R.string.sui_shell_title to R.string.sui_shell_body else when(state) {
             RecorderState.MISSING->R.string.missing_title to R.string.missing_body
             RecorderState.STOPPED->if(hasHistory)R.string.unavailable_title to R.string.unavailable_body else R.string.start_recording to R.string.start_shizuku
             RecorderState.PERMISSION->R.string.permission_title to R.string.permission_body
@@ -200,7 +205,7 @@ class HistoryHome(
             val label=when {
                 stoppedByUser->R.string.start_recorder
                 state==RecorderState.CONNECTING->R.string.connecting
-                state.needsServiceSetup->R.string.setup_help
+                advice==SetupAdvice.SUI_SWITCH_TO_SHELL || state.needsServiceSetup->R.string.setup_help
                 state==RecorderState.STOPPED->R.string.open_shizuku
                 state==RecorderState.DENIED->R.string.open_shizuku
                 state==RecorderState.PERMISSION->R.string.connect
@@ -209,13 +214,14 @@ class HistoryHome(
             row.addView(ui.button(s(label)) {
                 when {
                     stoppedByUser->connect()
-                    state.needsServiceSetup->help()
+                    advice==SetupAdvice.SUI_SWITCH_TO_SHELL || state.needsServiceSetup->help()
                     state==RecorderState.STOPPED || state==RecorderState.DENIED->openShizuku()
                     else->connect()
                 }
             }.apply { isEnabled=state!=RecorderState.CONNECTING })
             status.addView(row)
-            if(!stoppedByUser && state==RecorderState.PERMISSION)status.addView(ui.button(s(R.string.open_shizuku),action=openShizuku))
+            if(!stoppedByUser && state==RecorderState.PERMISSION && advice==SetupAdvice.STANDARD)
+                status.addView(ui.button(s(R.string.open_shizuku),action=openShizuku))
             return
         }
         val box=ui.column().apply { background=ui.shape(ui.color(R.color.secondary_surface),16);setPadding(ui.dp(16),ui.dp(12),ui.dp(16),ui.dp(8)) }
@@ -223,7 +229,11 @@ class HistoryHome(
         val actions=LinearLayout(ui.activity).apply {
             orientation=if(ui.activity.resources.configuration.fontScale>1.3f)LinearLayout.VERTICAL else LinearLayout.HORIZONTAL
         }
-        if(stoppedByUser)actions.addView(ui.button(s(R.string.start_recorder),action=connect)) else when(state) {
+        if(stoppedByUser)actions.addView(ui.button(s(R.string.start_recorder),action=connect))
+        else if(advice==SetupAdvice.SUI_CHOOSE_SHELL)actions.addView(ui.button(s(R.string.connect),action=connect))
+        else if(advice==SetupAdvice.SUI_SWITCH_TO_SHELL) {
+            actions.addView(ui.button(s(R.string.setup_help),action=help));actions.addView(ui.button(s(R.string.reconnect),action=connect))
+        } else when(state) {
             RecorderState.CONNECTING->actions.addView(ProgressBar(ui.activity).apply { isIndeterminate=true },LinearLayout.LayoutParams(ui.dp(24),ui.dp(36)))
             RecorderState.MISSING->{ actions.addView(ui.button(s(R.string.setup_help),action=help));actions.addView(ui.button(s(R.string.try_again),action=connect)) }
             RecorderState.UNSUPPORTED,RecorderState.OUTDATED,RecorderState.ROOT_MODE->{
