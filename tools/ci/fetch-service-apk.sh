@@ -45,8 +45,18 @@ if [[ -f "$target" && "$(checksum "$target")" == "$sha256" ]]; then
   exit 0
 fi
 rm -f "$target" "$target.part"
-curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --tlsv1.2 \
-  --retry 3 --retry-delay 5 --connect-timeout 20 --max-time 300 -o "$(native "$target.part")" "$url"
+# GitHub's release downloads sometimes answer 5xx for a few minutes (a run on 8 Nov 2026 lost
+# 15 jobs to one minute of HTTP 504). curl retries quickly; the outer loop waits longer
+# between rounds, so a short outage costs time instead of the whole run.
+downloaded=0
+for wait in 0 15 30 60 120; do
+  if ((wait)); then echo "Download of $file failed; retrying in ${wait}s" >&2; sleep "$wait"; fi
+  if curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --tlsv1.2 \
+    --retry 3 --retry-delay 5 --connect-timeout 20 --max-time 300 -o "$(native "$target.part")" "$url"; then
+    downloaded=1; break
+  fi
+done
+((downloaded)) || { rm -f "$target.part"; echo "Could not download $file from $url" >&2; exit 1; }
 actual="$(checksum "$target.part")"
 if [[ "$actual" != "$sha256" ]]; then
   rm -f "$target.part"

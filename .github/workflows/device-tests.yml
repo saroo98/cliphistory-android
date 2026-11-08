@@ -70,6 +70,13 @@ jobs:
           cp app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk validation-apks/cliphistory-validation-test.apk
           (cd validation-apks && sha256sum ./*.apk | tee SHA256SUMS)
 
+      - name: Fetch pinned service APKs once for all emulator jobs
+        # One download per service instead of one per job, with retries and SHA-256 pins.
+        # Each emulator job verifies the pin again before installing.
+        run: |
+          bash tools/ci/fetch-service-apk.sh shizuku validation-apks/service-apk
+          bash tools/ci/fetch-service-apk.sh shizako validation-apks/service-apk
+
       - name: Upload validation APKs
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -157,7 +164,7 @@ jobs:
           disk-size: 6144M
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: bash tools/ci/emulator-e2e.sh --serial emulator-5554 --expect-avd cliphistory-ci --apk validation-apks/cliphistory-validation.apk --test-apk validation-apks/cliphistory-validation-test.apk --output reports/ci/device
+          script: bash tools/ci/emulator-e2e.sh --serial emulator-5554 --expect-avd cliphistory-ci --apk validation-apks/cliphistory-validation.apk --test-apk validation-apks/cliphistory-validation-test.apk --service-cache validation-apks/service-apk --output reports/ci/device
 
       - name: Upload device results
         if: ${{ !cancelled() }}
