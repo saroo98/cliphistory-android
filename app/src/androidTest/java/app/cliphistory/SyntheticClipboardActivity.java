@@ -85,6 +85,8 @@ public class SyntheticClipboardActivity extends Activity {
             PersistableBundle extras=new PersistableBundle();extras.putBoolean("android.content.extra.IS_SENSITIVE",true);clip.getDescription().setExtras(extras);
         }
         getSystemService(ClipboardManager.class).setPrimaryClip(clip);
-        message.setText("Synthetic text copied");
+        // A caller's token confirms this exact write happened (a deferred write can land late).
+        String token=getIntent().getStringExtra("token");
+        message.setText(token==null ? "Synthetic text copied" : "Synthetic text copied "+token);
     }
 }

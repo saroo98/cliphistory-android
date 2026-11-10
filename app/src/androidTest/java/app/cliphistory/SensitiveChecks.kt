@@ -212,7 +212,9 @@ class SensitiveChecks(private val test:Instrumentation) {
             verify(service.status().getInt("count")==1 && entries().none { it.getBoolean("sensitive") },"Disabling capture purges sensitive text while retaining normal text")
             // Exercise each real UI control and native duration input, with persisted acknowledgements.
             main { call("showSettings") }
-            await("Connected sensitive control is available") { var enabled=false;main { enabled=views(activity.window.decorView).filterIsInstance<Switch>().single { it.text.toString()==context.getString(R.string.capture_sensitive) }.isEnabled };enabled }
+            // Wait for the page to show the saved "off" state too. Clicking a switch still drawn
+            // from an older "on" snapshot would turn capture off again instead of on.
+            await("Connected sensitive control is available and off") { var ready=false;main { val control=views(activity.window.decorView).filterIsInstance<Switch>().single { it.text.toString()==context.getString(R.string.capture_sensitive) };ready=control.isEnabled && !control.isChecked };ready }
             main { views(activity.window.decorView).filterIsInstance<Switch>().single { it.text.toString()==context.getString(R.string.capture_sensitive) }.performClick() }
             await("Capture switch saves true") { service.status().getBoolean("captureSensitive") }
             await("Acknowledged capture switch is available") { var ready=false;main {

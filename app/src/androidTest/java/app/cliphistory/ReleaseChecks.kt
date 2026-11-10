@@ -213,6 +213,7 @@ class ReleaseChecks(private val test:Instrumentation) {
             error("Synthetic capture count did not reach $count")
         }
         var producerStarted=false
+        var produced=0
         fun produce(text:String,sensitive:Boolean=false,oversized:Boolean=false) {
             if(!producerStarted) {
                 test.sendStatus(0,Bundle().apply { putString("stream","Producer package: ${test.context.packageName}, target: ${context.packageName}\n") })
@@ -221,8 +222,19 @@ class ReleaseChecks(private val test:Instrumentation) {
                 until("Synthetic producer is foreground") { field("visible")==false }
                 SystemClock.sleep(350);producerStarted=true
             }
+            // Wait until the producer confirms this write. The producer only writes while focused,
+            // so on a slow emulator a write can land after the next step (for example after resume).
+            val token="#${++produced}"
             context.sendBroadcast(Intent(SyntheticClipboardActivity.ACTION).setPackage(test.context.packageName)
-                .putExtra("text",text).putExtra("sensitive",sensitive).putExtra("oversized",oversized))
+                .putExtra("text",text).putExtra("sensitive",sensitive).putExtra("oversized",oversized).putExtra("token",token))
+            val written="Synthetic text copied $token"
+            val end=SystemClock.elapsedRealtime()+10000
+            while(SystemClock.elapsedRealtime()<end) {
+                val root=test.uiAutomation.rootInActiveWindow
+                if(root?.findAccessibilityNodeInfosByText(written)?.any { it.text?.toString()==written }==true)return
+                SystemClock.sleep(40)
+            }
+            error("Synthetic producer did not confirm write $token")
         }
         val initial=status()
         checkThat(initial.getInt("uid")==2000 && initial.getBoolean("listening") && initial.getBoolean("storageVerified"),"Shell listener and durable private storage, API ${Build.VERSION.SDK_INT}")
