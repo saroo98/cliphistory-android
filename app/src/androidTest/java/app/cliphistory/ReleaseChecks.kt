@@ -214,6 +214,8 @@ class ReleaseChecks(private val test:Instrumentation) {
         }
         var producerStarted=false
         var produced=0
+        // Unique per run: a producer left open by an earlier run remembers that run's tokens.
+        val run=java.util.UUID.randomUUID().toString().take(8)
         fun produce(text:String,sensitive:Boolean=false,oversized:Boolean=false) {
             if(!producerStarted) {
                 test.sendStatus(0,Bundle().apply { putString("stream","Producer package: ${test.context.packageName}, target: ${context.packageName}\n") })
@@ -224,12 +226,16 @@ class ReleaseChecks(private val test:Instrumentation) {
             }
             // Wait until the producer confirms this write. The producer only writes while focused,
             // so on a slow emulator a write can land after the next step (for example after resume).
-            val token="#${++produced}"
-            context.sendBroadcast(Intent(SyntheticClipboardActivity.ACTION).setPackage(test.context.packageName)
-                .putExtra("text",text).putExtra("sensitive",sensitive).putExtra("oversized",oversized).putExtra("token",token))
+            // Resend until confirmed: on a slow cold start a broadcast sent before the producer
+            // registers its receiver is lost. The producer never writes the same token twice.
+            val token="$run#${++produced}"
+            val request=Intent(SyntheticClipboardActivity.ACTION).setPackage(test.context.packageName)
+                .putExtra("text",text).putExtra("sensitive",sensitive).putExtra("oversized",oversized).putExtra("token",token)
             val written="Synthetic text copied $token"
-            val end=SystemClock.elapsedRealtime()+10000
+            val end=SystemClock.elapsedRealtime()+15000
+            var resend=0L
             while(SystemClock.elapsedRealtime()<end) {
+                if(SystemClock.elapsedRealtime()>=resend) { context.sendBroadcast(request);resend=SystemClock.elapsedRealtime()+1000 }
                 val root=test.uiAutomation.rootInActiveWindow
                 if(root?.findAccessibilityNodeInfosByText(written)?.any { it.text?.toString()==written }==true)return
                 SystemClock.sleep(40)

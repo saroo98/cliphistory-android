@@ -19,8 +19,14 @@ public class SyntheticClipboardActivity extends Activity {
     private static boolean checkpointReady;
     private boolean copied;
     private TextView message;
+    private final java.util.HashSet<String> written=new java.util.HashSet<>();
     private final BroadcastReceiver writer=new BroadcastReceiver() {
-        public void onReceive(Context context,Intent event) { setIntent(event);copied=false;write(); }
+        public void onReceive(Context context,Intent event) {
+            // The caller resends a request until it is confirmed. Never write the same token twice.
+            String token=event.getStringExtra("token");
+            if(token!=null && written.contains(token))return;
+            setIntent(event);copied=false;write();
+        }
     };
     public void onCreate(Bundle state) {
         super.onCreate(state);
@@ -87,6 +93,7 @@ public class SyntheticClipboardActivity extends Activity {
         getSystemService(ClipboardManager.class).setPrimaryClip(clip);
         // A caller's token confirms this exact write happened (a deferred write can land late).
         String token=getIntent().getStringExtra("token");
+        if(token!=null)written.add(token);
         message.setText(token==null ? "Synthetic text copied" : "Synthetic text copied "+token);
     }
 }
