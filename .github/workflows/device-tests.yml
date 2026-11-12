@@ -90,10 +90,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     timeout-minutes: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && 90 || 40 }}
-    # Android 17 jobs still run and report, but do not fail the workflow. The API 37 image's
-    # graphics driver aborts surfaceflinger at boot on the hosted emulator ("Assertion failed:
-    # !rcEnc->featureInfo()->hasReadColorBufferDma", with swiftshader_indirect and swangle_indirect
-    # alike), before the app is installed. Android 17 is covered by local API 37 runs meanwhile.
+    # Android 17 jobs still run and report, but do not fail the workflow. On hosted Linux runners
+    # the API 37 image's graphics driver aborts surfaceflinger about every 30 seconds after boot
+    # ("Assertion failed: !rcEnc->featureInfo()->hasReadColorBufferDma"). Android restarts while
+    # the app is installed and started, so setup fails with "Activity class ... does not exist".
+    # Tried without effect (November 2026): swiftshader_indirect, swangle_indirect, -gpu guest
+    # (falls back to lavapipe), -feature -GLDMA2, -feature -GLDMA,-GLDMA2, and emulator 37.2.12
+    # instead of 37.2.13. The same image runs without the crash on a local Windows emulator, and
+    # Android 17 is covered by local API 37 runs meanwhile.
     continue-on-error: ${{ matrix.api == '37.0' }}
     strategy:
       fail-fast: false
