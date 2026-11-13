@@ -576,7 +576,7 @@ class MainActivity:Activity() {
     private fun showHelp(focusTopic:Int?=null) {
         if(pageKind=="help")helpScroll=findScroll(page)?.scrollY?:helpScroll
         helpConnected=client.connected()
-        val view=pages.help(::backPage,::openWebsite,::openManager,{client.connect(true)},helpConnected,helpTopics,focusTopic) {
+        val view=pages.help(::backPage,::openWebsite,::openSystemSettings,::openManager,{client.connect(true)},helpConnected,helpTopics,focusTopic) {
             helpScroll=findScroll(page)?.scrollY?:0;showLicenses()
         }
         val scroll=helpScroll
@@ -593,6 +593,13 @@ class MainActivity:Activity() {
     private fun openWebsite(url:String) {
         try { startActivity(Intent(Intent.ACTION_VIEW,android.net.Uri.parse(url))) }
         catch (_:ActivityNotFoundException){notifyUser(R.string.browser_missing)}
+    }
+    private fun openSystemSettings(action:String) {
+        val intent=Intent(action)
+        // Developer options: scroll to and highlight Wireless debugging where Settings supports it.
+        if(action==android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)intent.putExtra(":settings:fragment_args_key","toggle_adb_wireless")
+        try { startActivity(intent) }
+        catch (_:ActivityNotFoundException) { try { startActivity(Intent(android.provider.Settings.ACTION_SETTINGS)) } catch (_:ActivityNotFoundException) {} }
     }
     private fun openManager() {
         chooseManager(R.string.open_manager_manually) { client.openShizuku(it) }

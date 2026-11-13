@@ -209,11 +209,11 @@ class HtmlPortChecks(private val test:Instrumentation,private val arguments:Bund
             val content=scroll().getChildAt(0) as LinearLayout
             val children=(0 until content.childCount).map { content.getChildAt(it) }
             val headings=listOf(R.string.html_port_setup_install,R.string.html_port_setup_pair,R.string.html_port_setup_start,
-                R.string.html_port_setup_connect,R.string.html_port_setup_background,R.string.html_port_setup_reboot)
-            val actions=listOf(listOf(R.string.download_shizuku),listOf(R.string.official_setup_guide,R.string.open_shizuku),listOf(R.string.open_shizuku),
-                listOf(R.string.connect),listOf(R.string.background_reliability),listOf(R.string.open_shizuku,R.string.connect))
+                R.string.html_port_setup_connect,R.string.html_port_setup_background)
+            val actions=listOf(listOf(R.string.download_shizuku),listOf(R.string.open_about_phone,R.string.open_developer_options),listOf(R.string.open_shizuku),
+                listOf(R.string.connect),listOf(R.string.background_reliability))
             val indices=headings.mapIndexed { index,id -> children.indexOfFirst { it is TextView && it.isAccessibilityHeading && it.text.toString()==context.getString(R.string.html_port_setup_step,index+1,context.getString(id)) } }
-            checkThat(indices.all { it>=0 } && indices==indices.sorted(),"Help contains six numbered native setup sections in order")
+            checkThat(indices.all { it>=0 } && indices==indices.sorted(),"Help contains five numbered native setup sections in order")
             indices.forEachIndexed { step,start ->
                 val end=indices.getOrNull(step+1)?:children.indexOfFirst { it is TextView && it.text.toString()==context.getString(R.string.html_port_using_clipboard) }
                 val labels=children.subList(start+1,end).flatMap(::views).filterIsInstance<Button>().map { it.text.toString() }

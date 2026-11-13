@@ -74,13 +74,24 @@ Add the **Clipboard** tile to your phone's Quick Settings (the panel you open by
 
 ## Get started
 
-ClipHistory runs on **Android 11 or newer** and uses [Shizuku](https://shizuku.rikka.app/), a free and widely used app that lets apps like this one work in the background without root.
+ClipHistory runs on **Android 11 or newer**. It needs [Shizuku-Next](https://github.com/rushiranpise/Shizuku-Next), a free helper app that lets ClipHistory see what you copy, without root. You set it up once. After that it starts by itself every time your phone restarts.
+
+<div align="center">
+<img src="docs/readme/setup-steps.png" alt="Eight setup steps: install Shizuku-Next, tap Build number 7 times, turn on Wireless debugging, tap Start in Shizuku-Next, pair with the code, turn on Start on boot, allow ClipHistory, and see your copies saved" width="860">
+</div>
 
 1. **Install ClipHistory** from the [latest release](https://github.com/saroo98/cliphistory-android/releases/latest).
-2. **Install and start Shizuku** using wireless debugging. ClipHistory's built-in guide walks you through it.
-3. **Open ClipHistory, tap Connect** and allow access. Then copy anything, anywhere. It is saved.
+2. **Install Shizuku-Next** from its [latest release](https://github.com/rushiranpise/Shizuku-Next/releases/latest). Tap the file ending in `next.apk` (not the `debug` one). If your phone asks, allow installing apps from your browser.
+3. **Turn on wireless debugging.** Connect to Wi-Fi. Open **Settings › About phone** and tap **Build number** 7 times. Then open **Settings › System › Developer options**, turn on **Wireless debugging** and choose **Always allow on this network**.
+4. **Start Shizuku-Next.** Open it and tap **Start**. The first time, it asks you to pair once: in Wireless debugging, tap **Pair device with pairing code** and type the 6-digit code into Shizuku-Next's notification.
+5. **Make it automatic.** In Shizuku-Next, open **Settings › Startup** and turn on **Start on boot**.
+6. **Connect.** Open ClipHistory, tap **Connect** and choose **Always allow**. Now copy anything, anywhere. It is saved.
 
-Add the **Clipboard** tile to Quick Settings for one-tap access: ClipHistory offers it in Settings, or add it yourself from Quick Settings → Edit. After restarting your phone, start Shizuku again and ClipHistory picks up where it left off.
+The same steps are built into the app under **Help & privacy**, with a button for each one.
+
+Already use Shizuku? That works too. To switch to Shizuku-Next, uninstall Shizuku first, because the two can't be installed side by side.
+
+Add the **Clipboard** tile to Quick Settings for one-tap access: ClipHistory offers it in Settings, or add it yourself from Quick Settings → Edit.
 
 <details>
 <summary><b>Rooted phone?</b> Set it up once and never think about it again.</summary>

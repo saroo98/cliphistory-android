@@ -17,6 +17,10 @@ import app.cliphistory.core.issueKind
 import java.text.NumberFormat
 
 class DetailPages(private val ui:Ui) {
+    companion object {
+        /** Opens the newest Shizuku-Next release; its APK name changes with every version. */
+        const val SHIZUKU_NEXT_DOWNLOAD="https://github.com/rushiranpise/Shizuku-Next/releases/latest"
+    }
     private fun s(id:Int)=ui.activity.getString(id)
     fun page(title:String,back:()->Unit,body:(LinearLayout,LinearLayout)->Unit):View {
         val root=ui.column().apply { setBackgroundColor(ui.color(R.color.canvas));setPadding(ui.dp(20),0,ui.dp(20),ui.dp(8));accessibilityPaneTitle=title }
@@ -61,7 +65,7 @@ class DetailPages(private val ui:Ui) {
         }
         parent.addView(row);parent.addView(body);parent.addView(ui.divider());return row
     }
-    fun help(back:()->Unit,website:(String)->Unit,manager:()->Unit,connect:()->Unit,connected:Boolean,openTopics:MutableSet<Int>,
+    fun help(back:()->Unit,website:(String)->Unit,systemSettings:(String)->Unit,manager:()->Unit,connect:()->Unit,connected:Boolean,openTopics:MutableSet<Int>,
         focusTopic:Int?=null,licenses:()->Unit):View=page(s(R.string.help_privacy),back) { content,_ ->
         lateinit var questions:TextView
         ui.actionRow(content,s(R.string.html_port_clipboard_questions)) {
@@ -81,11 +85,14 @@ class DetailPages(private val ui:Ui) {
             val vertical=parent.orientation==LinearLayout.VERTICAL
             parent.addView(ui.button(s(label),primary=primary,action=click),LinearLayout.LayoutParams(if(vertical)-1 else 0,-2,if(vertical)0f else 1f))
         }
-        step(1,R.string.html_port_setup_install,listOf(R.string.setup_install)) { action(it,R.string.download_shizuku,true){website("https://shizuku.rikka.app/download/")} }
-        step(2,R.string.html_port_setup_pair,listOf(R.string.setup_debugging,R.string.setup_pair)) {
-            action(it,R.string.official_setup_guide){website("https://shizuku.rikka.app/guide/setup/")};action(it,R.string.open_shizuku,click=manager)
+        step(1,R.string.html_port_setup_install,listOf(R.string.setup_install)) {
+            action(it,R.string.download_shizuku,true){website(SHIZUKU_NEXT_DOWNLOAD)}
         }
-        step(3,R.string.html_port_setup_start,listOf(R.string.setup_start)) { action(it,R.string.open_shizuku,click=manager) }
+        step(2,R.string.html_port_setup_pair,listOf(R.string.setup_debugging,R.string.setup_pair)) {
+            action(it,R.string.open_about_phone){systemSettings(android.provider.Settings.ACTION_DEVICE_INFO_SETTINGS)}
+            action(it,R.string.open_developer_options){systemSettings(android.provider.Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)}
+        }
+        step(3,R.string.html_port_setup_start,listOf(R.string.setup_start,R.string.setup_reboot)) { action(it,R.string.open_shizuku,click=manager) }
         step(4,R.string.html_port_setup_connect,listOf(R.string.setup_authorise)) {
             if(connected) {
                 ui.paragraph(content,s(R.string.html_port_connected_test_advice))
@@ -94,10 +101,6 @@ class DetailPages(private val ui:Ui) {
         }
         step(5,R.string.html_port_setup_background,listOf(R.string.setup_background)) {
             action(it,R.string.background_reliability){ (ui.activity as MainActivity).showBackgroundGuide() }
-        }
-        step(6,R.string.html_port_setup_reboot,listOf(R.string.setup_reboot)) {
-            action(it,R.string.open_shizuku,click=manager)
-            if(connected)ui.paragraph(content,s(R.string.html_port_connected_reboot_advice)) else action(it,R.string.connect,click=connect)
         }
         content.addView(ui.space(28))
         questions=ui.title(s(R.string.html_port_using_clipboard),18f).apply { isAccessibilityHeading=true;isFocusable=true;isFocusableInTouchMode=true }

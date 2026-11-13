@@ -1,11 +1,12 @@
 <resources>
-    <string name="setup_install">1. Install Shizuku or a compatible service app. Some forks need a separate compatibility app; follow their instructions. Start it with wireless debugging or ADB, also on rooted phones: Android doesn’t allow clipboard reading from root. Run one service at a time.</string>
-    <string name="setup_debugging">2. Connect to Wi-Fi. In Android Settings, enable Developer options if needed, then enable Wireless debugging. The official guide explains where these settings are on your phone.</string>
-    <string name="setup_pair">3. In Shizuku, choose Pairing. In Wireless debugging, choose Pair device with pairing code. Enter Android’s code in the service app. Other forks may use different steps.</string>
-    <string name="setup_start">4. Start your service and wait until it is running. If ClipHistory is not recognised after an update, restart the service. Pairing and starting are separate steps.</string>
-    <string name="setup_authorise">5. Return here and tap Connect. Allow ClipHistory to use the service, then run the Connection test. Recording stores text locally until it rolls out of your chosen limit or you delete it. Pause before copying private text that another app might not mark sensitive.</string>
-    <string name="download_shizuku">Official Shizuku download</string>
-    <string name="official_setup_guide">Official setup guide</string>
+    <string name="setup_install">1. ClipHistory needs Shizuku-Next, a free helper app, to see what you copy. Tap Download Shizuku-Next, then tap the file ending in next.apk (not the debug one) and install it. If your phone asks, allow installing apps from your browser. Already have Shizuku? Uninstall it first: the two can’t be installed side by side.</string>
+    <string name="setup_debugging">2. Connect to Wi-Fi. Tap About phone below, then tap Build number 7 times. Enter your PIN if asked. This unlocks Developer options.</string>
+    <string name="setup_pair">3. Tap Developer options below. Find Wireless debugging, turn it on and choose Always allow on this network.</string>
+    <string name="setup_start">4. Open Shizuku-Next and tap Start. The first time, it asks you to pair once: in Wireless debugging, tap Pair device with pairing code, then type the 6-digit code into Shizuku-Next’s notification.</string>
+    <string name="setup_authorise">6. Come back here, tap Connect and choose Allow. Copy any text to check: it appears at the top of your history. Pause recording before copying private text that another app might not mark sensitive.</string>
+    <string name="download_shizuku">Download Shizuku-Next</string>
+    <string name="open_about_phone">About phone</string>
+    <string name="open_developer_options">Developer options</string>
     <string name="source_code">Source code</string>
     <string name="licenses">Open-source licenses</string>
     <string name="last_checked">Last checked</string>
