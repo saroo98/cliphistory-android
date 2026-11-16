@@ -2,6 +2,25 @@
 
 Version **1.4.8 / code 18**. This release changes only the setup guide, the README and the store text. The recorder, storage, permissions and signing key are unchanged from 1.4.7. Final hashes are recorded after tagging.
 
+## Final release
+
+Published on [GitHub](https://github.com/saroo98/cliphistory-android/releases/tag/v1.4.8) on 16 November 2026.
+
+| Item | Verified identity |
+| --- | --- |
+| Tag and source commit | `v1.4.8` → `e8c800d1132c52897e1db18725a82d0cee9e5762` |
+| Signed APK: release asset, public download and installed Pixel APK | `f5893210f0eb4fa9ab637b67a30983f9375002b1c6d6f17f0f1e51bc05e7068d`, 2,697,335 bytes |
+| Unsigned APK, Windows (JBR 21) and Linux (CI, Temurin 17) clean builds of the tag | `affee6011451d93b5645eb20c955de53cd7637e7dd98b4fceabf86933544966a` |
+| Signing certificate | `ef13472a271f187fbcfb3fecc186a5afa041bf1a2567caa166c82f8eb5459c82` |
+
+The tagged commit rebuilt byte-identically on Windows and Linux, and `apksigcopier compare --unsigned` matches the signed APK. The APK records the tagged commit. v3 signature, 16 KiB aligned, target 37, minimum 30, not debuggable, the same six permissions. Unit tests 100/100, lint 0 errors.
+
+| Check | Result |
+| --- | --- |
+| GitHub CI on the tag | Unit tests, lint and APKs green (run 43867314981). Full emulator matrix, Android 11–17 × Shizuku, Shizako and root refusal: 21/21 jobs green (run 43867319419). The Android 11 Shizako job passed on re-run after its emulator went offline before the onboarding suite started; this time the Android 17 jobs passed too. |
+| Signed upgrade from the public 1.4.7, Android 16 emulator | Shizuku-Next 14.0.35 with Start on boot: same signer, first install date kept, the 3 saved entries kept, the recorder restarted as UID 2000 in the same second as the update, before the app was opened, and the app shows Listening. |
+| Pixel 8 Pro, Android 17 QPR3 beta | The public release APK was installed in place over 1.4.7 with its data kept (first install date unchanged); the installed hash matches; the recorder restarted as UID 2000 by itself, with Shizuku-Next 14.0.36 already running. |
+
 ## What changed
 
 - **Setup with Shizuku-Next** (`45197ab`, `f774980`, `9513f61`). The built-in guide and the README now set users up with [Shizuku-Next](https://github.com/rushiranpise/Shizuku-Next), a maintained Shizuku fork with the same package name, so ClipHistory works with it unchanged. Its **Start on boot** brings the service back after every restart without a computer. The guide has five steps, with buttons that download Shizuku-Next in one tap (`releases/latest/download/shizuku-next.apk`), open **About phone** and open **Developer options** at Wireless debugging. Users who already run Shizuku keep working; the guide explains how to switch.
