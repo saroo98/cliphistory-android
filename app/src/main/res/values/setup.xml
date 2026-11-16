@@ -1,10 +1,13 @@
 <resources>
-    <string name="setup_install">ClipHistory needs Shizuku-Next, a free helper app, to see what you copy. Tap Download Shizuku-Next, then open the downloaded file and install it. If your phone asks, allow installing apps from your browser. Already have Shizuku? Uninstall it first: the two can’t be installed side by side.</string>
+    <string name="setup_install">ClipHistory needs a free helper app to see what you copy. Shizuku-Next is the recommended option for the best compatibility, and it starts by itself after every restart. Tap Download, then open the downloaded file and install it. If your phone asks, allow installing apps from your browser. Already use Shizuku or another compatible app? That works too, and you can skip this step. To switch to Shizuku-Next, uninstall Shizuku first: the two can’t be installed side by side.</string>
     <string name="setup_debugging">Connect to Wi-Fi. Tap About phone below, then tap Build number 7 times. Enter your PIN if asked. This unlocks Developer options.</string>
     <string name="setup_pair">Tap Developer options below. Find Wireless debugging, turn it on and choose Always allow on this network.</string>
     <string name="setup_start">Open Shizuku-Next and tap Start. The first time, it asks you to pair once: in Wireless debugging, tap Pair device with pairing code, then type the 6-digit code into Shizuku-Next’s notification.</string>
     <string name="setup_authorise">Come back here, tap Connect and choose Always allow. Copy any text to check: it appears at the top of your history. Pause recording before copying private text that another app might not mark sensitive.</string>
-    <string name="download_shizuku">Download Shizuku-Next</string>
+    <string name="download_shizuku">Download Shizuku-Next (recommended)</string>
+    <string name="setup_status_done">Done</string>
+    <string name="setup_status_next">Do this next</string>
+    <string name="setup_all_done">All set. ClipHistory is connected and saves what you copy.</string>
     <string name="open_about_phone">About phone</string>
     <string name="open_developer_options">Developer options</string>
     <string name="source_code">Source code</string>

@@ -12,6 +12,7 @@ import app.cliphistory.R
 import app.cliphistory.client.DaemonClient
 import app.cliphistory.core.IssueKind
 import app.cliphistory.core.ROOT_UID
+import app.cliphistory.core.SETUP_DONE
 import app.cliphistory.core.SHELL_UID
 import app.cliphistory.core.issueKind
 import java.text.NumberFormat
@@ -19,6 +20,8 @@ import java.text.NumberFormat
 class DetailPages(private val ui:Ui) {
     companion object {
         /** Downloads the newest Shizuku-Next APK; its releases keep this fixed file name. */
+        /** Marks the heading of the step Setup help asks the user to do next. */
+        const val NEXT_STEP_TAG="setup-next-step"
         const val SHIZUKU_NEXT_DOWNLOAD="https://github.com/rushiranpise/Shizuku-Next/releases/latest/download/shizuku-next.apk"
     }
     private fun s(id:Int)=ui.activity.getString(id)
@@ -65,16 +68,36 @@ class DetailPages(private val ui:Ui) {
         }
         parent.addView(row);parent.addView(body);parent.addView(ui.divider());return row
     }
-    fun help(back:()->Unit,website:(String)->Unit,systemSettings:(String)->Unit,manager:()->Unit,connect:()->Unit,connected:Boolean,openTopics:MutableSet<Int>,
+    fun help(back:()->Unit,website:(String)->Unit,systemSettings:(String)->Unit,manager:()->Unit,connect:()->Unit,connected:Boolean,nextStep:Int?,openTopics:MutableSet<Int>,
         focusTopic:Int?=null,licenses:()->Unit):View=page(s(R.string.help_privacy),back) { content,_ ->
         lateinit var questions:TextView
         ui.actionRow(content,s(R.string.html_port_clipboard_questions)) {
             (content.parent as? ScrollView)?.scrollTo(0,questions.top);questions.requestFocus()
         }
         content.addView(ui.title(s(R.string.help_setup),18f).apply { isAccessibilityHeading=true })
+        if(nextStep==SETUP_DONE) { content.addView(ui.space(8));ui.paragraph(content,s(R.string.setup_all_done)) }
         fun step(number:Int,heading:Int,paragraphs:List<Int>,actions:(LinearLayout)->Unit) {
             content.addView(ui.space(24))
-            content.addView(ui.title(ui.activity.getString(R.string.html_port_setup_step,number,s(heading)),17f).apply { isAccessibilityHeading=true });content.addView(ui.space(12))
+            val headingText=ui.activity.getString(R.string.html_port_setup_step,number,s(heading))
+            val done=nextStep!=null && number<nextStep && number<SETUP_DONE
+            val next=number==nextStep && nextStep!=SETUP_DONE
+            val status=if(done)s(R.string.setup_status_done) else if(next)s(R.string.setup_status_next) else null
+            content.addView(ui.title(headingText,17f).apply {
+                isAccessibilityHeading=true
+                if(status!=null)contentDescription="$headingText. $status"
+                if(next)tag=NEXT_STEP_TAG
+            })
+            if(status!=null) {
+                content.addView(ui.space(6))
+                content.addView(ui.text(status,13f,!next).apply {
+                    importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                    if(next) {
+                        setTextColor(ui.color(R.color.on_accent));background=ui.shape(ui.accent,12)
+                        setPadding(ui.dp(10),ui.dp(3),ui.dp(10),ui.dp(3))
+                    }
+                },LinearLayout.LayoutParams(-2,-2))
+            }
+            content.addView(ui.space(12))
             paragraphs.forEach { ui.paragraph(content,s(it).replaceFirst(Regex("^\\d+\\.\\s*"),"")) }
             val buttons=LinearLayout(ui.activity).apply {
                 orientation=if(ui.activity.resources.configuration.fontScale>1.3f)LinearLayout.VERTICAL else LinearLayout.HORIZONTAL

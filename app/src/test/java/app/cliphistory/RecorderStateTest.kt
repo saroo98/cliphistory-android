@@ -28,4 +28,14 @@ class RecorderStateTest {
         assertEquals(RecorderState.CONNECTING, recorderState(ConnectionStage.CONNECTING))
         assertEquals(RecorderState.UNSUPPORTED, recorderState(ConnectionStage.UNSUPPORTED))
     }
+    @Test fun setupHelpPointsAtTheNextStep() {
+        assertEquals(1, nextSetupStep(ConnectionStage.MISSING, false))
+        assertEquals(2, nextSetupStep(ConnectionStage.STOPPED, false))
+        assertEquals(3, nextSetupStep(ConnectionStage.STOPPED, true))
+        listOf(ConnectionStage.PERMISSION, ConnectionStage.DENIED, ConnectionStage.CONNECTING, ConnectionStage.FAILED)
+            .forEach { assertEquals(4, nextSetupStep(it, true)) }
+        assertEquals(SETUP_DONE, nextSetupStep(ConnectionStage.CONNECTED, false))
+        listOf(ConnectionStage.UNSUPPORTED, ConnectionStage.OUTDATED, ConnectionStage.ROOT_MODE)
+            .forEach { assertNull(nextSetupStep(it, true)) }
+    }
 }

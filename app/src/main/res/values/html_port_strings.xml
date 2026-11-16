@@ -19,7 +19,7 @@
     <string name="html_port_using_clipboard">Using your clipboard</string>
     <string name="html_port_privacy_saved_text">Privacy and saved text</string>
     <string name="html_port_setup_step">%1$d. %2$s</string>
-    <string name="html_port_setup_install">Get Shizuku-Next</string>
+    <string name="html_port_setup_install">Get Shizuku-Next (recommended)</string>
     <string name="html_port_setup_pair">Turn on wireless debugging</string>
     <string name="html_port_setup_start">Start Shizuku-Next</string>
     <string name="html_port_setup_connect">Connect ClipHistory</string>

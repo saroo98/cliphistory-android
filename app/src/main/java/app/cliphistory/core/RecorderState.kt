@@ -71,3 +71,19 @@ fun setupAdvice(state: RecorderState, serviceIsSui: Boolean): SetupAdvice = when
 /** States whose fix is explained under "Rooted phone" in Setup help, which then opens there. */
 fun rootedHelpApplies(state: RecorderState, serviceIsSui: Boolean): Boolean =
     state == RecorderState.ROOT_MODE || setupAdvice(state, serviceIsSui) != SetupAdvice.STANDARD
+
+/** Setup help marks steps 1 to 4 as done once the recorder is connected. */
+const val SETUP_DONE = 5
+
+/**
+ * The numbered Setup help step to do next, or null when the guide can't tell.
+ * Wireless debugging can read as off on Android 17 even when it is on, so a stopped
+ * service points at step 2 unless the setting reads on.
+ */
+fun nextSetupStep(stage: ConnectionStage, wirelessDebuggingOn: Boolean): Int? = when (stage) {
+    ConnectionStage.MISSING -> 1
+    ConnectionStage.STOPPED -> if (wirelessDebuggingOn) 3 else 2
+    ConnectionStage.PERMISSION, ConnectionStage.DENIED, ConnectionStage.CONNECTING, ConnectionStage.FAILED -> 4
+    ConnectionStage.CONNECTED -> SETUP_DONE
+    ConnectionStage.UNSUPPORTED, ConnectionStage.OUTDATED, ConnectionStage.ROOT_MODE -> null
+}

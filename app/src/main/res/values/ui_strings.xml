@@ -26,9 +26,9 @@
     <string name="paused">Recording paused</string>
     <string name="resume">Resume</string>
     <string name="start_recording">Start recording</string>
-    <string name="start_shizuku">Start or restart Shizuku or a compatible service, then connect ClipHistory.</string>
-    <string name="missing_title">Start a compatible service</string>
-    <string name="missing_body">Start or restart Shizuku or a compatible service, then try again. Setup help explains what you need.</string>
+    <string name="start_shizuku">Start Shizuku-Next or your helper app, then connect ClipHistory. Setup help shows what to do next.</string>
+    <string name="missing_title">Install a helper app</string>
+    <string name="missing_body">ClipHistory needs a free helper app to see what you copy. Shizuku-Next is recommended; Shizuku and other compatible apps work too. Setup help walks you through it.</string>
     <string name="permission_title">Allow service access</string>
     <string name="permission_body">Tap Connect. If the prompt closes or never appears, open your service app, allow ClipHistory in its authorized apps, then return and tap Connect.</string>
     <string name="denied_title">Service access is off</string>

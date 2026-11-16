@@ -58,6 +58,7 @@ class MainActivity:Activity() {
     private var helpScroll=0
     private val helpTopics=mutableSetOf<Int>()
     private var helpConnected=false
+    private var helpStep:Int?=null
     private var licensesFromSettings=false
     private var settingsFocus=""
     private var reopenAppearance=false
@@ -221,7 +222,7 @@ class MainActivity:Activity() {
             recorderContent?.let { fillRecorder(it,recorderDialog!!) }
             if(pageKind=="diagnostics")diagnosticPage?.update?.invoke(latest,offline)
             if(pageKind=="settings")settingsPage?.update?.invoke(latest)
-            if(pageKind=="help" && helpConnected!=client.connected())showHelp()
+            if(pageKind=="help" && (helpConnected!=client.connected() || helpStep!=setupStep()))showHelp()
             when(pageKind) {
                 "restore-preview"->{pageKind="";preview(previewId)}
                 "restore-diagnostics"->{pageKind="";diagnostics()}
@@ -568,20 +569,28 @@ class MainActivity:Activity() {
         // Root and Sui setup problems open Setup help at its "Rooted phone" answer.
         val rooted=rootedHelpApplies(recorderState(client.connectionStage()),client.serviceIsSui())
         if(rooted)helpTopics.add(R.string.help_rooted)
-        showHelp(if(rooted)R.string.help_rooted else null)
+        showHelp(if(rooted)R.string.help_rooted else null,toNextStep=!rooted)
     }
+    /** The Setup help step to do next. Android 17 can hide that wireless debugging is on. */
+    private fun setupStep():Int?=nextSetupStep(client.connectionStage(),
+        android.provider.Settings.Global.getInt(contentResolver,"adb_wifi_enabled",0)==1)
     private fun settingsHelp() {
         helpFromSettings=true;helpSettingsScroll=findScroll(page)?.scrollY?:0;showHelp()
     }
-    private fun showHelp(focusTopic:Int?=null) {
+    private fun showHelp(focusTopic:Int?=null,toNextStep:Boolean=false) {
         if(pageKind=="help")helpScroll=findScroll(page)?.scrollY?:helpScroll
-        helpConnected=client.connected()
-        val view=pages.help(::backPage,::openWebsite,::openSystemSettings,::openManager,{client.connect(true)},helpConnected,helpTopics,focusTopic) {
+        helpConnected=client.connected();helpStep=setupStep()
+        val view=pages.help(::backPage,::openWebsite,::openSystemSettings,::openManager,{client.connect(true)},helpConnected,helpStep,helpTopics,focusTopic) {
             helpScroll=findScroll(page)?.scrollY?:0;showLicenses()
         }
         val scroll=helpScroll
         showPage("help",view)
-        if(focusTopic==null)view.post { findScroll(view)?.scrollTo(0,scroll) }
+        if(focusTopic==null)view.post {
+            // Opened from the welcome or home screen: start at the step to do next.
+            val next=if(toNextStep)view.findViewWithTag<View>(DetailPages.NEXT_STEP_TAG) else null
+            findScroll(view)?.scrollTo(0,if(next!=null)maxOf(0,next.top-ui.dp(16)) else scroll)
+            next?.let { it.isFocusable=true;it.requestFocus() }
+        }
     }
     private fun showLicenses() {
         if(pageKind=="help")licensesFromSettings=false

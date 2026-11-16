@@ -53,7 +53,7 @@
     <string name="welcome_off">Never</string>
     <string name="show_welcome">Show welcome now</string>
     <string name="welcome_title">Your clipboard, on your device</string>
-    <string name="welcome_body">Free, open source, and local. Saved text stays on your device.\n\nInstall Shizuku-Next, a free helper app, and connect the recorder. Then copy text in any app. Tap a saved entry here to copy it back. The setup guide explains the steps.\n\nFeedback or a GitHub star is always optional.</string>
+    <string name="welcome_body">Free, open source, and local. Saved text stays on your device.\n\nInstall a free helper app (Shizuku-Next is recommended) and connect the recorder. Then copy text in any app. Tap a saved entry here to copy it back. The setup guide shows each step.\n\nFeedback or a GitHub star is always optional.</string>
     <string name="welcome_continue">Continue</string>
     <string name="support_project">Support the project</string>
     <string name="support_optional">Feedback, stars, and sharing are entirely optional. No payment or rating is required.</string>
