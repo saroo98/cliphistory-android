@@ -81,7 +81,7 @@ ClipHistory runs on **Android 11 or newer**. It needs [Shizuku-Next](https://git
 </div>
 
 1. **Install ClipHistory** from the [latest release](https://github.com/saroo98/cliphistory-android/releases/latest).
-2. **Install Shizuku-Next** from its [latest release](https://github.com/rushiranpise/Shizuku-Next/releases/latest). Tap the file ending in `next.apk` (not the `debug` one). If your phone asks, allow installing apps from your browser.
+2. **Install Shizuku-Next:** [download it here](https://github.com/rushiranpise/Shizuku-Next/releases/latest/download/shizuku-next.apk), then open the file to install it. If your phone asks, allow installing apps from your browser.
 3. **Turn on wireless debugging.** Connect to Wi-Fi. Open **Settings › About phone** and tap **Build number** 7 times. Then open **Settings › System › Developer options**, turn on **Wireless debugging** and choose **Always allow on this network**.
 4. **Start Shizuku-Next.** Open it and tap **Start**. The first time, it asks you to pair once: in Wireless debugging, tap **Pair device with pairing code** and type the 6-digit code into Shizuku-Next's notification.
 5. **Make it automatic.** In Shizuku-Next, open **Settings › Startup** and turn on **Start on boot**.
