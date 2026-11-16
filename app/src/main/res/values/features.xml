@@ -73,6 +73,6 @@
     <string name="quick_copy_failed">Copy was not allowed. Tap a saved text to retry, or close this panel.</string>
     <string name="quick_retry">Retry</string>
     <string name="quick_close">Close quick copy</string>
-    <string name="setup_background">7. Optional: if your phone stops apps in the background, open Background reliability and allow ClipHistory and Shizuku-Next to run in the background.</string>
-    <string name="setup_reboot">5. In Shizuku-Next, open Settings, then Startup, and turn on Start on boot. Shizuku-Next now starts by itself whenever your phone restarts. Unlock your phone once after a restart and recording carries on.</string>
+    <string name="setup_background">Optional: if your phone stops apps in the background, open Background reliability and allow ClipHistory and Shizuku-Next to run in the background.</string>
+    <string name="setup_reboot">In Shizuku-Next, open Settings, then Startup, and turn on Start on boot. Shizuku-Next now starts by itself whenever your phone restarts. Unlock your phone once after a restart and recording carries on.</string>
 </resources>

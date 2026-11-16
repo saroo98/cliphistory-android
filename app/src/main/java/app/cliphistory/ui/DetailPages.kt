@@ -18,7 +18,7 @@ import java.text.NumberFormat
 
 class DetailPages(private val ui:Ui) {
     companion object {
-        /** Opens the newest Shizuku-Next release; its APK name changes with every version. */
+        /** Downloads the newest Shizuku-Next APK; its releases keep this fixed file name. */
         const val SHIZUKU_NEXT_DOWNLOAD="https://github.com/rushiranpise/Shizuku-Next/releases/latest/download/shizuku-next.apk"
     }
     private fun s(id:Int)=ui.activity.getString(id)
