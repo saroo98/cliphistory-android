@@ -1,0 +1,1 @@
+The setup guide now shows where you are. Finished steps are marked Done, the next one says Do this next, and the guide opens right at it, so you always know what to tap. It updates by itself as you go. Shizuku-Next is now shown as the recommended helper app rather than a requirement: Shizuku and other compatible apps still work.
