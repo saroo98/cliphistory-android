@@ -10,8 +10,8 @@ android {
         applicationId = "app.cliphistory"
         minSdk = 30
         targetSdk = 37
-        versionCode = 17
-        versionName = "1.4.7"
+        versionCode = 18
+        versionName = "1.4.8"
         manifestPlaceholders["appLabel"] = "@string/app_name"
         manifestPlaceholders["tileLabel"] = "@string/tile_name"
         testInstrumentationRunner = "app.cliphistory.UiSmokeInstrumentation"
